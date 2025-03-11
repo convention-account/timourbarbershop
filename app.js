@@ -112,11 +112,6 @@ app.get('/login', (req, res) => {
     });
 });
 
-// Страница регистрации
-app.get('/register', (req, res) => {
-    res.render('register', { error: null });
-});
-
 // Страница профиля
 app.get('/profile', (req, res) => {
     if (!req.session.user) {
