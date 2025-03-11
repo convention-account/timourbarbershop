@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - TimourBarber</title>
+    <link rel="icon" type="image/x-icon" href="/media/logo.ico">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body>
+    <div class="background-overlay"></div>
+    <header>
+        <div class="logo">
+            <img src="/media/icon.png" alt="Logo" class="logo-icon">
+        </div>
+        <nav class="navbar">
+            <div class="burger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-list">
+                <li><a href="/">Home</a></li>
+                <li><a href="academy">Academy</a></li>
+                <li><a href="webshop">Store</a></li>
+                <li><a href="about">About</a></li>
+                <li><a href="/services">Services</a></li>
+                <li><a href="contact">Contact</a></li>
+                <li><a href="job">Job</a></li>
+                <li><a href="coin">Coin</a></li>
+            </ul>
+        </nav>
+        <div class="login-nav">
+            <% if (user) { %>
+                <li>Welcome, <%= user %> | <a href="/profile">Personal Cabinet</a> | <a href="/logout">Logout</a></li>
+                <% } else { %>
+                    <li><a href="/login">Login</a></li>
+                    <% } %>
+        </div>
+    </header>
+    <main class="auth-section">
+        <div class="auth-wrapper">
+            <h1 class="auth-headline">
+                <span class="headline-main">LOGIN</span>
+                <span class="headline-sub">TO YOUR ACCOUNT</span>
+            </h1>
+            <% if (error) { %>
+                <p style="color: red;">
+                    <%= error %>
+                </p>
+                <% } %>
+                    <form method="POST" action="/login" class="auth-form">
+                        <input type="text" name="username" placeholder="Username" class="auth-input" required>
+                        <input type="password" name="password" placeholder="Password" class="auth-input" required>
+                        <button type="submit" class="auth-btn">Sign In</button>
+                        <p class="auth-text">Don’t have an account? <a href="/register">Register here</a></p>
+                    </form>
+        </div>
+    </main>
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 Timour Barber. All rights reserved.</p>
+            <ul class="footer-links">
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Terms of Service</a></li>
+                <li><a href="#">Contact Us</a></li>
+            </ul>
+        </div>
+    </footer>
+    <script src="/js/script.js"></script>
+</body>
+
+</html>

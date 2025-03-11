@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store - TimourBarber</title>
+    <link rel="icon" type="image/x-icon" href="../media/logo.ico">
+    <link rel="stylesheet" type="text/css" href="css/webshop.css">
+</head>
+
+<body>
+    <div class="background-overlay"></div>
+    <header>
+        <div class="logo">
+            <img src="../media/icon.png" alt="Logo" class="logo-icon">
+        </div>
+        <nav class="navbar">
+            <div class="burger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-list">
+                <li><a href="/">Home</a></li>
+                <li><a href="academy">Academy</a></li>
+                <li><a href="webshop">Store</a></li>
+                <li><a href="about">About</a></li>
+                <li><a href="/services">Services</a></li>
+                <li><a href="contact">Contact</a></li>
+                <li><a href="job">Job</a></li>
+                <li><a href="coin">Coin</a></li>
+            </ul>
+        </nav>
+        <div class="login-nav">
+            <% if (user) { %>
+                <li>Welcome, <%= user %> | <a href="/profile">Personal Cabinet</a> | <a href="/logout">Logout</a></li>
+                <% } else { %>
+                    <li><a href="/login">Login</a></li>
+                    <% } %>
+        </div>
+        <div class="cart-icon">
+            🛒
+            <span class="cart-count">0</span>
+        </div>
+    </header>
+
+    <!-- Модальное окно корзины -->
+    <div class="cart-modal">
+        <div class="cart-content">
+            <h2>Your Cart</h2>
+            <div class="cart-items"></div>
+            <div class="cart-total">
+                <span>Total:</span>
+                <span class="total-price">0 USDT</span>
+            </div>
+            <button class="checkout-btn">Proceed to Payment</button>
+            <button class="close-cart">Close</button>
+        </div>
+    </div>
+
+    <main class="webshop-section">
+        <div class="webshop-wrapper">
+            <!-- Заголовок -->
+            <div class="webshop-intro">
+                <h1 class="headline">
+                    <span class="headline-emoji">🛒✂️</span>
+                    <span class="headline-main">Timour Barber Store</span>
+                    <span class="headline-sub">Shop with Style</span>
+                </h1>
+            </div>
+
+            <!-- Описание -->
+            <div class="webshop-main">
+                <p class="webshop-text">🛒 Discover premium barbering products and services at Timour Barber Webshop!
+                    From professional tools to exclusive vouchers, we’ve got everything you need to elevate your craft.
+                </p>
+                <p class="webshop-text">💰 Pay securely with USDT or cash and enjoy fast delivery or instant digital
+                    access.</p>
+            </div>
+
+            <!-- Каталог товаров -->
+            <div class="webshop-products">
+                <div class="product-card">
+                    <img src="../media/tools.jpg" alt="Haircut Voucher" class="product-image">
+                    <div class="product-content">
+                        <h2>Wahl Detailer Trimmer</h2>
+                        <p class="product-description">💈 A compact and powerful trimmer for precise lines and edging.
+                            Perfect for beard and mustache detailing.<br><br>
+                            ✔️ Professional tool<br>
+                            ✔️ Payment in USDT or cash.
+                        </p>
+                        <!-- <p class="product-price">📍 Location: Barbershop</p> -->
+                        <p class="product-price">💰 50 USDT (~45€)</p>
+                        <a href="#" class="product-btn">Buy now</a>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="../media/tools2.jpg" alt="Barber Kit" class="product-image">
+                    <div class="product-content">
+                        <h2>Parlux 3200 Hair Dryer</h2>
+                        <p class="product-description">💈 A professional hair dryer with powerful airflow and ionic
+                            technology for gentle drying.<br><br>
+                            ✔️ Professional tool<br>
+                            ✔️ Payment in USDT or cash.
+                            <!-- <p class="product-price">📍 Location: Your own location</p> -->
+                        <p class="product-price">💰 200 USDT (~180€)</p>
+                        <a href="#" class="product-btn">Buy now</a>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="../media/tools3.jpg" alt="Merchandise" class="product-image">
+                    <div class="product-content">
+                        <h2>Dovo Shavette Straight Razor</h2>
+                        <p class="product-description">💈 A straight razor with replaceable blades, a convenient option
+                            for precise shaving without the need for sharpening.<br><br>
+                            ✔️ Professional tool<br>
+                            ✔️ Payment in USDT or cash.
+                        </p>
+                        <p class="product-price">💰 50 USDT (~45€)</p>
+                        <a href="#" class="product-btn">Buy now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br><br>
+        <!-- Каталог товаров -->
+        <div class="webshop-products">
+            <div class="product-card">
+                <img src="../media/tools.jpg" alt="Haircut Voucher" class="product-image">
+                <div class="product-content">
+                    <h2>Wahl Detailer Trimmer</h2>
+                    <p class="product-description">💈 A compact and powerful trimmer for precise lines and edging.
+                        Perfect for beard and mustache detailing.<br><br>
+                        ✔️ Professional tool<br>
+                        ✔️ Payment in USDT or cash.
+                    </p>
+                    <!-- <p class="product-price">📍 Location: Barbershop</p> -->
+                    <p class="product-price">💰 50 USDT (~45€)</p>
+                    <a href="#" class="product-btn">Buy now</a>
+                </div>
+            </div>
+            <div class="product-card">
+                <img src="../media/tools2.jpg" alt="Barber Kit" class="product-image">
+                <div class="product-content">
+                    <h2>Parlux 3200 Hair Dryer</h2>
+                    <p class="product-description">💈 A professional hair dryer with powerful airflow and ionic
+                        technology for gentle drying.<br><br>
+                        ✔️ Professional tool<br>
+                        ✔️ Payment in USDT or cash.
+                        <!-- <p class="product-price">📍 Location: Your own location</p> -->
+                    <p class="product-price">💰 200 USDT (~180€)</p>
+                    <a href="#" class="product-btn">Buy now</a>
+                </div>
+            </div>
+            <div class="product-card">
+                <img src="../media/tools3.jpg" alt="Merchandise" class="product-image">
+                <div class="product-content">
+                    <h2>Dovo Shavette Straight Razor</h2>
+                    <p class="product-description">💈 A straight razor with replaceable blades, a convenient option
+                        for precise shaving without the need for sharpening.<br><br>
+                        ✔️ Professional tool<br>
+                        ✔️ Payment in USDT or cash.
+                    </p>
+                    <p class="product-price">💰 50 USDT (~45€)</p>
+                    <a href="#" class="product-btn">Buy now</a>
+                </div>
+            </div>
+        </div>
+        </div>
+    </main>
+    <footer>
+        <div class="footer-content">
+            <p>© 2025 Timour Barber. All rights reserved.</p>
+            <ul class="footer-links">
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Terms of Service</a></li>
+                <li><a href="#">Contact Us</a></li>
+            </ul>
+        </div>
+    </footer>
+    <script src="js/webshop.js"></script>
+</body>
+
+</html>

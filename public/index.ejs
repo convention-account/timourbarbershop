@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - TimourBarber</title>
+    <link rel="icon" type="image/x-icon" href="../media/logo.ico">
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
+</head>
+
+<body>
+    <div class="background-overlay"></div>
+    <header>
+        <div class="logo">
+            <img src="../media/icon.png" alt="Logo" class="logo-icon">
+        </div>
+        <nav class="navbar">
+            <div class="burger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-list">
+                <li><a href="/">Home</a></li>
+                <li><a href="academy">Academy</a></li>
+                <li><a href="webshop">Store</a></li>
+                <li><a href="about">About</a></li>
+                <li><a href="/services">Services</a></li>
+                <li><a href="contact">Contact</a></li>
+                <li><a href="job">Job</a></li>
+                <li><a href="coin">Coin</a></li>
+            </ul>
+        </nav>
+        <div class="login-nav">
+            <% if (user) { %>
+                <li>Welcome, <%= user %> | <a href="/profile">Personal Cabinet</a> | <a href="/logout">Logout</a></li>
+            <% } else { %>
+                <li><a href="/login">Login</a></li>
+            <% } %>
+        </div>
+    </header>
+    <main>
+        <div class="content-wrapper">
+            <div class="text-content">
+                <h1 class="headline">
+                    <span class="headline-main">THE FUTURE OF BARBERING</span>
+                    <span class="headline-sub">STARTS HERE.</span>
+                </h1>
+                <p class="welcome-text">Welcome to Timour Barber – Precision. Style. Mastery.</p>
+                <a href="/about" class="about-btn">About</a>
+            </div>
+            <img src="media/colorful-barber-scissors-png-iqr-4votjsibs06p086n.png" alt="Scissors" class="scissors">
+            <div class="course-section">
+                <img src="media/barber_shop.jpg" alt="Barber Shop" class="course-image">
+                <div class="play-button-second"></div>
+                <div class="course-text">
+                    <h3>Start a course</h3>
+                    <h4>to become a real barber</h4>
+                </div>
+            </div>
+        </div>
+    </main>
+    <section class="second-section">
+        <div class="second-overlay"></div>
+        <div class="second-content">
+            <div class="text-content-second">
+                <h1 class="headline-second">
+                    <span class="headline-main-second">AT TIMOUR BARBER, WE DON'T JUST CUT HAIR –</span>
+                    <span class="headline-sub-second">WE CREATE A BARBERING EXPERIENCE LIKE NO OTHER.</span>
+                </h1>
+                <a href="/services" class="blog-btn">Services</a>
+                <p class="blog-text">Find out latest updates</p>
+            </div>
+            <div class="info-card">
+                <div class="play-button-second" id="scroll-btn"></div>
+                <div class="info-text">
+                    <p>I'm Timour Khaydarov, a professional barber and educator with over 12 years of experience, having
+                        worked in multiple countries and won several barbering championships. My goal is to provide
+                        top-quality haircuts and train the next generation of barbers with the best techniques.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="third-section">
+        <div class="third-overlay"></div>
+        <div class="third-content">
+            <div class="text-content-third">
+                <h1 class="headline-third">
+                    <span class="headline-main-third">WHAT WE OFFER</span>
+                </h1>
+                <a href="/contact" class="contact-btn">Contact</a>
+                <p class="additional-info">Contact for additional info</p>
+            </div>
+            <div class="offer-card">
+                <div class="play-button-third"></div>
+                <div class="offer-text">
+                    <ul>
+                        <li>Expert Barbering Services – Precision haircuts, modern styles, and professional grooming.
+                        </li>
+                        <li>Exclusive Barber Courses – Become a barber in just 3 months.</li>
+                        <li>Crypto-Friendly Payments – Pay with crypto & enjoy exclusive discounts and free airdrop
+                            BarberCoin.</li>
+                    </ul>
+                </div>
+            </div>
+            <img src="media/photo_personal.png" alt="Timour Barber" class="third-image">
+        </div>
+    </section>
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 Timour Barber. All rights reserved.</p>
+            <ul class="footer-links">
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Terms of Service</a></li>
+                <li><a href="#">Contact Us</a></li>
+            </ul>
+        </div>
+    </footer>
+    <script src="/js/script.js"></script>
+</body>
+
+</html>

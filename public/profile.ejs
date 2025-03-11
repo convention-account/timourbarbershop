@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="/css/auth.css">
+    <link rel="icon" type="image/x-icon" href="../media/logo.ico">
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
+    <title>Hello, <%= user %>! Personal Cabinet</title>
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <img src="../media/icon.png" alt="Logo" class="logo-icon">
+        </div>
+        <nav class="navbar">
+            <div class="burger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-list">
+                <li><a href="/">Home</a></li>
+                <li><a href="academy">Academy</a></li>
+                <li><a href="webshop">Store</a></li>
+                <li><a href="about">About</a></li>
+                <li><a href="/services">Services</a></li>
+                <li><a href="contact">Contact</a></li>
+                <li><a href="job">Job</a></li>
+                <li><a href="coin">Coin</a></li>
+            </ul>
+        </nav>
+        <div class="login-nav">
+            <% if (user) { %>
+                <li>Welcome, <%= user %> | <a href="/profile">Personal Cabinet</a> | <a href="/logout">Logout</a></li>
+                <% } else { %>
+                    <li><a href="/login">Login</a></li>
+                    <% } %>
+        </div>
+    </header>
+    <h1>Personal Cabinet</h1>
+    <div class="profile-info">
+        <h2>
+            <%= user %>
+        </h2>
+        <img src="/img/default-avatar.png" alt="Avatar" width="100">
+        <p>
+            <%= hasVoucher ? 'You have a voucher' : 'No vouchers' %>
+        </p>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+
+</html>

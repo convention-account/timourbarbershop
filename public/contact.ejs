@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - TimourBarber</title>
+    <link rel="icon" type="image/x-icon" href="../media/logo.ico">
+    <link rel="stylesheet" type="text/css" href="css/contact.css">
+</head>
+
+<body>
+    <div class="background-overlay"></div>
+    <header>
+        <div class="logo">
+            <img src="../media/icon.png" alt="Logo" class="logo-icon">
+        </div>
+        <nav class="navbar">
+            <div class="burger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-list">
+                <li><a href="/">Home</a></li>
+                <li><a href="academy">Academy</a></li>
+                <li><a href="webshop">Store</a></li>
+                <li><a href="about">About</a></li>
+                <li><a href="/services">Services</a></li>
+                <li><a href="contact">Contact</a></li>
+                <li><a href="job">Job</a></li>
+                <li><a href="coin">Coin</a></li>
+            </ul>
+        </nav>
+        <div class="login-nav">
+            <% if (user) { %>
+                <li>Welcome, <%= user %> | <a href="/profile">Personal Cabinet</a> | <a href="/logout">Logout</a></li>
+            <% } else { %>
+                <li><a href="/login">Login</a></li>
+            <% } %>
+        </div>
+    </header>
+    <main class="contact-section">
+        <div class="contact-wrapper">
+            <!-- Заголовок -->
+            <div class="contact-intro">
+                <h1 class="headline">
+                    <span class="headline-emoji">📞✂️</span>
+                    <span class="headline-main">Contact Timour Barber</span>
+                    <span class="headline-sub">Let’s Get in Touch</span>
+                </h1>
+            </div>
+
+            <!-- Контактная информация -->
+            <div class="contact-info">
+                <p class="contact-text">📍 Visit us: 123 Barber Street, Vilnius, Lithuania</p>
+                <p class="contact-text">📧 Email: info@timourbarber.com</p>
+                <p class="contact-text">📞 Phone: +370 123 456 789</p>
+                <p class="contact-text">🌐 Follow us on social media:</p>
+                <div class="social-links">
+                    <a href="#" class="social-link">Instagram</a>
+                    <a href="#" class="social-link">Facebook</a>
+                    <a href="#" class="social-link">Twitter</a>
+                </div>
+            </div>
+
+            <!-- Форма обратной связи -->
+            <div class="contact-form">
+                <h2 class="form-title">Send Us a Message</h2>
+                <form action="#" method="POST">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" placeholder="Your Name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="Your Email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" placeholder="Your Message" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="form-btn">Send Message</button>
+                </form>
+            </div>
+
+            <!-- Карта (опционально) -->
+            <div class="contact-map">
+                <!-- Вставка карты через iframe (Google Maps или другой сервис) -->
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2305.987654321!2d25.279651615!3d54.68715598!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNTTCsDQxJzEzLjgiTiAyNcKwMTYnNDYuOCJF!5e0!3m2!1sen!2slt!4v1698765432100!5m2!1sen!2slt"
+                    width="100%" height="300" style="border:0; border-radius: 10px;" allowfullscreen=""
+                    loading="lazy"></iframe>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <div class="footer-content">
+            <p>© 2025 Timour Barber. All rights reserved.</p>
+            <ul class="footer-links">
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Terms of Service</a></li>
+                <li><a href="#">Contact Us</a></li>
+            </ul>
+        </div>
+    </footer>
+    <script src="js/script.js"></script>
+</body>
+
+</html>

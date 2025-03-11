@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academy - TimourBarber</title>
+    <link rel="icon" type="image/x-icon" href="../media/logo.ico">
+    <link rel="stylesheet" type="text/css" href="css/academy.css">
+</head>
+
+<body>
+    <div class="background-overlay"></div>
+    <header>
+        <div class="logo">
+            <img src="../media/icon.png" alt="Logo" class="logo-icon">
+        </div>
+        <nav class="navbar">
+            <div class="burger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-list">
+                <li><a href="/">Home</a></li>
+                <li><a href="academy">Academy</a></li>
+                <li><a href="webshop">Store</a></li>
+                <li><a href="about">About</a></li>
+                <li><a href="/services">Services</a></li>
+                <li><a href="contact">Contact</a></li>
+                <li><a href="job">Job</a></li>
+                <li><a href="coin">Coin</a></li>
+            </ul>
+        </nav>
+        <div class="login-nav">
+            <% if (user) { %>
+                <li>Welcome, <%= user %> | <a href="/profile">Personal Cabinet</a> | <a href="/logout">Logout</a></li>
+            <% } else { %>
+                <li><a href="/login">Login</a></li>
+            <% } %>
+        </div>
+    </header>
+    <main class="academy-section">
+        <div class="academy-wrapper">
+            <!-- Заголовок -->
+            <div class="academy-intro">
+                <h1 class="headline">
+                    <span class="headline-emoji">🎓✂️</span>
+                    <span class="headline-main">Timour Barber Academy</span>
+                    <span class="headline-sub">Learn from the Master</span>
+                </h1>
+            </div>
+
+            <!-- Описание академии -->
+            <div class="academy-main">
+                <p class="academy-text">🎓 Welcome to Timour Barber Academy, where passion meets profession! With 12
+                    years of experience, I, Timour Khaydarov, created a unique 3-month barbering course to transform
+                    beginners into skilled professionals.</p>
+                <p class="academy-text">💡 Our academy combines hands-on training, innovative techniques, and a
+                    supportive community, preparing you to succeed in the barbering world.</p>
+                <p class="academy-text">💰 Pay with USDT (3500) or cash (4000€) and start your journey today!</p>
+            </div>
+
+            <!-- Преимущества -->
+            <div class="academy-benefits">
+                <h2 class="benefits-title">Why Choose Our Academy?</h2>
+                <ul class="benefits-list">
+                    <li>✔️ 3-month intensive training with a master barber.</li>
+                    <li>✔️ Practical skills for real-world success.</li>
+                    <li>✔️ Final exam with a professional certificate.</li>
+                    <li>✔️ Flexible payment: crypto (USDT) or cash.</li>
+                    <li>✔️ Access to an exclusive alumni network.</li>
+                </ul>
+            </div>
+
+            <!-- Фото/видео -->
+            <div class="academy-media">
+                <img src="../media/ac.png" alt="Academy Class" class="media-image">
+                <!-- Если есть видео, можно раскомментировать -->
+                <!-- <video controls class="media-video">
+                    <source src="../media/academy-video.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video> -->
+                <a href="#" class="academy-btn">Enroll Now</a>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <div class="footer-content">
+            <p>© 2025 Timour Barber. All rights reserved.</p>
+            <ul class="footer-links">
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Terms of Service</a></li>
+                <li><a href="#">Contact Us</a></li>
+            </ul>
+        </div>
+    </footer>
+    <script src="js/script.js"></script>
+</body>
+
+</html>

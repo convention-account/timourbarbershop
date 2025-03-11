@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services - TimourBarber</title>
+    <link rel="icon" type="image/x-icon" href="media/logo.ico">
+    <link rel="stylesheet" href="css/services.css">
+</head>
+
+<body>
+    <div class="background-overlay"></div>
+    <header>
+        <div class="logo">
+            <img src="../media/icon.png" alt="Logo" class="logo-icon">
+        </div>
+        <nav class="navbar">
+            <div class="burger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-list">
+                <li><a href="/">Home</a></li>
+                <li><a href="academy">Academy</a></li>
+                <li><a href="webshop">Store</a></li>
+                <li><a href="about">About</a></li>
+                <li><a href="services">Services</a></li>
+                <li><a href="contact">Contact</a></li>
+                <li><a href="job">Job</a></li>
+                <li><a href="coin">Coin</a></li>
+            </ul>
+        </nav>
+        <div class="login-nav">
+            <% if (user) { %>
+                <li>Welcome, <%= user %> | <a href="/profile">Personal Cabinet</a> | <a href="/logout">Logout</a></li>
+                <% } else { %>
+                    <li><a href="/login">Login</a></li>
+                    <% } %>
+        </div>
+    </header>
+
+    <main class="services-section">
+        <div class="services-wrapper">
+            <div class="services-intro">
+                <h1 class="headline">
+                    <span class="headline-main">Premium Barber Services</span>
+                    <span class="headline-sub"><br>Pay with Crypto & Cash</span>
+                </h1>
+                <p class="welcome-text">✂️ Get a haircut, shave or training – with cryptocurrency payment!</p>
+                <p class="welcome-text">We accept USDT (3500) and cash (4000€) for the academy, as well as crypto for
+                    barbershop and home services.</p>
+            </div>
+
+            <div class="services-cards">
+                <!-- Карточка 1: Voucher for Haircut & Beard Trim -->
+                <div class="service-card">
+                    <img src="../media/vaucher_photo.jpg" alt="Haircut & Beard Trim" class="service-image">
+                    <div class="service-content">
+                        <h2>Voucher for Haircut & Beard Trim (Crypto & Cash)</h2>
+                        <ul class="service-details">
+                            <li>✔️ Professional haircut</li>
+                            <li>✔️ Beard trim or shave</li>
+                            <li>✔️ Stylish finish</li>
+                            <li>✔️ Pay with USDT or cash</li>
+                        </ul>
+                        <p class="service-price">💰 Price: 50 USDT (~45€)</p>
+                        <p class="service-location">📍 Location: Barbershop</p>
+                        <a href="#" class="service-btn">Buy Voucher</a>
+                    </div>
+                </div>
+
+                <!-- Карточка 2: Home Barber Service -->
+                <div class="service-card">
+                    <img src="../media/vaucher_photo.jpg" alt="Home Barber Service" class="service-image">
+                    <div class="service-content">
+                        <h2>Home Barber Service (VIP Service)</h2>
+                        <ul class="service-details">
+                            <li>✔️ On-site barbering (home, hotel, office)</li>
+                            <li>✔️ Premium haircut & styling</li>
+                            <li>✔️ Full shave or beard care</li>
+                            <li>✔️ Personal VIP service</li>
+                        </ul>
+                        <p class="service-price">💰 Price: By agreement</p>
+                        <p class="service-location">📍 Location: Your place</p>
+                        <a href="#" class="service-btn">Book a Home Barber</a>
+                    </div>
+                </div>
+
+                <!-- Карточка 3: Voucher for Academy -->
+                <div class="service-card">
+                    <img src="../media/vaucher_photo.jpg" alt="Barber Academy" class="service-image">
+                    <div class="service-content">
+                        <h2>Voucher for Academy (3-Month Barber Course)</h2>
+                        <ul class="service-details">
+                            <li>✔️ 3 months of hands-on training</li>
+                            <li>✔️ Final exam & certificate</li>
+                            <li>✔️ Start earning right after</li>
+                            <li>✔️ Pay with crypto or cash</li>
+                        </ul>
+                        <p class="service-price">💰 Price: 3500 USDT or 4000€</p>
+                        <p class="service-location">📍 Location: Academy</p>
+                        <a href="#" class="service-btn">Buy Academy Voucher</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="modal" style="display: none;">
+        <div class="modal-content success">
+            <span class="close">×</span>
+            <h3>Success!</h3>
+            <p>Voucher purchased successfully.</p>
+        </div>
+    </div>
+
+    <!-- Already Owned Modal -->
+    <div id="already-owned-modal" class="modal" style="display: none;">
+        <div class="modal-content warning">
+            <span class="close">×</span>
+            <h3>Oops!</h3>
+            <p>You already own a voucher.</p>
+        </div>
+    </div>
+
+    <script>
+        const purchaseSuccess = <%= purchaseSuccess %>;
+        const voucherAlreadyOwned = <%= voucherAlreadyOwned %>;
+
+        if (purchaseSuccess) {
+            document.getElementById('success-modal').style.display = 'block';
+        }
+        if (voucherAlreadyOwned) {
+            document.getElementById('already-owned-modal').style.display = 'block';
+        }
+
+        document.querySelectorAll('.close').forEach(closeBtn => {
+            closeBtn.onclick = function () {
+                this.parentElement.parentElement.style.display = 'none';
+            };
+        });
+
+        window.onclick = function (event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        };
+    </script>
+
+    <footer>
+        <div class="footer-content">
+            <p>© 2025 Timour Barber. All rights reserved.</p>
+            <ul class="footer-links">
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Terms of Service</a></li>
+                <li><a href="#">Contact Us</a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+
+</html>
