@@ -95,7 +95,7 @@ const db = new sqlite3.Database(path.join(dbDir, 'users.db'), (err) => {
 
 // Главная страница
 app.get('/', (req, res) => {
-    const renderData = { 
+    const renderData = {
         user: req.session.user || null,
         purchaseSuccess: req.session.purchaseSuccess || false,
         voucherAlreadyOwned: req.session.voucherAlreadyOwned || false
@@ -106,10 +106,22 @@ app.get('/', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-    res.render('login', { 
+    res.render('login', {
         error: null,
         user: req.session?.user || null
     });
+});
+
+app.get('/register', (req, res) => {
+    res.render('register', {
+        error: null,
+        user: req.session?.user || null
+    });
+});
+
+app.get('/register', (req, res) => {
+    res.render('register',
+        { user: req.session.user || null });
 });
 
 // Страница профиля
@@ -131,9 +143,9 @@ app.post('/register', async (req, res) => {
     const { username, password } = req.body;
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
-        db.run('INSERT INTO users (username, password, voucher) VALUES (?, ?, 0)', 
-            [username, hashedPassword], 
-            function(err) {
+        db.run('INSERT INTO users (username, password, voucher) VALUES (?, ?, 0)',
+            [username, hashedPassword],
+            function (err) {
                 if (err) {
                     return res.render('register', { error: 'Имя пользователя уже существует' });
                 }
@@ -157,7 +169,7 @@ app.post('/login', (req, res) => {
 
             // Генерируем уникальный токен
             const authToken = crypto.randomBytes(16).toString('hex');
-            
+
             // Сохраняем токен в базе данных
             db.run('UPDATE users SET authToken = ? WHERE username = ?', [authToken, username], (updateErr) => {
                 if (updateErr) {
@@ -234,7 +246,7 @@ process.on('SIGINT', () => {
 });
 
 app.get('/services', (req, res) => {
-    const renderData = { 
+    const renderData = {
         user: req.session.user || null,
         purchaseSuccess: req.session.purchaseSuccess || false,
         voucherAlreadyOwned: req.session.voucherAlreadyOwned || false
@@ -245,7 +257,7 @@ app.get('/services', (req, res) => {
 });
 
 app.get('/academy', (req, res) => {
-    const renderData = { 
+    const renderData = {
         user: req.session.user || null,
         purchaseSuccess: req.session.purchaseSuccess || false,
         voucherAlreadyOwned: req.session.voucherAlreadyOwned || false
@@ -256,7 +268,7 @@ app.get('/academy', (req, res) => {
 });
 
 app.get('/webshop', (req, res) => {
-    const renderData = { 
+    const renderData = {
         user: req.session.user || null,
         purchaseSuccess: req.session.purchaseSuccess || false,
         voucherAlreadyOwned: req.session.voucherAlreadyOwned || false
@@ -267,7 +279,7 @@ app.get('/webshop', (req, res) => {
 });
 
 app.get('/about', (req, res) => {
-    const renderData = { 
+    const renderData = {
         user: req.session.user || null,
         purchaseSuccess: req.session.purchaseSuccess || false,
         voucherAlreadyOwned: req.session.voucherAlreadyOwned || false
@@ -278,7 +290,7 @@ app.get('/about', (req, res) => {
 });
 
 app.get('/job', (req, res) => {
-    const renderData = { 
+    const renderData = {
         user: req.session.user || null,
         purchaseSuccess: req.session.purchaseSuccess || false,
         voucherAlreadyOwned: req.session.voucherAlreadyOwned || false
@@ -289,7 +301,7 @@ app.get('/job', (req, res) => {
 });
 
 app.get('/coin', (req, res) => {
-    const renderData = { 
+    const renderData = {
         user: req.session.user || null,
         purchaseSuccess: req.session.purchaseSuccess || false,
         voucherAlreadyOwned: req.session.voucherAlreadyOwned || false
@@ -300,7 +312,7 @@ app.get('/coin', (req, res) => {
 });
 
 app.get('/contact', (req, res) => {
-    const renderData = { 
+    const renderData = {
         user: req.session.user || null,
         purchaseSuccess: req.session.purchaseSuccess || false,
         voucherAlreadyOwned: req.session.voucherAlreadyOwned || false
