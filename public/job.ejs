@@ -39,7 +39,25 @@
                 <li><a href="/login">Login</a></li>
             <% } %>
         </div>
+
+        <div class="cart-icon">
+            🛒
+            <span class="cart-count">0</span>
+        </div>
     </header>
+        <!-- Модальное окно корзины -->
+        <div class="cart-modal">
+            <div class="cart-content">
+                <h2>Your Cart</h2>
+                <div class="cart-items"></div>
+                <div class="cart-total">
+                    <span>Total:</span>
+                    <span class="total-price">0 USDT</span>
+                </div>
+                <button class="checkout-btn">Proceed to Payment</button>
+                <button class="close-cart">Close</button>
+            </div>
+        </div>
     <main class="job-section">
         <div class="job-wrapper">
             <!-- Заголовок -->
@@ -124,6 +142,7 @@
         </div>
     </footer>
     <script src="js/script.js"></script>
+    <script src="/js/cart.js"></script>
 </body>
 
 </html>

@@ -667,3 +667,8 @@ footer {
     text-decoration: none;
     transition: opacity 0.3s;
 }
+
+.checkout-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

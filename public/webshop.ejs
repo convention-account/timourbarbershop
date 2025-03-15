@@ -7,6 +7,7 @@
     <title>Store - TimourBarber</title>
     <link rel="icon" type="image/x-icon" href="../media/logo.ico">
     <link rel="stylesheet" type="text/css" href="css/webshop.css">
+    <link rel="stylesheet" href="css/mobile-adaptation.css">    
 </head>
 
 <body>
@@ -48,16 +49,25 @@
     <!-- Модальное окно корзины -->
     <div class="cart-modal">
         <div class="cart-content">
-            <h2>Your Cart</h2>
-            <div class="cart-items"></div>
-            <div class="cart-total">
-                <span>Total:</span>
-                <span class="total-price">0 USDT</span>
-            </div>
-            <button class="checkout-btn">Proceed to Payment</button>
-            <button class="close-cart">Close</button>
+          <h2>Your Cart</h2>
+          <div class="cart-items"></div>
+          <div class="cart-total">
+            <span>Total:</span>
+            <span class="total-price">0 USDT</span>
+          </div>
+          <form id="payment-form" method="POST" action="https://plisio.net/invoice">
+            <input type="hidden" name="source_currency" value="USDT_TRC20">
+            <input type="hidden" name="source_amount" id="cart-amount" value="">
+            <input type="hidden" name="order_name" value="Cart Purchase">
+            <input type="hidden" name="order_number" value="cart-001">
+            <input type="hidden" name="api_key" value="URwuNVuKw7oXyvKjYUqoFl1jB2xpGF6pABbXRMpwEizTY1ukGsjvYoL8JwTUorWs">
+            <input type="hidden" name="success_url" value="https://yourdomain.com/success">
+            <input type="hidden" name="cancel_url" value="https://yourdomain.com/webshop">
+            <input type="submit" value="Proceed to Payment" class="checkout-btn">
+          </form>
+          <button class="close-cart">Close</button>
         </div>
-    </div>
+      </div>
 
     <main class="webshop-section">
         <div class="webshop-wrapper">
@@ -91,7 +101,7 @@
                             ✔️ Payment in USDT or cash.
                         </p>
                         <!-- <p class="product-price">📍 Location: Barbershop</p> -->
-                        <p class="product-price">💰 50 USDT (~45€)</p>
+                        <p class="product-price">💰 5 USDT (~3.5€)</p>
                         <a href="#" class="product-btn">Buy now</a>
                     </div>
                 </div>

@@ -1,0 +1,309 @@
+@media (max-width: 768px) {
+    header {
+        padding: 20px;
+        background: rgba(32, 0, 83, 0.97) !important;
+        flex-wrap: wrap;
+        /* Разрешаем перенос элементов */
+        justify-content: space-between;
+        /* Распределяем элементы */
+    }
+
+    header.fixed {
+        padding: 10px;
+        flex-wrap: wrap;
+        /* Убедимся, что элементы переносятся */
+        justify-content: space-between;
+        /* Распределяем элементы */
+        align-items: center;
+        /* Центрируем по вертикали */
+        background: rgba(32, 0, 83, 0.97) !important;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Адаптация nav-list */
+    .nav-list {
+        display: none;
+        flex-direction: column;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.95);
+        padding: 60px 0;
+        opacity: 0;
+        transform: translateY(-100%);
+        transition: transform 0.5s ease-in-out, opacity 0.3s ease-in-out;
+        z-index: 2000;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    .nav-list.active {
+        display: flex;
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .nav-list li {
+        margin: 20px 0;
+        width: 100%;
+        max-width: 300px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+    }
+
+    .nav-list li a {
+        display: inline-block;
+        width: 100%;
+        padding: 10px;
+        color: #FFF;
+        font-size: 14px;
+        font-weight: 900;
+        text-transform: uppercase;
+        text-decoration: none;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: center;
+    }
+
+    .nav-list.active li {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Задержки для анимации */
+    .nav-list.active li:nth-child(1) {
+        transition-delay: 0s;
+    }
+
+    .nav-list.active li:nth-child(2) {
+        transition-delay: 0.1s;
+    }
+
+    .nav-list.active li:nth-child(3) {
+        transition-delay: 0.2s;
+    }
+
+    .nav-list.active li:nth-child(4) {
+        transition-delay: 0.3s;
+    }
+
+    .nav-list.active li:nth-child(5) {
+        transition-delay: 0.4s;
+    }
+
+    .nav-list.active li:nth-child(6) {
+        transition-delay: 0.5s;
+    }
+
+    .nav-list.active li:nth-child(7) {
+        transition-delay: 0.6s;
+    }
+
+    .nav-list.active li:nth-child(8) {
+        transition-delay: 0.7s;
+    }
+
+    .burger-menu {
+        display: flex;
+        z-index: 2100;
+    }
+
+    /* Адаптация login-nav */
+    .login-nav {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        /* Разрешаем перенос элементов */
+        align-items: center;
+        justify-content: center;
+        /* Центрируем элементы */
+        padding: 5px 10px;
+        /* Минимизируем отступы */
+        gap: 10px;
+        /* Расстояние между элементами */
+        margin-left: 0;
+        /* Убираем отступ слева */
+        max-width: 250px;
+        /* Уменьшаем ширину */
+        width: auto;
+        /* Адаптивная ширина */
+        background-color: rgb(67, 1, 121);
+        border-radius: 15px;
+        position: relative;
+        margin: 0 auto;
+        /* Центрируем блок */
+    }
+
+    /* Дополнительно корректируем login-nav в режиме fixed */
+    header.fixed .login-nav {
+        max-width: 200px;
+        /* Еще сильнее уменьшаем ширину в режиме fixed */
+        padding: 5px 8px;
+        /* Уменьшаем отступы */
+        font-size: 12px;
+        /* Уменьшаем шрифт для компактности */
+    }
+
+    .login-nav li {
+        font-size: 14px;
+        /* Сохраняем читаемый шрифт */
+        text-align: center;
+        white-space: normal;
+        /* Разрешаем перенос текста */
+        overflow-wrap: break-word;
+        /* Разрешаем перенос длинных слов */
+        overflow: visible;
+        /* Убираем обрезку */
+    }
+
+    .login-nav li a {
+        color: #FFF;
+        font-size: 14px;
+        /* Сохраняем шрифт */
+        padding: 5px;
+        text-transform: uppercase;
+        text-decoration: none;
+        transition: opacity 0.3s;
+        white-space: normal;
+        overflow-wrap: break-word;
+    }
+
+    /* Дополнительно корректируем шрифт в режиме fixed */
+    header.fixed .login-nav li,
+    header.fixed .login-nav li a {
+        font-size: 12px;
+        /* Уменьшаем шрифт в режиме fixed */
+    }
+
+    /* Уменьшаем логотип в режиме fixed */
+    .logo-icon {
+        width: 155px !important;
+        /* Увеличиваем логотип */
+        height: 155px !important;
+    }
+
+    header.fixed .logo-icon {
+        width: 80px !important;
+        /* Уменьшаем логотип в режиме fixed */
+        height: 80px !important;
+    }
+
+    .cart-icon {
+        margin-right: 10px;
+        padding: 10px;
+        font-size: 24px;
+        margin-left: auto;
+        /* Выравниваем вправо */
+    }
+
+    /* Уменьшаем корзину в режиме fixed */
+    header.fixed .cart-icon {
+        font-size: 20px;
+        /* Уменьшаем размер иконки */
+        padding: 5px 8px;
+        /* Уменьшаем отступы */
+    }
+
+    .cart-count {
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+    }
+
+    .cart-content {
+        width: 95%;
+        padding: 20px;
+    }
+
+    .cart-items {
+        max-height: 300px;
+    }
+
+    .job-section {
+        padding: 20px;
+        padding-top: 70px;
+    }
+
+    .job-intro {
+        text-align: center;
+    }
+
+    .headline-emoji {
+        font-size: 30px;
+    }
+
+    .headline-main {
+        font-size: 28px;
+    }
+
+    .headline-sub {
+        font-size: 28px;
+    }
+
+    .job-text {
+        font-size: 14px;
+        margin: 10px 0;
+    }
+
+    .openings-title {
+        font-size: 20px;
+    }
+
+    .opening-card h3 {
+        font-size: 18px;
+    }
+
+    .opening-description {
+        font-size: 14px;
+    }
+
+    .opening-details {
+        font-size: 14px;
+    }
+
+    .opening-btn {
+        font-size: 12px;
+        padding: 8px 15px;
+    }
+
+    .apply-title {
+        font-size: 20px;
+    }
+
+    .form-group label {
+        font-size: 14px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .form-btn {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+
+    footer {
+        padding: 20px;
+    }
+
+    .footer-links {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .footer-links a {
+        font-size: 12px;
+    }
+}

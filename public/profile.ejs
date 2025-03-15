@@ -2,10 +2,13 @@
 <html>
 
 <head>
-    <link rel="stylesheet" href="/css/auth.css">
+    <!-- <link rel="stylesheet" href="/css/auth.css"> -->
     <link rel="icon" type="image/x-icon" href="../media/logo.ico">
-    <link rel="stylesheet" type="text/css" href="css/styles.css">
+    <!-- <link rel="stylesheet" type="text/css" href="css/styles.css"> -->
     <title>Hello, <%= user %>! Personal Cabinet</title>
+    <link rel="stylesheet" href="css/mobile-adaptation.css"> 
+    <link rel="stylesheet" type="text/css" href="css/profile.css"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body>
@@ -37,7 +40,25 @@
                     <li><a href="/login">Login</a></li>
                     <% } %>
         </div>
+
+        <div class="cart-icon">
+            🛒
+            <span class="cart-count">0</span>
+        </div>
     </header>
+        <!-- Модальное окно корзины -->
+        <div class="cart-modal">
+            <div class="cart-content">
+                <h2>Your Cart</h2>
+                <div class="cart-items"></div>
+                <div class="cart-total">
+                    <span>Total:</span>
+                    <span class="total-price">0 USDT</span>
+                </div>
+                <button class="checkout-btn">Proceed to Payment</button>
+                <button class="close-cart">Close</button>
+            </div>
+        </div>
     <h1>Personal Cabinet</h1>
     <div class="profile-info">
         <h2>
@@ -50,6 +71,7 @@
     </div>
 
     <script src="js/script.js"></script>
+    <script src="/js/cart.js"></script>
 </body>
 
 </html>

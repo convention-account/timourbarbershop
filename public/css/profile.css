@@ -1,0 +1,737 @@
+/* Определение шрифта */
+@font-face {
+    font-family: 'Nexa';
+    src: url('../../font/Nexa-Heavy.ttf');
+}
+
+/* Базовые стили для body */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #1a0033, #000033);
+    position: relative;
+    overflow-x: hidden;
+    font-family: 'Nexa', sans-serif;
+    color: #FFF;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+    transition: opacity 0.3s ease;
+}
+
+body.menu-open {
+    overflow: hidden;
+}
+
+body.menu-open>*:not(header) {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Стили для хедера */
+header {
+    position: relative;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    /* Распределяем элементы по краям */
+    align-items: center;
+    padding: 20px 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    transition: all 0.3s ease;
+}
+
+header.fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    max-width: none;
+    padding: 10px 15px;
+    /* Уменьшенные отступы для компактности */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.logo-icon {
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+    transition: width 0.3s ease, height 0.3s ease;
+    /* Плавное изменение размера */
+}
+
+header.fixed .logo-icon {
+    width: 50px;
+    /* Еще меньше для узких экранов */
+    height: 50px;
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    margin-left: 20px;
+}
+
+.nav-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 20px;
+}
+
+.nav-list li a {
+    color: #FFF;
+    font-size: 14px;
+    font-weight: 900;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: opacity 0.3s;
+}
+
+.nav-list li a:hover {
+    opacity: 0.8;
+}
+
+.burger-menu {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.burger-menu span {
+    width: 30px;
+    height: 3px;
+    background-color: #FFF;
+    margin: 5px 0;
+    transition: all 0.3s ease;
+}
+
+.burger-menu.toggle span:nth-child(1) {
+    transform: rotate(45deg) translate(7px, 7px);
+}
+
+.burger-menu.toggle span:nth-child(2) {
+    opacity: 0;
+}
+
+.burger-menu.toggle span:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -7px);
+}
+
+/* Стили для .login-nav */
+.login-nav {
+    background-color: rgb(67, 1, 121);
+    border-radius: 15px;
+    list-style: none;
+    margin: 0;
+    padding: 5px 10px;
+    /* Компактные отступы */
+    display: flex;
+    gap: 10px;
+    /* Уменьшенный интервал */
+    align-items: center;
+    white-space: nowrap;
+    /* Предотвращаем перенос */
+    overflow: hidden;
+    /* Обрезаем лишнее */
+}
+
+.login-nav li {
+    color: #FFF;
+    font-size: 14px;
+    font-weight: 900;
+    text-transform: uppercase;
+    display: inline;
+    /* Убеждаемся, что элементы в строке */
+}
+
+.login-nav li a {
+    color: #FFF;
+    text-decoration: none;
+    font-weight: 900;
+    transition: opacity 0.3s;
+    padding: 0 5px;
+    /* Добавляем небольшие отступы внутри ссылок */
+}
+
+.login-nav li a:hover {
+    opacity: 0.8;
+}
+
+/* Стили для корзины */
+.cart-icon {
+    position: relative;
+    color: #FFF;
+    font-size: 24px;
+    /* Уменьшенный размер по умолчанию */
+    cursor: pointer;
+    padding: 8px 12px;
+    /* Компактные отступы */
+    background: rgba(159, 127, 243, 0.8);
+    border-radius: 10px;
+    transition: opacity 0.3s;
+    margin-left: 10px;
+    /* Уменьшенный отступ */
+}
+
+.cart-icon:hover {
+    opacity: 0.8;
+}
+
+header.fixed .cart-icon {
+    font-size: 20px;
+    padding: 5px 8px;
+}
+
+.cart-count {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #ff4444;
+    color: #FFF;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+}
+
+/* Модальное окно корзины */
+.cart-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+}
+
+.cart-modal.active {
+    display: flex;
+}
+
+.cart-content {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    padding: 20px;
+    width: 90%;
+    max-width: 500px;
+    /* Уменьшенная максимальная ширина */
+    color: #FFF;
+    position: relative;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.cart-content h2 {
+    margin: 0 0 15px;
+    font-size: 24px;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.cart-items {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 14px;
+}
+
+.cart-item-title {
+    flex: 1;
+}
+
+.cart-item-price {
+    margin: 0 10px;
+}
+
+.remove-item {
+    background: #ff4444;
+    color: #FFF;
+    border: none;
+    padding: 4px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.cart-total {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    font-size: 18px;
+    font-weight: 900;
+    background: rgba(159, 127, 243, 0.2);
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.checkout-btn,
+.close-cart {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 900;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+.checkout-btn {
+    background: #9F7FF3;
+    color: #FFF;
+}
+
+.checkout-btn:hover,
+.close-cart:hover {
+    opacity: 0.8;
+}
+
+.close-cart {
+    background: #FFF;
+    color: #000;
+}
+
+/* Стили для профиля */
+h1 {
+    text-align: center;
+    color: #FFF;
+    font-size: 48px;
+    font-weight: 900;
+    text-transform: uppercase;
+    text-shadow: 0 5px 20px rgba(255, 255, 255, 0.3);
+    margin: 40px 0;
+}
+
+.profile-info {
+    position: relative;
+    z-index: 2;
+    max-width: 500px;
+    margin: 0 auto 60px;
+    padding: 40px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    box-shadow: 0 5px 30px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    text-align: center;
+}
+
+.profile-info h2 {
+    color: #9F7FF3;
+    font-size: 32px;
+    font-weight: 900;
+    text-transform: uppercase;
+    -webkit-text-stroke: 1px #9F7FF3;
+    text-shadow: 0 5px 20px rgba(159, 127, 243, 0.8);
+    margin: 0 0 20px;
+}
+
+.profile-info img {
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    margin: 20px 0;
+    border: 2px solid #9F7FF3;
+    box-shadow: 0 0 15px rgba(159, 127, 243, 0.5);
+}
+
+.profile-info p {
+    color: #FFF;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1.5;
+    margin: 20px 0 0;
+}
+
+#buy-voucher-btn {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+#buy-voucher-btn:hover {
+    background-color: #45a049;
+}
+
+/* Модальные окна */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.3s;
+}
+
+.modal-content {
+    margin: 15% auto;
+    padding: 20px;
+    width: 300px;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    animation: slideIn 0.3s;
+}
+
+.modal-content.success {
+    background-color: #dff0d8;
+    border: 2px solid #3c763d;
+}
+
+.modal-content.warning {
+    background-color: #fcf8e3;
+    border: 2px solid #8a6d3b;
+}
+
+.modal-content h3 {
+    margin: 0 0 10px;
+    font-size: 24px;
+}
+
+.modal-content p {
+    margin: 0;
+    font-size: 16px;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+}
+
+/* Анимации */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    header {
+        padding: 10px 15px;
+        background: rgba(32, 0, 83, 0.97);
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    header.fixed {
+        padding: 8px 10px;
+        /* Еще более компактные отступы */
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .nav-list {
+        display: none;
+        flex-direction: column;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.95);
+        padding: 60px 0;
+        opacity: 0;
+        transform: translateY(-100%);
+        transition: transform 0.5s ease-in-out, opacity 0.3s ease-in-out;
+        z-index: 2000;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    .nav-list.active {
+        display: flex;
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .nav-list li {
+        margin: 15px 0;
+        width: 100%;
+        max-width: 250px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+    }
+
+    .nav-list li a {
+        display: inline-block;
+        width: 100%;
+        padding: 8px;
+        color: #FFF;
+        font-size: 14px;
+        font-weight: 900;
+        text-transform: uppercase;
+        text-decoration: none;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: center;
+    }
+
+    .nav-list.active li {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .nav-list.active li:nth-child(1) {
+        transition-delay: 0s;
+    }
+
+    .nav-list.active li:nth-child(2) {
+        transition-delay: 0.1s;
+    }
+
+    .nav-list.active li:nth-child(3) {
+        transition-delay: 0.2s;
+    }
+
+    .nav-list.active li:nth-child(4) {
+        transition-delay: 0.3s;
+    }
+
+    .nav-list.active li:nth-child(5) {
+        transition-delay: 0.4s;
+    }
+
+    .nav-list.active li:nth-child(6) {
+        transition-delay: 0.5s;
+    }
+
+    .nav-list.active li:nth-child(7) {
+        transition-delay: 0.6s;
+    }
+
+    .nav-list.active li:nth-child(8) {
+        transition-delay: 0.7s;
+    }
+
+    .burger-menu {
+        display: flex;
+        z-index: 2100;
+    }
+
+    .login-nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 4px 8px;
+        /* Еще более компактные отступы */
+        gap: 5px;
+        /* Уменьшенный интервал */
+        max-width: 200px;
+        /* Ограничение ширины */
+        width: auto;
+        margin: 0 auto 10px;
+        /* Центрируем с небольшим отступом снизу */
+    }
+
+    header.fixed .login-nav {
+        max-width: 180px;
+        /* Уменьшаем еще больше */
+        padding: 3px 6px;
+        font-size: 11px;
+        /* Уменьшаем шрифт */
+    }
+
+    .login-nav li {
+        font-size: 12px;
+        text-align: center;
+        white-space: normal;
+        overflow-wrap: break-word;
+        overflow: visible;
+    }
+
+    header.fixed .login-nav li,
+    header.fixed .login-nav li a {
+        font-size: 11px;
+    }
+
+    .cart-icon {
+        margin-right: 5px;
+        padding: 6px 8px;
+        font-size: 20px;
+        margin-left: auto;
+    }
+
+    header.fixed .cart-icon {
+        font-size: 18px;
+        padding: 4px 6px;
+    }
+
+    .cart-count {
+        width: 18px;
+        height: 18px;
+        font-size: 10px;
+    }
+
+    h1 {
+        font-size: 36px;
+        margin: 30px 0;
+    }
+
+    .profile-info {
+        margin: 0 15px 40px;
+        padding: 20px;
+    }
+
+    .profile-info h2 {
+        font-size: 24px;
+        -webkit-text-stroke: 0.5px #9F7FF3;
+    }
+
+    .profile-info img {
+        width: 80px;
+        height: 80px;
+    }
+
+    .profile-info p {
+        font-size: 16px;
+    }
+
+    #buy-voucher-btn {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    header {
+        padding: 8px 10px;
+    }
+
+    header.fixed {
+        padding: 6px 8px;
+    }
+
+    .logo-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    header.fixed .logo-icon {
+        width: 35px;
+        height: 35px;
+    }
+
+    .login-nav {
+        max-width: 150px;
+        padding: 3px 5px;
+        gap: 3px;
+    }
+
+    header.fixed .login-nav {
+        max-width: 140px;
+        padding: 2px 4px;
+        font-size: 10px;
+    }
+
+    .login-nav li {
+        font-size: 10px;
+    }
+
+    header.fixed .login-nav li,
+    header.fixed .login-nav li a {
+        font-size: 10px;
+    }
+
+    .cart-icon {
+        font-size: 18px;
+        padding: 4px 6px;
+    }
+
+    header.fixed .cart-icon {
+        font-size: 16px;
+        padding: 3px 5px;
+    }
+
+    .cart-count {
+        width: 16px;
+        height: 16px;
+        font-size: 9px;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+
+    .profile-info h2 {
+        font-size: 20px;
+    }
+
+    .profile-info img {
+        width: 60px;
+        height: 60px;
+    }
+
+    .profile-info p {
+        font-size: 14px;
+    }
+
+    #buy-voucher-btn {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+}
+

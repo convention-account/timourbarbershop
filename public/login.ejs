@@ -7,16 +7,17 @@
     <title>Login - TimourBarber</title>
     <link rel="icon" type="image/x-icon" href="/media/logo.ico">
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="css/mobile-adaptation.css">    
 </head>
 
 <body>
     <div class="background-overlay"></div>
     <header>
         <div class="logo">
-            <img src="/media/icon.png" alt="Logo" class="logo-icon">
+            <img src="../media/icon.png" alt="Logo" class="logo-icon">
         </div>
         <nav class="navbar">
-            <div class="burger-menu">
+            <div class="burger-menu" data-toggle="menu">
                 <span></span>
                 <span></span>
                 <span></span>
@@ -35,11 +36,28 @@
         <div class="login-nav">
             <% if (user) { %>
                 <li>Welcome, <%= user %> | <a href="/profile">Personal Cabinet</a> | <a href="/logout">Logout</a></li>
-                <% } else { %>
-                    <li><a href="/login">Login</a></li>
-                    <% } %>
+            <% } else { %>
+                <li><a href="/login">Login</a></li>
+            <% } %>
+        </div>
+        <div class="cart-icon">
+            🛒
+            <span class="cart-count">0</span>
         </div>
     </header>
+        <!-- Модальное окно корзины -->
+        <div class="cart-modal">
+            <div class="cart-content">
+                <h2>Your Cart</h2>
+                <div class="cart-items"></div>
+                <div class="cart-total">
+                    <span>Total:</span>
+                    <span class="total-price">0 USDT</span>
+                </div>
+                <button class="checkout-btn">Proceed to Payment</button>
+                <button class="close-cart">Close</button>
+            </div>
+        </div>
     <main class="auth-section">
         <div class="auth-wrapper">
             <h1 class="auth-headline">
@@ -70,6 +88,7 @@
         </div>
     </footer>
     <script src="/js/script.js"></script>
+    <script src="/js/cart.js"></script>
 </body>
 
 </html>

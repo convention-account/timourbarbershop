@@ -12,12 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const loginNav = document.querySelector('.login-nav');
 
         if (logo && navbar && loginNav && window.innerWidth <= 768) {
-            // Удаляем логотип из текущего места
             logo.remove();
-            // Вставляем логотип после navbar, но перед login-nav
             header.insertBefore(logo, loginNav);
         } else if (logo && window.innerWidth > 768) {
-            // Возвращаем логотип на исходное место (слева) на десктопе
             logo.remove();
             header.insertBefore(logo, navbar);
         }
@@ -29,14 +26,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Обновляем позицию логотипа при изменении размера окна
     window.addEventListener('resize', repositionLogo);
 
-    // Фиксация header при скролле
+    // Фиксация header при скролле для всех устройств
     window.addEventListener('scroll', () => {
-        if (window.innerWidth <= 768) {
-            if (window.scrollY > 0) {
-                header.classList.add('fixed');
-            } else {
-                header.classList.remove('fixed');
-            }
+        if (window.scrollY > 0) {
+            header.classList.add('fixed');
+        } else {
+            header.classList.remove('fixed');
         }
     });
 
@@ -78,3 +73,4 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+

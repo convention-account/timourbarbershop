@@ -32,7 +32,7 @@ header {
     position: relative;
     z-index: 100;
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between; /* Изменено с flex-start на space-between */
     align-items: center;
     padding: 20px 40px;
     max-width: 1200px;
@@ -309,6 +309,175 @@ footer {
     opacity: 0.8;
 }
 
+/* Стили для login-nav */
+.login-nav {
+    background-color: rgb(67, 1, 121);
+    border-radius: 15px;
+    list-style: none;
+    margin: 0;
+    color: pink;
+    padding: 0;
+    display: flex;
+    gap: 20px;
+    padding: 10px;
+    margin-left: 15px;
+}
+
+.login-nav li a {
+    color: #FFF;
+    font-size: 14px;
+    font-weight: 900;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: opacity 0.3s;
+}
+
+/* Стили для иконки корзины справа */
+.cart-icon {
+    position: relative;
+    color: #FFF;
+    font-size: 30px;
+    cursor: pointer;
+    padding: 10px 20px;
+    background: rgba(159, 127, 243, 0.8);
+    border-radius: 10px;
+    transition: opacity 0.3s;
+    margin-left: auto; /* Сдвигает корзину вправо в десктопной версии */
+}
+
+.cart-icon:hover {
+    opacity: 0.8;
+}
+
+.cart-count {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: #ff4444;
+    color: #FFF;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+}
+
+/* Стили для модального окна корзины */
+.cart-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+}
+
+.cart-modal.active {
+    display: flex;
+}
+
+.cart-content {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    padding: 30px;
+    width: 90%;
+    max-width: 600px;
+    color: #FFF;
+    position: relative;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.cart-content h2 {
+    margin: 0 0 20px;
+    font-size: 28px;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.cart-items {
+    max-height: 400px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 16px;
+}
+
+.cart-item-title {
+    flex: 1;
+}
+
+.cart-item-price {
+    margin: 0 20px;
+}
+
+.remove-item {
+    background: #ff4444;
+    color: #FFF;
+    border: none;
+    padding: 5px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.cart-total {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 0;
+    font-size: 20px;
+    font-weight: 900;
+    background: rgba(159, 127, 243, 0.2);
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.checkout-btn,
+.close-cart {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: 900;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+.checkout-btn {
+    background: #9F7FF3;
+    color: #FFF;
+}
+
+.checkout-btn:hover,
+.close-cart:hover {
+    opacity: 0.8;
+}
+
+.close-cart {
+    background: #FFF;
+    color: #000;
+}
+
 /* Адаптивность для мобильных устройств */
 @media (max-width: 768px) {
     header {
@@ -348,6 +517,7 @@ footer {
         margin: 20px 0;
         text-align: center;
         opacity: 0;
+        width: 100%;
         transform: translateY(20px);
         transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
     }
@@ -446,10 +616,6 @@ footer {
         max-width: 100%;
     }
 
-    footer {
-        padding: 20px;
-    }
-
     .footer-links {
         flex-direction: column;
         gap: 12px;
@@ -457,6 +623,28 @@ footer {
 
     .footer-links a {
         font-size: 12px;
+    }
+
+    .cart-icon {
+        margin-left: 10px; /* Минимизируем отступ слева */
+        margin-right: 10px; /* Добавим небольшой отступ справа */
+        font-size: 24px; /* Уменьшим размер иконки */
+        padding: 8px 15px; /* Уменьшим padding для компактности */
+    }
+
+    .cart-count {
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+    }
+
+    .cart-content {
+        width: 95%;
+        padding: 20px;
+    }
+
+    .cart-items {
+        max-height: 300px;
     }
 }
 
@@ -496,12 +684,14 @@ footer {
     border-radius: 15px;
     list-style: none;
     margin: 0;
-    color: pink;
     padding: 0;
     display: flex;
     gap: 20px;
-    padding: 10px;
-    margin-left: 15px;
+    color: pink;
+    padding: 10px 20px; /* Add horizontal padding */
+    margin-left: auto; /* Push to the right */
+    margin-left: 20px;
+    white-space: nowrap; /* Prevent wrapping */
 }
 
 .login-nav li a {
@@ -511,4 +701,129 @@ footer {
     text-transform: uppercase;
     text-decoration: none;
     transition: opacity 0.3s;
+}
+
+@media (max-width: 768px) {
+    .nav-list {
+        display: none;
+        flex-direction: column;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.95);
+        padding: 60px 0;
+        opacity: 0;
+        transform: translateY(-100%);
+        transition: transform 0.5s ease-in-out, opacity 0.3s ease-in-out;
+        z-index: 2000;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    .nav-list.active {
+        display: flex;
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .nav-list li {
+        margin: 20px 0;
+        width: 100%; /* Занимая вся ширина контейнера */
+        max-width: 300px; /* Ограничиваем максимальную ширину */
+        display: flex; /* Делаем li flex-контейнером */
+        justify-content: center; /* Центрируем содержимое */
+        align-items: center;
+        text-align: center;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+    }
+
+    .nav-list li a {
+        display: inline-block;
+        width: 100%; /* Занимая вся ширина li */
+        padding: 10px;
+        color: #FFF;
+        font-size: 14px;
+        font-weight: 900;
+        text-transform: uppercase;
+        text-decoration: none;
+        white-space: nowrap; /* Предотвращаем перенос текста */
+        overflow: hidden;
+        text-overflow: ellipsis; /* Добавляем многоточие для длинного текста */
+        text-align: center; /* Гарантируем центрирование текста */
+    }
+
+    .nav-list.active li {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Задержки для анимации */
+    .nav-list.active li:nth-child(1) { transition-delay: 0s; }
+    .nav-list.active li:nth-child(2) { transition-delay: 0.1s; }
+    .nav-list.active li:nth-child(3) { transition-delay: 0.2s; }
+    .nav-list.active li:nth-child(4) { transition-delay: 0.3s; }
+    .nav-list.active li:nth-child(5) { transition-delay: 0.4s; }
+    .nav-list.active li:nth-child(6) { transition-delay: 0.5s; }
+    .nav-list.active li:nth-child(7) { transition-delay: 0.6s; }
+    .nav-list.active li:nth-child(8) { transition-delay: 0.7s; }
+}
+
+@media (max-width: 768px) {
+    .login-nav {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap; /* Разрешаем перенос элементов */
+        align-items: center;
+        justify-content: center; /* Центрируем элементы */
+        padding: 5px 10px; /* Сохраняем минимальные отступы */
+        gap: 10px; /* Расстояние между элементами */
+        margin-left: 0; /* Убираем отступ слева */
+        max-width: 300px; /* Ограничиваем максимальную ширину */
+        width: auto; /* Адаптивная ширина в зависимости от содержимого */
+        background-color: rgb(67, 1, 121);
+        border-radius: 15px;
+        position: relative;
+        margin: 0 auto; /* Центрируем блок по горизонтали */
+    }
+
+    .login-nav li {
+        font-size: 14px; /* Сохраняем читаемый шрифт */
+        text-align: center;
+        white-space: normal; /* Разрешаем перенос текста */
+        overflow-wrap: break-word; /* Разрешаем перенос длинных слов */
+        overflow: visible; /* Убираем обрезку */
+    }
+
+    .login-nav li a {
+        color: #FFF;
+        font-size: 14px; /* Сохраняем шрифт */
+        padding: 5px;
+        text-transform: uppercase;
+        text-decoration: none;
+        transition: opacity 0.3s;
+        white-space: normal;
+        overflow-wrap: break-word;
+    }
+
+    /* Увеличение логотипа */
+    .logo-icon {
+        width: 155px !important; /* Увеличиваем логотип */
+        height: 155px !important;
+    }
+
+    /* Корректировка хедера для компактности */
+    header {
+        flex-wrap: wrap; /* Разрешаем перенос элементов */
+        padding: 10px; /* Сохраняем минимальные отступы */
+        justify-content: space-between; /* Распределяем элементы */
+    }
+
+    .cart-icon {
+        font-size: 20px; /* Сохраняем размер иконки корзины */
+        padding: 5px 10px;
+    }
 }
