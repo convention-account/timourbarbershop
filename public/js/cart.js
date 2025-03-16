@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const cartCount = document.querySelector('.cart-count');
     const totalPriceElement = document.querySelector('.total-price');
     const checkoutBtn = document.querySelector('.checkout-btn');
+    const paymentForm = document.getElementById('payment-form');
     const body = document.body;
 
     // Вспомогательные функции для работы с cookies
@@ -33,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let cart = getCookie('cart') || [];
 
     // Проверка наличия всех элементов
-    if (!cartIcon || !cartModal || !closeCart || !cartItemsContainer || !cartCount || !totalPriceElement || !checkoutBtn) {
+    if (!cartIcon || !cartModal || !closeCart || !cartItemsContainer || !cartCount || !totalPriceElement || !checkoutBtn || !paymentForm) {
         console.error('Ошибка: один или несколько элементов корзины не найдены!');
         return;
     }
@@ -99,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Управление состоянием кнопки и сообщением
         const existingMessage = cartItemsContainer.querySelector('.min-order-message');
-        if (existingMessage) existingMessage.remove(); // Удаляем старое сообщение, если оно есть
+        if (existingMessage) existingMessage.remove(); // Удаляем старое сообщение
 
         if (totalEUR < minimumOrderEUR && cart.length > 0) {
             const message = document.createElement('p');
@@ -130,28 +131,26 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Обработка оплаты
+    // Обработка оплаты через Plisio
     checkoutBtn.addEventListener('click', (e) => {
         e.preventDefault(); // Предотвращаем действие по умолчанию
         const totalUSDT = parseFloat(totalPriceElement.textContent.match(/\d+/)[0]);
         const totalEUR = totalUSDT * 0.9;
         const minimumOrderEUR = 50;
 
-        if (checkoutBtn.disabled || totalEUR < minimumOrderEUR) {
+        if (cart.length === 0) {
+            alert('Your cart is empty!');
+            return;
+        }
+
+        if (totalEUR < minimumOrderEUR) {
             alert(`Minimum order amount is ${minimumOrderEUR} EUR. Please add more items to proceed.`);
             return;
         }
 
-        if (cart.length > 0) {
-            alert(`Proceeding to payment with total: ${totalPriceElement.textContent}. Please implement payment logic here!`);
-            cart = [];
-            setCookie('cart', cart, 7);
-            updateCart();
-            cartModal.classList.remove('active');
-            body.classList.remove('cart-open');
-        } else {
-            alert('Your cart is empty!');
-        }
+        // Заполняем форму Plisio
+        document.getElementById('cart-amount').value = totalUSDT;
+        paymentForm.submit(); // Отправляем форму на Plisio
     });
 
     // Инициализация корзины при загрузке страницы

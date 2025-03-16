@@ -672,3 +672,154 @@ footer {
     opacity: 0.5;
     cursor: not-allowed;
 }
+
+.product-section {
+    position: relative;
+    z-index: 2;
+    padding: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.product-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.product-title {
+    color: #FFF;
+    font-size: 36px;
+    font-weight: 900;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.product-gallery {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+}
+
+.product-gallery .product-image {
+    width: 300px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.product-details {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    padding: 20px;
+    color: #FFF;
+}
+
+.product-features {
+    list-style: none;
+    padding: 0;
+    margin: 15px 0;
+}
+
+.product-features li {
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.add-to-cart-btn {
+    display: inline-block;
+    background: #9F7FF3;
+    color: #FFF;
+    padding: 12px 25px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 900;
+    text-transform: uppercase;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+.add-to-cart-btn:hover {
+    opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+    .product-section {
+        padding: 20px;
+        padding-top: 70px; /* Учитываем фиксированный навбар */
+    }
+
+    .product-title {
+        font-size: 28px;
+    }
+
+    .product-gallery {
+        flex-direction: column; /* Вертикальная галерея на мобильных */
+        align-items: center;
+        overflow-x: hidden; /* Убираем горизонтальную прокрутку */
+        gap: 15px;
+    }
+
+    .product-gallery .product-image {
+        width: 100%; /* Полная ширина контейнера */
+        max-width: 300px; /* Ограничение максимальной ширины */
+        height: auto; /* Сохранение пропорций */
+        min-height: 150px; /* Минимальная высота для читаемости */
+    }
+
+    .product-details {
+        padding: 15px;
+    }
+
+    .product-description {
+        font-size: 14px;
+    }
+
+    .product-features li {
+        font-size: 14px;
+    }
+
+    .product-price {
+        font-size: 14px;
+    }
+
+    .add-to-cart-btn {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+}
+
+/* Дополнительная оптимизация для очень маленьких экранов */
+@media (max-width: 480px) {
+    .product-title {
+        font-size: 24px;
+    }
+
+    .product-gallery .product-image {
+        max-width: 250px;
+        min-height: 120px;
+    }
+
+    .product-details {
+        padding: 10px;
+    }
+
+    .product-description {
+        font-size: 13px;
+    }
+
+    .product-features li {
+        font-size: 13px;
+    }
+
+    .product-price {
+        font-size: 13px;
+    }
+
+    .add-to-cart-btn {
+        padding: 8px 15px;
+        font-size: 13px;
+    }
+}

@@ -321,3 +321,47 @@ app.get('/contact', (req, res) => {
     if (req.session.voucherAlreadyOwned) delete req.session.voucherAlreadyOwned;
     res.render('contact', renderData);
 });
+
+app.get('/product/:productId', (req, res) => {
+    const productId = req.params.productId;
+    // Пример данных о товарах (в реальном проекте это может быть база данных)
+    const products = {
+        'wahl-detailer': {
+            id: 'wahl-detailer',
+            title: 'Wahl Detailer Trimmer',
+            price: 50,
+            priceEUR: 45,
+            description: 'A compact and powerful trimmer for precise lines and edging. Perfect for beard and mustache detailing.',
+            images: ['../media/tools.jpg', '../media/tools2.jpg', '../media/tools3.jpg'], // Несколько фото
+            features: ['Professional tool', 'Payment in USDT or cash']
+        },
+        'parlux-3200': {
+            id: 'parlux-3200',
+            title: 'Parlux 3200 Hair Dryer',
+            price: 200,
+            priceEUR: 180,
+            description: 'A professional hair dryer with powerful airflow and ionic technology for gentle drying.',
+            images: ['../media/tools2.jpg', '../media/tools.jpg'],
+            features: ['Professional tool', 'Payment in USDT or cash']
+        },
+        'dovo-shavette': {
+            id: 'dovo-shavette',
+            title: 'Dovo Shavette Straight Razor',
+            price: 50,
+            priceEUR: 45,
+            description: 'A straight razor with replaceable blades, a convenient option for precise shaving without the need for sharpening.',
+            images: ['../media/tools3.jpg', '../media/tools.jpg'],
+            features: ['Professional tool', 'Payment in USDT or cash']
+        }
+    };
+
+    const product = products[productId];
+    if (!product) {
+        return res.status(404).send('Product not found');
+    }
+
+    res.render('product', {
+        user: req.session.user || null,
+        product: product
+    });
+});
