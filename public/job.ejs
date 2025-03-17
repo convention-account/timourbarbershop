@@ -35,9 +35,9 @@
         <div class="login-nav">
             <% if (user) { %>
                 <li>Welcome, <%= user %> | <a href="/profile">Personal Cabinet</a> | <a href="/logout">Logout</a></li>
-            <% } else { %>
-                <li><a href="/login">Login</a></li>
-            <% } %>
+                <% } else { %>
+                    <li><a href="/login">Login</a></li>
+                    <% } %>
         </div>
 
         <div class="cart-icon">
@@ -45,19 +45,29 @@
             <span class="cart-count">0</span>
         </div>
     </header>
-        <!-- Модальное окно корзины -->
-        <div class="cart-modal">
-            <div class="cart-content">
-                <h2>Your Cart</h2>
-                <div class="cart-items"></div>
-                <div class="cart-total">
-                    <span>Total:</span>
-                    <span class="total-price">0 USDT</span>
-                </div>
-                <button class="checkout-btn">Proceed to Payment</button>
-                <button class="close-cart">Close</button>
+    <!-- Модальное окно корзины -->
+    <div class="cart-modal">
+        <div class="cart-content">
+            <h2>Your Cart</h2>
+            <div class="cart-items"></div>
+            <div class="cart-total">
+                <span>Total:</span>
+                <span class="total-price">0 USDT</span>
             </div>
+            <form id="payment-form" method="POST" action="https://plisio.net/invoice">
+                <input type="hidden" name="source_currency" value="USDT_TRC20">
+                <input type="hidden" name="source_amount" id="cart-amount" value="">
+                <input type="hidden" name="order_name" value="Cart Purchase">
+                <input type="hidden" name="order_number" value="cart-001">
+                <input type="hidden" name="api_key"
+                    value="URwuNVuKw7oXyvKjYUqoFl1jB2xpGF6pABbXRMpwEizTY1ukGsjvYoL8JwTUorWs">
+                <input type="hidden" name="success_url" value="https://yourdomain.com/success">
+                <input type="hidden" name="cancel_url" value="https://yourdomain.com/webshop">
+                <input type="submit" value="Proceed to Payment" class="checkout-btn">
+            </form>
+            <button class="close-cart">Close</button>
         </div>
+    </div>
     <main class="job-section">
         <div class="job-wrapper">
             <!-- Заголовок -->

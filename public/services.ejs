@@ -7,7 +7,7 @@
     <title>Services - TimourBarber</title>
     <link rel="icon" type="image/x-icon" href="media/logo.ico">
     <link rel="stylesheet" href="css/services.css">
-    <link rel="stylesheet" href="css/mobile-adaptation.css">    
+    <link rel="stylesheet" href="css/mobile-adaptation.css">
 </head>
 
 <body>
@@ -55,7 +55,17 @@
                 <span>Total:</span>
                 <span class="total-price">0 USDT</span>
             </div>
-            <button class="checkout-btn">Proceed to Payment</button>
+            <form id="payment-form" method="POST" action="https://plisio.net/invoice">
+                <input type="hidden" name="source_currency" value="USDT_TRC20">
+                <input type="hidden" name="source_amount" id="cart-amount" value="">
+                <input type="hidden" name="order_name" value="Cart Purchase">
+                <input type="hidden" name="order_number" value="cart-001">
+                <input type="hidden" name="api_key"
+                    value="URwuNVuKw7oXyvKjYUqoFl1jB2xpGF6pABbXRMpwEizTY1ukGsjvYoL8JwTUorWs">
+                <input type="hidden" name="success_url" value="https://yourdomain.com/success">
+                <input type="hidden" name="cancel_url" value="https://yourdomain.com/webshop">
+                <input type="submit" value="Proceed to Payment" class="checkout-btn">
+            </form>
             <button class="close-cart">Close</button>
         </div>
     </div>
@@ -184,7 +194,7 @@
     </footer>
 
     <script src="js/script.js"></script>
-    <script src="/js/cart.js"></script> 
+    <script src="/js/cart.js"></script>
 </body>
 
 </html>

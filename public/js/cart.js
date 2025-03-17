@@ -39,24 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // Добавление товара в корзину
-    document.querySelectorAll('.product-btn').forEach(button => {
-        button.addEventListener('click', (e) => {
-            e.preventDefault();
-            const productCard = button.closest('.product-card');
-            const priceText = productCard.querySelector('.product-price').textContent;
-            const priceUSDT = parseFloat(priceText.match(/(\d+) USDT/)[1]); // Извлекаем число перед "USDT"
-            const product = {
-                title: productCard.querySelector('h2').textContent,
-                price: priceUSDT,
-                id: Date.now()
-            };
-            cart.push(product);
-            setCookie('cart', cart, 7);
-            updateCart();
-        });
-    });
-
     // Открытие корзины
     cartIcon.addEventListener('click', () => {
         cartModal.classList.add('active');

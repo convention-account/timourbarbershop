@@ -50,20 +50,68 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Бургер-меню
-    if (burger && navList) {
-        burger.addEventListener('click', () => {
-            burger.classList.toggle('toggle');
-            navList.classList.toggle('active');
-            body.classList.toggle('menu-open');
+    // if (burger && navList) {
+    //     burger.addEventListener('click', () => {
+    //         burger.classList.toggle('toggle');
+    //         navList.classList.toggle('active');
+    //         body.classList.toggle('menu-open');
+    //     });
+
+    //     navItems.forEach(item => {
+    //         item.addEventListener('click', () => {
+    //             burger.classList.remove('toggle');
+    //             navList.classList.remove('active');
+    //             body.classList.remove('menu-open');
+    //         });
+    //     });
+    // }
+
+    // Функция анимации полета товара в корзину
+    function flyToCart(button) {
+        const cartIconRect = cartIcon.getBoundingClientRect();
+        const buttonRect = button.getBoundingClientRect();
+
+        // Создаем элемент для анимации (копия изображения товара или просто иконка)
+        const flyingItem = document.createElement('div');
+        flyingItem.classList.add('flying-item');
+        
+        // Используем первое изображение из галереи как основу
+        const productImage = document.querySelector('.product-gallery .product-image');
+        if (productImage) {
+            flyingItem.style.backgroundImage = `url(${productImage.src})`;
+            flyingItem.style.backgroundSize = 'cover';
+        } else {
+            flyingItem.textContent = '🛒'; // Запасной вариант - иконка
+        }
+
+        // Устанавливаем начальную позицию (от кнопки)
+        flyingItem.style.position = 'fixed';
+        flyingItem.style.left = `${buttonRect.left + buttonRect.width / 2 - 25}px`; // Центр кнопки
+        flyingItem.style.top = `${buttonRect.top + buttonRect.height / 2 - 25}px`;
+        flyingItem.style.width = '50px';
+        flyingItem.style.height = '50px';
+        flyingItem.style.borderRadius = '50%';
+        flyingItem.style.zIndex = '3000';
+        document.body.appendChild(flyingItem);
+
+        // Анимация полета
+        const deltaX = cartIconRect.left + cartIconRect.width / 2 - (buttonRect.left + buttonRect.width / 2);
+        const deltaY = cartIconRect.top + cartIconRect.height / 2 - (buttonRect.top + buttonRect.height / 2);
+
+        flyingItem.animate([
+            { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+            { transform: `translate(${deltaX}px, ${deltaY}px) scale(0.5)`, opacity: 0.7 }
+        ], {
+            duration: 800, // Длительность анимации в миллисекундах
+            easing: 'ease-in-out',
+            fill: 'forwards'
         });
 
-        navItems.forEach(item => {
-            item.addEventListener('click', () => {
-                burger.classList.remove('toggle');
-                navList.classList.remove('active');
-                body.classList.remove('menu-open');
-            });
-        });
+        // Удаляем элемент после завершения анимации
+        setTimeout(() => {
+            flyingItem.remove();
+            updateCartCount(); // Обновляем счетчик после анимации
+        }, 800);
     }
 
     // Добавление товара в корзину (для страницы продукта)
@@ -77,8 +125,8 @@ document.addEventListener('DOMContentLoaded', () => {
             };
             cart.push(product);
             setCookie('cart', cart, 7);
-            updateCartCount(); // Обновляем только счетчик, если корзина не отображается
-            alert(`${product.title} added to cart!`);
+            flyToCart(button); // Запускаем анимацию вместо alert
+            if (isCartAvailable) updateCart(); // Обновляем корзину, если она доступна
         });
     });
 
@@ -152,7 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Обновление только счетчика корзины (для страниц без модального окна)
+    // Обновление только счетчика корзины
     function updateCartCount() {
         if (cartCount) {
             cartCount.textContent = cart.length;
@@ -163,6 +211,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (isCartAvailable) {
         updateCart();
     } else {
-        updateCartCount(); // Только обновляем счетчик на странице продукта
+        updateCartCount();
     }
 });

@@ -196,7 +196,7 @@ header.fixed {
 
 .product-image {
     width: 100%;
-    height: 200px;
+    height: 270px;
     object-fit: cover;
 }
 
@@ -407,7 +407,7 @@ footer {
     }
 
     .product-image {
-        height: 150px;
+        height: 300px;
     }
 
     .product-content h2 {
@@ -821,5 +821,33 @@ footer {
     .add-to-cart-btn {
         padding: 8px 15px;
         font-size: 13px;
+    }
+}
+
+/* Стили для анимации полета товара */
+.flying-item {
+    position: fixed;
+    width: 50px;
+    height: 50px;
+    background-color: rgba(159, 127, 243, 0.8); /* Цвет фона, если нет изображения */
+    border-radius: 50%;
+    z-index: 3000;
+    pointer-events: none; /* Чтобы не мешал кликам */
+    opacity: 1;
+    transition: opacity 0.2s ease; /* Плавное исчезновение */
+}
+
+/* Улучшение для мобильных */
+@media (max-width: 768px) {
+    .flying-item {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .flying-item {
+        width: 30px;
+        height: 30px;
     }
 }
