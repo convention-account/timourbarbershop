@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - TimourBarber</title>
+    <link rel="icon" type="image/x-icon" href="../media/logo.ico">
+    <link rel="stylesheet" type="text/css" href="css/contact.css">
+    <link rel="stylesheet" href="css/mobile-adaptation.css">
+</head>
+<body>
+    <div class="background-overlay"></div>
+    <header>
+        <div class="logo">
+            <img src="../media/icon.png" alt="Logo" class="logo-icon">
+        </div>
+        <nav class="navbar">
+            <div class="burger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-list">
+                <li><a href="/">Home</a></li>
+                <li><a href="academy">Academy</a></li>
+                <li><a href="webshop">Store</a></li>
+                <li><a href="about">About</a></li>
+                <li><a href="/services">Services</a></li>
+                <li><a href="contact">Contact</a></li>
+                <li><a href="job">Job</a></li>
+                <li><a href="coin">Coin</a></li>
+            </ul>
+        </nav>
+        <div class="login-nav">
+            <% if (user) { %>
+                <li>Welcome, <%= user %> | <a href="/profile">Personal Cabinet</a> | <a href="/logout">Logout</a></li>
+            <% } else { %>
+                <li><a href="/login">Login</a></li>
+            <% } %>
+        </div>
+        <div class="cart-icon">
+            🛒
+            <span class="cart-count">0</span>
+        </div>
+    </header>
+
+    <main class="contact-section checkout-section">
+        <div class="contact-wrapper checkout-wrapper">
+            <!-- Заголовок -->
+            <div class="contact-intro">
+                <h1 class="headline">
+                    <span class="headline-emoji">💳</span>
+                    <span class="headline-main">Checkout</span>
+                    <span class="headline-sub">Complete Your Purchase</span>
+                </h1>
+            </div>
+
+            <!-- Форма checkout -->
+            <div class="contact-form checkout-form">
+                <h2 class="form-title">Checkout Details</h2>
+                <form id="checkout-form" method="POST" action="https://plisio.net/invoice">
+                    <!-- Адрес доставки -->
+                    <div class="checkout-group">
+                        <h3 class="form-subtitle">Shipping Address</h3>
+                        <div class="form-group">
+                            <label for="full-name">Full Name</label>
+                            <input type="text" id="full-name" name="full_name" placeholder="Your Full Name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" placeholder="Your Email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="address">Street Address</label>
+                            <input type="text" id="address" name="address" placeholder="123 Barber Street" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="city">City</label>
+                            <input type="text" id="city" name="city" placeholder="Vilnius" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="country">Country</label>
+                            <input type="text" id="country" name="country" placeholder="Lithuania" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="postal-code">Postal Code</label>
+                            <input type="text" id="postal-code" name="postal_code" placeholder="12345" required>
+                        </div>
+                    </div>
+
+                    <!-- Способы оплаты -->
+                    <div class="checkout-group">
+                        <h3 class="form-subtitle">Payment Method</h3>
+                        <div class="form-group">
+                            <label>
+                                <input type="radio" name="payment_method" value="usdt_trc20" checked>
+                                USDT (TRC20)
+                            </label>
+                            <label>
+                                <input type="radio" name="payment_method" value="card">
+                                Credit/Debit Card
+                            </label>
+                            <label>
+                                <input type="radio" name="payment_method" value="paypal">
+                                PayPal
+                            </label>
+                        </div>
+                        <!-- Дополнительные поля для карты (показываются при выборе) -->
+                        <div class="card-details" style="display: none;">
+                            <div class="form-group">
+                                <label for="card-number">Card Number</label>
+                                <input type="text" id="card-number" name="card_number" placeholder="1234 5678 9012 3456">
+                            </div>
+                            <div class="form-group">
+                                <label for="card-expiry">Expiry Date</label>
+                                <input type="text" id="card-expiry" name="card_expiry" placeholder="MM/YY">
+                            </div>
+                            <div class="form-group">
+                                <label for="card-cvc">CVC</label>
+                                <input type="text" id="card-cvc" name="card_cvc" placeholder="123">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Скрытые поля для Plisio -->
+                    <input type="hidden" name="source_currency" value="USDT_TRC20">
+                    <input type="hidden" name="source_amount" id="cart-amount" value="80">
+                    <input type="hidden" name="order_name" value="Checkout Purchase">
+                    <input type="hidden" name="order_number" value="checkout-001">
+                    <input type="hidden" name="api_key" value="URwuNVuKw7oXyvKjYUqoFl1jB2xpGF6pABbXRMpwEizTY1ukGsjvYoL8JwTUorWs">
+                    <input type="hidden" name="success_url" value="https://yourdomain.com/success">
+                    <input type="hidden" name="cancel_url" value="https://yourdomain.com/webshop">
+                    
+                    <button type="submit" class="form-btn checkout-btn">Place Order</button>
+                </form>
+                <button class="close-cart" onclick="window.location.href='/webshop'">Back to Store</button>
+            </div>
+
+            <!-- Обзор заказа -->
+            <div class="contact-info checkout-info">
+                <h2 class="form-title">Order Summary</h2>
+                <div class="cart-items">
+                    <div class="cart-item">
+                        <span class="cart-item-title">Barber Course</span>
+                        <span class="cart-item-price">50 USDT</span>
+                    </div>
+                    <div class="cart-item">
+                        <span class="cart-item-title">Haircut Kit</span>
+                        <span class="cart-item-price">30 USDT</span>
+                    </div>
+                </div>
+                <div class="cart-total">
+                    <span>Subtotal:</span>
+                    <span>80 USDT</span>
+                </div>
+                <div class="cart-total">
+                    <span>Shipping:</span>
+                    <span>5 USDT</span>
+                </div>
+                <div class="cart-total">
+                    <span>Total:</span>
+                    <span class="total-price">85 USDT</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>© 2025 Timour Barber. All rights reserved.</p>
+            <ul class="footer-links">
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Terms of Service</a></li>
+                <li><a href="#">Contact Us</a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <script>
+        // Простой скрипт для показа/скрытия полей карты
+        document.querySelectorAll('input[name="payment_method"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const cardDetails = document.querySelector('.card-details');
+                if (this.value === 'card') {
+                    cardDetails.style.display = 'block';
+                } else {
+                    cardDetails.style.display = 'none';
+                }
+            });
+        });
+    </script>
+    <script src="js/script.js"></script>
+    <script src="/js/cart.js"></script>
+</body>
+</html>

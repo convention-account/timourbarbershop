@@ -129,6 +129,13 @@ app.get('/register', (req, res) => {
     });
 });
 
+app.get('/checkout', (req, res) => {
+    res.render('checkout', {
+        error: null,
+        user: req.session?.user || null
+    });
+});
+
 // Страница профиля
 app.get('/profile', (req, res) => {
     if (!req.session.user) {
