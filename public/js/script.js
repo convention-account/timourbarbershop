@@ -98,3 +98,19 @@ if (cryptoPopup && cryptoCloseBtn) {
         cryptoPopup.style.display = 'none';
     }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.body.classList.add("fade-in"); // Анимация появления страницы
+
+    document.querySelectorAll("a").forEach(link => {
+        link.addEventListener("click", function (e) {
+            if (!this.href.includes(location.hostname)) return; // Игнорируем внешние ссылки
+            e.preventDefault();
+
+            document.body.classList.add("fade-out"); // Анимация исчезновения
+            setTimeout(() => {
+                window.location.href = this.href;
+            }, 150); // Задержка в 0.5 секунды перед переходом
+        });
+    });
+});

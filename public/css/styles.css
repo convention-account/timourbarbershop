@@ -4,6 +4,27 @@
     src: url('../../font/Nexa-Heavy.ttf');
 }
 
+.fade-out {
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+
+.fade-in {
+    opacity: 0;
+    animation: fadeIn 0.5s forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+
 /* Базовые стили для body */
 body {
     display: flex;
@@ -1745,10 +1766,13 @@ header.fixed {
     display: flex;
     gap: 20px;
     color: pink;
-    padding: 10px 20px; /* Add horizontal padding */
-    margin-left: auto; /* Push to the right */
+    padding: 10px 20px;
+    /* Add horizontal padding */
+    margin-left: auto;
+    /* Push to the right */
     margin-left: 20px;
-    white-space: nowrap; /* Prevent wrapping */
+    white-space: nowrap;
+    /* Prevent wrapping */
 }
 
 .login-nav li a {
@@ -1763,7 +1787,8 @@ header.fixed {
 /* Стили для всплывающего уведомления */
 .crypto-popup {
     position: fixed;
-    bottom: -100px; /* Изначально скрыто ниже экрана */
+    bottom: -100px;
+    /* Изначально скрыто ниже экрана */
     right: 20px;
     width: 300px;
     background: rgba(159, 127, 243, 0.95);
@@ -1775,7 +1800,8 @@ header.fixed {
 }
 
 .crypto-popup.active {
-    bottom: 20px; /* Появляется внизу справа */
+    bottom: 20px;
+    /* Появляется внизу справа */
 }
 
 .crypto-popup-content {
