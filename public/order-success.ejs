@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Success - TimourBarber</title>
+    <link rel="stylesheet" type="text/css" href="/css/webshop.css">
+</head>
+<body>
+    <header>
+        <!-- Ваш хедер -->
+    </header>
+    <main>
+        <h1>Order Successful!</h1>
+        <p>Order Number: <%= order.order_number %></p>
+        <p>Total: <%= order.total_usdt %> USDT</p>
+        <p>Shipping Address: <%= order.shipping_address %></p>
+        <p>Payment Method: <%= order.payment_method %></p>
+        <p>Status: <%= order.status %></p>
+        <h2>Items:</h2>
+        <ul>
+            <% order.items.forEach(item => { %>
+                <li><%= item.title %> - <%= item.price %> USDT</li>
+            <% }); %>
+        </ul>
+        <a href="/webshop">Back to Store</a>
+    </main>
+    <footer>
+        <!-- Ваш футер -->
+    </footer>
+</body>
+</html>

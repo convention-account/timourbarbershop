@@ -138,3 +138,45 @@ document.addEventListener('DOMContentLoaded', () => {
     // Инициализация корзины при загрузке страницы
     updateCart();
 });
+
+checkoutBtn.addEventListener('click', async (e) => {
+    e.preventDefault();
+    const totalUSDT = parseFloat(totalPriceElement.textContent.match(/\d+(\.\d+)?/)[0]);
+    const totalEUR = totalUSDT * 0.9;
+    const minimumOrderEUR = 50;
+
+    if (cart.length === 0) {
+        alert('Your cart is empty!');
+        return;
+    }
+
+    if (totalEUR < minimumOrderEUR) {
+        alert(`Minimum order amount is ${minimumOrderEUR} EUR.`);
+        return;
+    }
+
+    const response = await fetch('/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            full_name: 'John Doe', // Замените на данные из формы
+            email: 'john@example.com',
+            address: '123 Street',
+            city: 'Vilnius',
+            country: 'Lithuania',
+            postal_code: '12345',
+            payment_method: 'usdt_trc20',
+            cart: JSON.stringify(cart)
+        })
+    });
+
+    const result = await response.json();
+    if (result.error) {
+        alert(result.error);
+    } else {
+        document.getElementById('cart-amount').value = result.amount;
+        document.querySelector('input[name="order_number"]').value = result.order_number;
+        document.querySelector('input[name="success_url"]').value = `https://yourdomain.com/order-success?order=${result.order_number}`;
+        paymentForm.submit();
+    }
+});

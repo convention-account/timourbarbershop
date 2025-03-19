@@ -289,10 +289,10 @@ main {
 
 .scissors {
     position: absolute;
-    right: -450px;
-    top: 42%;
+    right: -490px;
+    top: 46%;
     transform: translateY(-50%);
-    width: 530px;
+    width: 670px;
     z-index: 1;
 }
 

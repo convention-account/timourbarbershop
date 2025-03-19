@@ -653,10 +653,13 @@ footer {
     display: flex;
     gap: 20px;
     color: pink;
-    padding: 10px 20px; /* Add horizontal padding */
-    margin-left: auto; /* Push to the right */
+    padding: 10px 20px;
+    /* Add horizontal padding */
+    margin-left: auto;
+    /* Push to the right */
     margin-left: 20px;
-    white-space: nowrap; /* Prevent wrapping */
+    white-space: nowrap;
+    /* Prevent wrapping */
 }
 
 .login-nav li a {
@@ -741,6 +744,30 @@ footer {
     transition: opacity 0.3s;
 }
 
+a {
+    text-decoration: none;
+    color: white;
+}
+
+.return-btn {
+    display: inline-block;
+    background: #4d16da;
+    color: #FFF;
+    padding: 12px 25px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 900;
+    text-transform: uppercase;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+.return-btn:hover {
+    opacity: 0.8;
+}
+
 .add-to-cart-btn:hover {
     opacity: 0.8;
 }
@@ -748,7 +775,8 @@ footer {
 @media (max-width: 768px) {
     .product-section {
         padding: 20px;
-        padding-top: 70px; /* Учитываем фиксированный навбар */
+        padding-top: 70px;
+        /* Учитываем фиксированный навбар */
     }
 
     .product-title {
@@ -756,17 +784,23 @@ footer {
     }
 
     .product-gallery {
-        flex-direction: column; /* Вертикальная галерея на мобильных */
+        flex-direction: column;
+        /* Вертикальная галерея на мобильных */
         align-items: center;
-        overflow-x: hidden; /* Убираем горизонтальную прокрутку */
+        overflow-x: hidden;
+        /* Убираем горизонтальную прокрутку */
         gap: 15px;
     }
 
     .product-gallery .product-image {
-        width: 100%; /* Полная ширина контейнера */
-        max-width: 300px; /* Ограничение максимальной ширины */
-        height: auto; /* Сохранение пропорций */
-        min-height: 150px; /* Минимальная высота для читаемости */
+        width: 100%;
+        /* Полная ширина контейнера */
+        max-width: 300px;
+        /* Ограничение максимальной ширины */
+        height: auto;
+        /* Сохранение пропорций */
+        min-height: 150px;
+        /* Минимальная высота для читаемости */
     }
 
     .product-details {
@@ -829,12 +863,15 @@ footer {
     position: fixed;
     width: 50px;
     height: 50px;
-    background-color: rgba(159, 127, 243, 0.8); /* Цвет фона, если нет изображения */
+    background-color: rgba(159, 127, 243, 0.8);
+    /* Цвет фона, если нет изображения */
     border-radius: 50%;
     z-index: 3000;
-    pointer-events: none; /* Чтобы не мешал кликам */
+    pointer-events: none;
+    /* Чтобы не мешал кликам */
     opacity: 1;
-    transition: opacity 0.2s ease; /* Плавное исчезновение */
+    transition: opacity 0.2s ease;
+    /* Плавное исчезновение */
 }
 
 /* Улучшение для мобильных */
@@ -863,22 +900,26 @@ footer {
 .product-image {
     max-width: 100%;
     height: auto;
-    object-fit: contain; /* Убеждаемся, что изображение не обрезается */
+    object-fit: contain;
+    /* Убеждаемся, что изображение не обрезается */
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 @media (max-width: 768px) {
     .product-image {
-        width: 90%; /* Уменьшаем ширину на мобильных */
-        margin: 0 auto; /* Центрируем изображение */
+        width: 90%;
+        /* Уменьшаем ширину на мобильных */
+        margin: 0 auto;
+        /* Центрируем изображение */
     }
 }
 
 /* Стили для всплывающего уведомления */
 .crypto-popup {
     position: fixed;
-    bottom: -100px; /* Изначально скрыто ниже экрана */
+    bottom: -100px;
+    /* Изначально скрыто ниже экрана */
     right: 20px;
     width: 300px;
     background: rgba(159, 127, 243, 0.95);
@@ -890,7 +931,8 @@ footer {
 }
 
 .crypto-popup.active {
-    bottom: 20px; /* Появляется внизу справа */
+    bottom: 20px;
+    /* Появляется внизу справа */
 }
 
 .crypto-popup-content {

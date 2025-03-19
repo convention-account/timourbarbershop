@@ -6,13 +6,14 @@ const cookieParser = require('cookie-parser');
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
-const { v4: uuidv4 } = require('uuid'); // Добавляем uuid
+const { v4: uuidv4 } = require('uuid');
 
 const app = express();
 const port = 3001;
 
 // Middleware
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json()); // Добавляем поддержку JSON для обработки данных из фронтенда
 app.use(express.static('public'));
 app.use(cookieParser());
 app.set('view engine', 'ejs');
@@ -31,7 +32,7 @@ app.use(session({
     }
 }));
 
-// Middleware для проверки постоянной авторизации через куки
+// Middleware для проверки авторизации через куки
 app.use((req, res, next) => {
     if (!req.session.user && req.cookies.authToken) {
         const authToken = req.cookies.authToken;
@@ -48,16 +49,16 @@ app.use((req, res, next) => {
 
 // Middleware для добавления хэша в URL
 app.use((req, res, next) => {
-    const hashFreePaths = ['/login', '/register', '/logout', '/buy-voucher']; // Исключаем эти пути
+    const hashFreePaths = ['/login', '/register', '/logout', '/buy-voucher', '/checkout', '/cart', '/order-success'];
     if (!req.query.hash && !hashFreePaths.includes(req.path) && !req.path.startsWith('/product/')) {
-        const hash = uuidv4(); // Генерируем UUID
+        const hash = uuidv4();
         const newUrl = `${req.path}?hash=${hash}`;
         return res.redirect(newUrl);
     }
     next();
 });
 
-// Создание директории базы данных, если её нет
+// Создание директории базы данных
 const dbDir = path.join(__dirname, 'database');
 if (!fs.existsSync(dbDir)) {
     fs.mkdirSync(dbDir);
@@ -71,6 +72,7 @@ const db = new sqlite3.Database(path.join(dbDir, 'users.db'), (err) => {
     }
     console.log('Подключено к базе данных SQLite');
 
+    // Создание таблицы пользователей
     db.run(`CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT UNIQUE,
@@ -78,28 +80,23 @@ const db = new sqlite3.Database(path.join(dbDir, 'users.db'), (err) => {
         voucher INTEGER DEFAULT 0,
         authToken TEXT
     )`, (err) => {
-        if (err) console.error('Ошибка создания таблицы:', err.message);
+        if (err) console.error('Ошибка создания таблицы users:', err.message);
+    });
 
-        db.all("PRAGMA table_info(users)", (err, columns) => {
-            if (err) {
-                console.error('Ошибка проверки столбцов таблицы:', err.message);
-                return;
-            }
-
-            const hasAuthTokenColumn = columns.some(column => column.name === 'authToken');
-            if (!hasAuthTokenColumn) {
-                console.log('Столбец authToken отсутствует, добавляем...');
-                db.run('ALTER TABLE users ADD COLUMN authToken TEXT', (alterErr) => {
-                    if (alterErr) {
-                        console.error('Ошибка добавления столбца authToken:', alterErr.message);
-                    } else {
-                        console.log('Столбец authToken успешно добавлен');
-                    }
-                });
-            } else {
-                console.log('Столбец authToken уже существует');
-            }
-        });
+    // Создание таблицы заказов
+    db.run(`CREATE TABLE IF NOT EXISTS orders (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        order_number TEXT UNIQUE,
+        items TEXT,
+        total_usdt REAL,
+        shipping_address TEXT,
+        payment_method TEXT,
+        status TEXT DEFAULT 'pending',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+    )`, (err) => {
+        if (err) console.error('Ошибка создания таблицы orders:', err.message);
     });
 });
 
@@ -115,24 +112,54 @@ app.get('/', (req, res) => {
     res.render('index', renderData);
 });
 
+// Страницы авторизации и регистрации
 app.get('/login', (req, res) => {
-    res.render('login', {
-        error: null,
-        user: req.session?.user || null
-    });
+    res.render('login', { error: null, user: req.session?.user || null });
 });
 
 app.get('/register', (req, res) => {
-    res.render('register', {
-        error: null,
-        user: req.session?.user || null
-    });
+    res.render('register', { error: null, user: req.session?.user || null });
 });
 
-app.get('/checkout', (req, res) => {
-    res.render('checkout', {
-        error: null,
-        user: req.session?.user || null
+app.post('/register', async (req, res) => {
+    const { username, password } = req.body;
+    try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        db.run('INSERT INTO users (username, password, voucher) VALUES (?, ?, 0)',
+            [username, hashedPassword],
+            function (err) {
+                if (err) {
+                    return res.render('register', { error: 'This username is already taken', user: null });
+                }
+                res.redirect('/login');
+            });
+    } catch (error) {
+        res.render('register', { error: 'Registration failed', user: null });
+    }
+});
+
+app.post('/login', (req, res) => {
+    const { username, password } = req.body;
+    db.get('SELECT * FROM users WHERE username = ?', [username], async (err, user) => {
+        if (err || !user) {
+            return res.render('login', { error: 'Incorrect login info', user: null });
+        }
+        const isValid = await bcrypt.compare(password, user.password);
+        if (isValid) {
+            req.session.user = username;
+            const authToken = crypto.randomBytes(16).toString('hex');
+            db.run('UPDATE users SET authToken = ? WHERE username = ?', [authToken, username], (updateErr) => {
+                if (updateErr) console.error('Ошибка сохранения токена:', updateErr.message);
+            });
+            res.cookie('authToken', authToken, {
+                maxAge: 30 * 24 * 60 * 60 * 1000,
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production'
+            });
+            res.redirect('/');
+        } else {
+            res.render('login', { error: 'Invalid login data', user: null });
+        }
     });
 });
 
@@ -150,87 +177,11 @@ app.get('/profile', (req, res) => {
     });
 });
 
-// Обработка регистрации
-app.post('/register', async (req, res) => {
-    const { username, password } = req.body;
-    try {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        db.run('INSERT INTO users (username, password, voucher) VALUES (?, ?, 0)',
-            [username, hashedPassword],
-            function (err) {
-                if (err) {
-                    return res.render('register', { error: 'Имя пользователя уже существует' });
-                }
-                res.redirect('/login');
-            });
-    } catch (error) {
-        res.render('register', { error: 'Регистрация не удалась' });
-    }
-});
-
-// Обработка логина
-app.post('/login', (req, res) => {
-    const { username, password } = req.body;
-    db.get('SELECT * FROM users WHERE username = ?', [username], async (err, user) => {
-        if (err || !user) {
-            return res.render('login', { error: 'Неверные учетные данные', user: null });
-        }
-        const isValid = await bcrypt.compare(password, user.password);
-        if (isValid) {
-            req.session.user = username;
-
-            const authToken = crypto.randomBytes(16).toString('hex');
-            db.run('UPDATE users SET authToken = ? WHERE username = ?', [authToken, username], (updateErr) => {
-                if (updateErr) {
-                    console.error('Ошибка сохранения токена:', updateErr.message);
-                }
-            });
-
-            res.cookie('authToken', authToken, {
-                maxAge: 30 * 24 * 60 * 60 * 1000,
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production'
-            });
-
-            res.redirect('/');
-        } else {
-            res.render('login', { error: 'Неверные учетные данные', user: null });
-        }
-    });
-});
-
-// Обработка покупки ваучера
-app.post('/buy-voucher', (req, res) => {
-    if (!req.session.user) {
-        return res.redirect('/login');
-    }
-    db.get('SELECT voucher FROM users WHERE username = ?', [req.session.user], (err, row) => {
-        if (err) {
-            console.error(err.message);
-            return res.redirect('/');
-        }
-        if (row.voucher === 1) {
-            req.session.voucherAlreadyOwned = true;
-            return res.redirect('/');
-        }
-        db.run('UPDATE users SET voucher = 1 WHERE username = ?', [req.session.user], (updateErr) => {
-            if (updateErr) {
-                console.error(updateErr.message);
-                return res.redirect('/');
-            }
-            req.session.purchaseSuccess = true;
-            res.redirect('/');
-        });
-    });
-});
-
 // Выход
 app.get('/logout', (req, res) => {
     if (req.session.user) {
         db.run('UPDATE users SET authToken = NULL WHERE username = ?', [req.session.user], (err) => {
-            if (err) {
-                console.error('Ошибка очистки токена:', err.message);
-            }
+            if (err) console.error('Ошибка очистки токена:', err.message);
         });
     }
     res.clearCookie('authToken');
@@ -238,43 +189,7 @@ app.get('/logout', (req, res) => {
     res.redirect('/');
 });
 
-const server = app.listen(port, () => {
-    console.log(`Сервер запущен на http://localhost:${port}`);
-});
-
-// Обработка завершения работы сервера
-process.on('SIGINT', () => {
-    server.close(() => {
-        console.log('Сервер остановлен');
-        db.close(() => {
-            console.log('Соединение с базой данных закрыто');
-            process.exit(0);
-        });
-    });
-});
-
-app.get('/services', (req, res) => {
-    const renderData = {
-        user: req.session.user || null,
-        purchaseSuccess: req.session.purchaseSuccess || false,
-        voucherAlreadyOwned: req.session.voucherAlreadyOwned || false
-    };
-    if (req.session.purchaseSuccess) delete req.session.purchaseSuccess;
-    if (req.session.voucherAlreadyOwned) delete req.session.voucherAlreadyOwned;
-    res.render('services', renderData);
-});
-
-app.get('/academy', (req, res) => {
-    const renderData = {
-        user: req.session.user || null,
-        purchaseSuccess: req.session.purchaseSuccess || false,
-        voucherAlreadyOwned: req.session.voucherAlreadyOwned || false
-    };
-    if (req.session.purchaseSuccess) delete req.session.purchaseSuccess;
-    if (req.session.voucherAlreadyOwned) delete req.session.voucherAlreadyOwned;
-    res.render('academy', renderData);
-});
-
+// Страница магазина
 app.get('/webshop', (req, res) => {
     const renderData = {
         user: req.session.user || null,
@@ -286,53 +201,145 @@ app.get('/webshop', (req, res) => {
     res.render('webshop', renderData);
 });
 
-app.get('/about', (req, res) => {
+// Страница чекаута
+app.get('/checkout', (req, res) => {
+    if (!req.session.user) {
+        return res.redirect('/login');
+    }
+    res.render('checkout', {
+        user: req.session.user || null,
+        error: null
+    });
+});
+
+// Обработка формы чекаута
+app.post('/checkout', (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).json({ error: 'Please log in to complete your purchase' });
+    }
+
+    const { full_name, email, address, city, country, postal_code, payment_method, cart } = req.body;
+
+    // Валидация данных
+    if (!full_name || !email || !address || !city || !country || !postal_code || !payment_method || !cart) {
+        return res.status(400).json({ error: 'All fields are required' });
+    }
+
+    let cartItems;
+    try {
+        cartItems = JSON.parse(cart);
+    } catch (e) {
+        return res.status(400).json({ error: 'Invalid cart data' });
+    }
+
+    if (!Array.isArray(cartItems) || cartItems.length === 0) {
+        return res.status(400).json({ error: 'Cart is empty or invalid' });
+    }
+
+    // Рассчитываем общую сумму
+    const totalUSDT = cartItems.reduce((sum, item) => sum + parseFloat(item.price), 0);
+    const totalEUR = totalUSDT * 0.9; // Примерный курс
+    const minimumOrderEUR = 50;
+
+    if (totalEUR < minimumOrderEUR) {
+        return res.status(400).json({ error: `Minimum order amount is ${minimumOrderEUR} EUR` });
+    }
+
+    // Формируем адрес доставки
+    const shippingAddress = `${full_name}, ${address}, ${city}, ${country}, ${postal_code}, Email: ${email}`;
+
+    // Генерируем уникальный номер заказа
+    const orderNumber = `ORD-${uuidv4().slice(0, 8).toUpperCase()}`;
+
+    // Получаем ID пользователя
+    db.get('SELECT id FROM users WHERE username = ?', [req.session.user], (err, user) => {
+        if (err || !user) {
+            return res.status(500).json({ error: 'User not found' });
+        }
+
+        // Сохраняем заказ в базе данных
+        db.run(`INSERT INTO orders (user_id, order_number, items, total_usdt, shipping_address, payment_method, status)
+                VALUES (?, ?, ?, ?, ?, ?, 'pending')`,
+            [user.id, orderNumber, JSON.stringify(cartItems), totalUSDT, shippingAddress, payment_method],
+            function (err) {
+                if (err) {
+                    console.error('Ошибка сохранения заказа:', err.message);
+                    return res.status(500).json({ error: 'Failed to create order' });
+                }
+
+                // Возвращаем данные для оплаты через Plisio
+                const paymentData = {
+                    order_number: orderNumber,
+                    amount: totalUSDT,
+                    redirect: `/order-success?order=${orderNumber}`
+                };
+                res.json(paymentData);
+            });
+    });
+});
+
+// Страница успешного заказа
+app.get('/order-success', (req, res) => {
+    const orderNumber = req.query.order;
+    if (!orderNumber) {
+        return res.redirect('/webshop');
+    }
+
+    db.get('SELECT * FROM orders WHERE order_number = ?', [orderNumber], (err, order) => {
+        if (err || !order) {
+            return res.redirect('/webshop');
+        }
+        res.render('order-success', {
+            user: req.session.user || null,
+            order: {
+                order_number: order.order_number,
+                total_usdt: order.total_usdt,
+                items: JSON.parse(order.items),
+                shipping_address: order.shipping_address,
+                payment_method: order.payment_method,
+                status: order.status
+            }
+        });
+    });
+});
+
+// Дополнительные маршруты
+app.get('/services', (req, res) => {
     const renderData = {
         user: req.session.user || null,
-        purchaseSuccess: req.session.purchaseSuccess || false,
-        voucherAlreadyOwned: req.session.voucherAlreadyOwned || false
+        purchaseSuccess: req.session.purchaseSuccess === true, // Явно задаем false, если undefined
+        voucherAlreadyOwned: req.session.voucherAlreadyOwned === true // Явно задаем false, если undefined
     };
+    res.render('services', renderData);
+    // Удаляем после рендера, чтобы не терять значения до обработки
     if (req.session.purchaseSuccess) delete req.session.purchaseSuccess;
     if (req.session.voucherAlreadyOwned) delete req.session.voucherAlreadyOwned;
-    res.render('about', renderData);
+});
+
+app.get('/academy', (req, res) => {
+    res.render('academy', { user: req.session.user || null });
+});
+
+app.get('/about', (req, res) => {
+    res.render('about', { user: req.session.user || null });
 });
 
 app.get('/job', (req, res) => {
-    const renderData = {
-        user: req.session.user || null,
-        purchaseSuccess: req.session.purchaseSuccess || false,
-        voucherAlreadyOwned: req.session.voucherAlreadyOwned || false
-    };
-    if (req.session.purchaseSuccess) delete req.session.purchaseSuccess;
-    if (req.session.voucherAlreadyOwned) delete req.session.voucherAlreadyOwned;
-    res.render('job', renderData);
+    res.render('job', { user: req.session.user || null });
 });
 
 app.get('/coin', (req, res) => {
-    const renderData = {
-        user: req.session.user || null,
-        purchaseSuccess: req.session.purchaseSuccess || false,
-        voucherAlreadyOwned: req.session.voucherAlreadyOwned || false
-    };
-    if (req.session.purchaseSuccess) delete req.session.purchaseSuccess;
-    if (req.session.voucherAlreadyOwned) delete req.session.voucherAlreadyOwned;
-    res.render('coin', renderData);
+    res.render('coin', { user: req.session.user || null });
 });
 
 app.get('/contact', (req, res) => {
-    const renderData = {
-        user: req.session.user || null,
-        purchaseSuccess: req.session.purchaseSuccess || false,
-        voucherAlreadyOwned: req.session.voucherAlreadyOwned || false
-    };
-    if (req.session.purchaseSuccess) delete req.session.purchaseSuccess;
-    if (req.session.voucherAlreadyOwned) delete req.session.voucherAlreadyOwned;
-    res.render('contact', renderData);
+    res.render('contact', { user: req.session.user || null });
 });
 
+// Маршрут для страницы продукта
 app.get('/product/:productId', (req, res) => {
     const productId = req.params.productId;
-    const hash = req.query.hash || uuidv4(); // Используем существующий хэш или генерируем новый
+    const hash = req.query.hash || uuidv4();
 
     const products = {
         'сlassic-pomade-125ml': {
@@ -495,7 +502,6 @@ app.get('/product/:productId', (req, res) => {
         return res.status(404).send('Product not found');
     }
 
-    // Если хэш отсутствует, перенаправляем с новым хэшем
     if (!req.query.hash) {
         return res.redirect(`/product/${productId}?hash=${hash}`);
     }
@@ -503,6 +509,47 @@ app.get('/product/:productId', (req, res) => {
     res.render('product', {
         user: req.session.user || null,
         product: product,
-        hash: hash // Передаем хэш в шаблон, если нужно
+        hash: hash
+    });
+});
+
+// Обработка покупки ваучера
+app.post('/buy-voucher', (req, res) => {
+    if (!req.session.user) {
+        return res.redirect('/login');
+    }
+    db.get('SELECT voucher FROM users WHERE username = ?', [req.session.user], (err, row) => {
+        if (err) {
+            console.error(err.message);
+            return res.redirect('/');
+        }
+        if (row.voucher === 1) {
+            req.session.voucherAlreadyOwned = true;
+            return res.redirect('/');
+        }
+        db.run('UPDATE users SET voucher = 1 WHERE username = ?', [req.session.user], (updateErr) => {
+            if (updateErr) {
+                console.error(updateErr.message);
+                return res.redirect('/');
+            }
+            req.session.purchaseSuccess = true;
+            res.redirect('/');
+        });
+    });
+});
+
+// Запуск сервера
+const server = app.listen(port, () => {
+    console.log(`Сервер запущен на http://localhost:${port}`);
+});
+
+// Обработка завершения работы сервера
+process.on('SIGINT', () => {
+    server.close(() => {
+        console.log('Сервер остановлен');
+        db.close(() => {
+            console.log('Соединение с базой данных закрыто');
+            process.exit(0);
+        });
     });
 });
