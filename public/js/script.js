@@ -74,3 +74,27 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// Всплывающее уведомление
+const cryptoPopup = document.querySelector('.crypto-popup');
+const cryptoCloseBtn = document.querySelector('.crypto-close-btn');
+
+if (cryptoPopup && cryptoCloseBtn) {
+    // Показываем уведомление через 1 секунду после загрузки
+    setTimeout(() => {
+        cryptoPopup.classList.add('active');
+    }, 1000);
+
+    // Закрытие уведомления
+    cryptoCloseBtn.addEventListener('click', () => {
+        cryptoPopup.classList.remove('active');
+        // Можно добавить cookie или localStorage, чтобы не показывать снова
+        localStorage.setItem('cryptoPopupClosed', 'true');
+    });
+
+    // Проверяем, было ли уведомление уже закрыто
+    if (localStorage.getItem('cryptoPopupClosed') !== 'true') {
+        cryptoPopup.style.display = 'block';
+    } else {
+        cryptoPopup.style.display = 'none';
+    }
+}

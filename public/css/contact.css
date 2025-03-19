@@ -740,3 +740,101 @@ footer {
     padding-bottom: 10px;
     margin-bottom: 10px;
 }
+
+/* Стили для всплывающего уведомления */
+.crypto-popup {
+    position: fixed;
+    bottom: -100px; /* Изначально скрыто ниже экрана */
+    right: 20px;
+    width: 300px;
+    background: rgba(159, 127, 243, 0.95);
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    transition: bottom 0.5s ease-in-out;
+}
+
+.crypto-popup.active {
+    bottom: 20px; /* Появляется внизу справа */
+}
+
+.crypto-popup-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.crypto-popup-content p {
+    margin: 0;
+    color: #FFF;
+    font-size: 16px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.crypto-popup-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.crypto-more-btn {
+    background: #FFF;
+    color: #000;
+    padding: 8px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 900;
+    text-transform: uppercase;
+    transition: opacity 0.3s;
+}
+
+.crypto-more-btn:hover {
+    opacity: 0.8;
+}
+
+.crypto-close-btn {
+    background: none;
+    border: none;
+    color: #FFF;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s;
+}
+
+.crypto-close-btn:hover {
+    opacity: 0.8;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    .crypto-popup {
+        width: 90%;
+        max-width: 280px;
+        right: 10px;
+        padding: 10px;
+    }
+
+    .crypto-popup-content p {
+        font-size: 14px;
+    }
+
+    .crypto-more-btn {
+        padding: 6px 15px;
+        font-size: 12px;
+    }
+
+    .crypto-close-btn {
+        font-size: 20px;
+        width: 25px;
+        height: 25px;
+    }
+}
