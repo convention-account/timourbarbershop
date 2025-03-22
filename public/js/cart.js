@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Проверка наличия всех элементов
     if (!cartIcon || !cartModal || !closeCart || !cartItemsContainer || !cartCount || !totalPriceElement || !checkoutBtn) {
-        console.error('Ошибка: один или несколько элементов корзины не найдены!');
+        console.error('Error: items not finded!');
         return;
     }
 
@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let totalUSDT = 0;
 
         if (cart.length === 0) {
-            cartItemsContainer.innerHTML = '<p>Ваша корзина пуста</p>';
+            cartItemsContainer.innerHTML = '<p>Your cart is empty</p>';
         } else {
             cart.forEach((item, index) => {
                 totalUSDT += item.price;
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 cartItem.innerHTML = `
                     <span class="cart-item-title">${item.title}</span>
                     <span class="cart-item-price">${item.price} USDT</span>
-                    <button class="remove-item" data-index="${index}">Удалить</button>
+                    <button class="remove-item" data-index="${index}">Delete</button>
                 `;
                 cartItemsContainer.appendChild(cartItem);
             });
@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
             message.classList.add('min-order-message');
             message.style.color = '#ff4444';
             message.style.textAlign = 'center';
-            message.textContent = `Минимальная сумма заказа ${minimumOrderEUR} EUR. Добавьте еще товаров.`;
+            message.textContent = `Minimum sum order ${minimumOrderEUR} EUR. Add more items.`;
             cartItemsContainer.appendChild(message);
             checkoutBtn.disabled = true;
             checkoutBtn.style.opacity = '0.5';
@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const customAlertMessage = document.getElementById('custom-alert-message');
             const customAlertClose = document.querySelector('.custom-alert-close');
 
-            customAlertMessage.textContent = 'Ваша корзина пуста!';
+            customAlertMessage.textContent = 'Your cart is empty!';
             customAlert.style.display = 'flex';
 
             customAlertClose.addEventListener('click', () => {
@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const customAlertMessage = document.getElementById('custom-alert-message');
             const customAlertClose = document.querySelector('.custom-alert-close');
 
-            customAlertMessage.textContent = `Минимальная сумма заказа ${minimumOrderEUR} EUR. Добавьте еще товаров.`;
+            customAlertMessage.textContent = `Minimum sum order ${minimumOrderEUR} EUR. Add more items.`;
             customAlert.style.display = 'flex';
 
             customAlertClose.addEventListener('click', () => {
