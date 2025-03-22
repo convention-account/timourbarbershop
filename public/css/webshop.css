@@ -1014,3 +1014,50 @@ a {
         height: 25px;
     }
 }
+
+/* Для webshop.css и contact.css */
+.custom-alert {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 3000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.custom-alert-content {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    padding: 20px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    color: #FFF;
+}
+
+.custom-alert-content p {
+    font-size: 18px;
+    font-weight: 900;
+    margin: 0 0 20px;
+}
+
+.custom-alert-close {
+    background: #9F7FF3;
+    color: #FFF;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 900;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+.custom-alert-close:hover {
+    opacity: 0.8;
+}

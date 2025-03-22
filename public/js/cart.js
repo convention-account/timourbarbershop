@@ -7,7 +7,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const cartCount = document.querySelector('.cart-count');
     const totalPriceElement = document.querySelector('.total-price');
     const checkoutBtn = document.querySelector('.checkout-btn');
-    const paymentForm = document.getElementById('payment-form');
     const body = document.body;
 
     // Вспомогательные функции для работы с cookies
@@ -34,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let cart = getCookie('cart') || [];
 
     // Проверка наличия всех элементов
-    if (!cartIcon || !cartModal || !closeCart || !cartItemsContainer || !cartCount || !totalPriceElement || !checkoutBtn || !paymentForm) {
+    if (!cartIcon || !cartModal || !closeCart || !cartItemsContainer || !cartCount || !totalPriceElement || !checkoutBtn) {
         console.error('Ошибка: один или несколько элементов корзины не найдены!');
         return;
     }
@@ -58,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let totalUSDT = 0;
 
         if (cart.length === 0) {
-            cartItemsContainer.innerHTML = '<p>Your cart is empty</p>';
+            cartItemsContainer.innerHTML = '<p>Ваша корзина пуста</p>';
         } else {
             cart.forEach((item, index) => {
                 totalUSDT += item.price;
@@ -67,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 cartItem.innerHTML = `
                     <span class="cart-item-title">${item.title}</span>
                     <span class="cart-item-price">${item.price} USDT</span>
-                    <button class="remove-item" data-index="${index}">Remove</button>
+                    <button class="remove-item" data-index="${index}">Удалить</button>
                 `;
                 cartItemsContainer.appendChild(cartItem);
             });
@@ -89,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
             message.classList.add('min-order-message');
             message.style.color = '#ff4444';
             message.style.textAlign = 'center';
-            message.textContent = `Minimum order amount is ${minimumOrderEUR} EUR. Add more items to proceed.`;
+            message.textContent = `Минимальная сумма заказа ${minimumOrderEUR} EUR. Добавьте еще товаров.`;
             cartItemsContainer.appendChild(message);
             checkoutBtn.disabled = true;
             checkoutBtn.style.opacity = '0.5';
@@ -113,70 +112,44 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Обработка оплаты через Plisio
+    // Обработка перехода на чекаут
     checkoutBtn.addEventListener('click', (e) => {
-        e.preventDefault(); // Предотвращаем действие по умолчанию
-        const totalUSDT = parseFloat(totalPriceElement.textContent.match(/\d+/)[0]);
+        e.preventDefault(); // Предотвращаем стандартное поведение ссылки
+        const totalUSDT = parseFloat(totalPriceElement.textContent.match(/\d+(\.\d+)?/)[0]);
         const totalEUR = totalUSDT * 0.9;
         const minimumOrderEUR = 50;
 
         if (cart.length === 0) {
-            alert('Your cart is empty!');
+            const customAlert = document.getElementById('custom-alert');
+            const customAlertMessage = document.getElementById('custom-alert-message');
+            const customAlertClose = document.querySelector('.custom-alert-close');
+
+            customAlertMessage.textContent = 'Ваша корзина пуста!';
+            customAlert.style.display = 'flex';
+
+            customAlertClose.addEventListener('click', () => {
+                customAlert.style.display = 'none';
+            });
             return;
         }
 
         if (totalEUR < minimumOrderEUR) {
-            alert(`Minimum order amount is ${minimumOrderEUR} EUR. Please add more items to proceed.`);
+            const customAlert = document.getElementById('custom-alert');
+            const customAlertMessage = document.getElementById('custom-alert-message');
+            const customAlertClose = document.querySelector('.custom-alert-close');
+
+            customAlertMessage.textContent = `Минимальная сумма заказа ${minimumOrderEUR} EUR. Добавьте еще товаров.`;
+            customAlert.style.display = 'flex';
+
+            customAlertClose.addEventListener('click', () => {
+                customAlert.style.display = 'none';
+            });
             return;
         }
 
-        // Заполняем форму Plisio
-        document.getElementById('cart-amount').value = totalUSDT;
-        paymentForm.submit(); // Отправляем форму на Plisio
+        window.location.href = '/checkout';
     });
 
     // Инициализация корзины при загрузке страницы
     updateCart();
-});
-
-checkoutBtn.addEventListener('click', async (e) => {
-    e.preventDefault();
-    const totalUSDT = parseFloat(totalPriceElement.textContent.match(/\d+(\.\d+)?/)[0]);
-    const totalEUR = totalUSDT * 0.9;
-    const minimumOrderEUR = 50;
-
-    if (cart.length === 0) {
-        alert('Your cart is empty!');
-        return;
-    }
-
-    if (totalEUR < minimumOrderEUR) {
-        alert(`Minimum order amount is ${minimumOrderEUR} EUR.`);
-        return;
-    }
-
-    const response = await fetch('/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            full_name: 'John Doe', // Замените на данные из формы
-            email: 'john@example.com',
-            address: '123 Street',
-            city: 'Vilnius',
-            country: 'Lithuania',
-            postal_code: '12345',
-            payment_method: 'usdt_trc20',
-            cart: JSON.stringify(cart)
-        })
-    });
-
-    const result = await response.json();
-    if (result.error) {
-        alert(result.error);
-    } else {
-        document.getElementById('cart-amount').value = result.amount;
-        document.querySelector('input[name="order_number"]').value = result.order_number;
-        document.querySelector('input[name="success_url"]').value = `https://yourdomain.com/order-success?order=${result.order_number}`;
-        paymentForm.submit();
-    }
 });

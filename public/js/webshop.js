@@ -1,3 +1,4 @@
+// public/js/webshop.js
 document.addEventListener('DOMContentLoaded', () => {
     const burger = document.querySelector('.burger-menu');
     const navList = document.querySelector('.nav-list');
@@ -48,23 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
-
-    // Бургер-меню
-    // if (burger && navList) {
-    //     burger.addEventListener('click', () => {
-    //         burger.classList.toggle('toggle');
-    //         navList.classList.toggle('active');
-    //         body.classList.toggle('menu-open');
-    //     });
-
-    //     navItems.forEach(item => {
-    //         item.addEventListener('click', () => {
-    //             burger.classList.remove('toggle');
-    //             navList.classList.remove('active');
-    //             body.classList.remove('menu-open');
-    //         });
-    //     });
-    // }
 
     // Функция анимации полета товара в корзину
     function flyToCart(button) {
@@ -146,17 +130,21 @@ document.addEventListener('DOMContentLoaded', () => {
             body.classList.remove('cart-open');
         });
 
-        // Обработка оплаты
+        // Обработка перехода на чекаут
         checkoutBtn.addEventListener('click', () => {
             if (cart.length > 0) {
-                alert(`Proceeding to payment with total: ${totalPriceElement.textContent}. Please implement payment logic here!`);
-                cart = [];
-                setCookie('cart', cart, 7);
-                updateCart();
-                cartModal.classList.remove('active');
-                body.classList.remove('cart-open');
+                window.location.href = '/checkout';
             } else {
-                alert('Your cart is empty!');
+                const customAlert = document.getElementById('custom-alert');
+                const customAlertMessage = document.getElementById('custom-alert-message');
+                const customAlertClose = document.querySelector('.custom-alert-close');
+
+                customAlertMessage.textContent = 'Your cart is empty!';
+                customAlert.style.display = 'flex';
+
+                customAlertClose.addEventListener('click', () => {
+                    customAlert.style.display = 'none';
+                });
             }
         });
     } else {
@@ -170,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let total = 0;
 
         if (cart.length === 0) {
-            cartItemsContainer.innerHTML = '<p>Your cart is empty</p>';
+            cartItemsContainer.innerHTML = '<p>Ваша корзина пуста</p>';
         } else {
             cart.forEach((item, index) => {
                 total += item.price;
@@ -179,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 cartItem.innerHTML = `
                     <span class="cart-item-title">${item.title}</span>
                     <span class="cart-item-price">${item.price} USDT</span>
-                    <button class="remove-item" data-index="${index}">Remove</button>
+                    <button class="remove-item" data-index="${index}">Удалить</button>
                 `;
                 cartItemsContainer.appendChild(cartItem);
             });

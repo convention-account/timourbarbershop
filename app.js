@@ -34,17 +34,13 @@ app.use(session({
 
 // Middleware для проверки авторизации через куки
 app.use((req, res, next) => {
-    if (!req.session.user && req.cookies.authToken) {
-        const authToken = req.cookies.authToken;
-        db.get('SELECT username FROM users WHERE authToken = ?', [authToken], (err, user) => {
-            if (user) {
-                req.session.user = user.username;
-            }
-            next();
-        });
-    } else {
-        next();
+    const hashFreePaths = ['/login', '/register', '/logout', '/buy-voucher', '/cart', '/order-success'];
+    if (!req.query.hash && !hashFreePaths.includes(req.path) && !req.path.startsWith('/product/')) {
+        const hash = uuidv4();
+        const newUrl = `${req.path}?hash=${hash}`;
+        return res.redirect(newUrl);
     }
+    next();
 });
 
 // Middleware для добавления хэша в URL
@@ -281,6 +277,7 @@ app.post('/checkout', (req, res) => {
 // Страница успешного заказа
 app.get('/order-success', (req, res) => {
     const orderNumber = req.query.order;
+    const hash = req.query.hash || ''; // Получаем хэш из query-параметров
     if (!orderNumber) {
         return res.redirect('/webshop');
     }
@@ -298,7 +295,8 @@ app.get('/order-success', (req, res) => {
                 shipping_address: order.shipping_address,
                 payment_method: order.payment_method,
                 status: order.status
-            }
+            },
+            hash: hash // Передаем хэш в шаблон
         });
     });
 });

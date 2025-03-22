@@ -838,3 +838,42 @@ footer {
         height: 25px;
     }
 }
+
+/* css/contact.css */
+.shipping-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.shipping-option {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.3s;
+    height: 50px;
+}
+
+.shipping-option:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.shipping-option input[type="radio"] {
+    margin-right: 10px;
+}
+
+.shipping-icon {
+    width: 140px;
+    height: 102px;
+    margin-right: 10px;
+    object-fit: contain;
+}
+
+.shipping-option span {
+    color: #FFF;
+    font-size: 16px;
+    font-weight: 700;
+}

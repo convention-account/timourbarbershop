@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="css/contact.css">
     <link rel="stylesheet" href="css/mobile-adaptation.css">
 </head>
+
 <body>
     <div class="background-overlay"></div>
     <header>
@@ -34,9 +36,9 @@
         <div class="login-nav">
             <% if (user) { %>
                 <li>Welcome, <%= user %> | <a href="/profile">Personal Cabinet</a> | <a href="/logout">Logout</a></li>
-            <% } else { %>
-                <li><a href="/login">Login</a></li>
-            <% } %>
+                <% } else { %>
+                    <li><a href="/login">Login</a></li>
+                    <% } %>
         </div>
         <div class="cart-icon">
             🛒
@@ -100,16 +102,13 @@
                                 <input type="radio" name="payment_method" value="card">
                                 Credit/Debit Card
                             </label>
-                            <label>
-                                <input type="radio" name="payment_method" value="paypal">
-                                PayPal
-                            </label>
                         </div>
-                        <!-- Дополнительные поля для карты (показываются при выборе) -->
+                        <!-- Дополнительные поля для карты -->
                         <div class="card-details" style="display: none;">
                             <div class="form-group">
                                 <label for="card-number">Card Number</label>
-                                <input type="text" id="card-number" name="card_number" placeholder="1234 5678 9012 3456">
+                                <input type="text" id="card-number" name="card_number"
+                                    placeholder="1234 5678 9012 3456">
                             </div>
                             <div class="form-group">
                                 <label for="card-expiry">Expiry Date</label>
@@ -122,15 +121,38 @@
                         </div>
                     </div>
 
+                    <!-- Способы доставки -->
+                    <div class="checkout-group">
+                        <h3 class="form-subtitle">Shipping Method</h3>
+                        <div class="shipping-methods">
+                            <label class="shipping-option">
+                                <input type="radio" name="shipping_method" value="dhl" checked>
+                                <img src="../media/lp-express-s.png" alt="LP    " class="shipping-icon">
+                                <span>LPExpress - 5 USDT (3-5 days) - Baltics regions</span>
+                            </label>
+                            <label class="shipping-option">
+                                <input type="radio" name="shipping_method" value="fedex">
+                                <img src="../media/dpd.png" alt="DPD" class="shipping-icon">
+                                <span>DPD - 7 USDT (2-4 days) - All Europe</span>
+                            </label>
+                            <label class="shipping-option">
+                                <input type="radio" name="shipping_method" value="ups">
+                                <img src="../media/omniva_horizontal_orange-1024x410-1.webp" alt="Omniva"
+                                    class="shipping-icon">
+                                <span>Omniva - 6 USDT (3-6 days) - Poland and Baltics</span>
+                            </label>
+                        </div>
+                    </div>
+
                     <!-- Скрытые поля для Plisio -->
                     <input type="hidden" name="source_currency" value="USDT_TRC20">
-                    <input type="hidden" name="source_amount" id="cart-amount" value="80">
+                    <input type="hidden" name="source_amount" id="cart-amount" value="0">
                     <input type="hidden" name="order_name" value="Checkout Purchase">
                     <input type="hidden" name="order_number" value="checkout-001">
                     <input type="hidden" name="api_key" value="№">
                     <input type="hidden" name="success_url" value="https://yourdomain.com/success">
                     <input type="hidden" name="cancel_url" value="https://yourdomain.com/webshop">
-                    
+
                     <button type="submit" class="form-btn checkout-btn">Place Order</button>
                 </form>
                 <button class="close-cart" onclick="window.location.href='/webshop'">Back to Store</button>
@@ -139,31 +161,32 @@
             <!-- Обзор заказа -->
             <div class="contact-info checkout-info">
                 <h2 class="form-title">Order Summary</h2>
-                <div class="cart-items">
-                    <div class="cart-item">
-                        <span class="cart-item-title">Barber Course</span>
-                        <span class="cart-item-price">50 USDT</span>
-                    </div>
-                    <div class="cart-item">
-                        <span class="cart-item-title">Haircut Kit</span>
-                        <span class="cart-item-price">30 USDT</span>
-                    </div>
+                <div class="cart-items" id="checkout-cart-items">
+                    <!-- Динамически заполняется через JavaScript -->
                 </div>
                 <div class="cart-total">
                     <span>Subtotal:</span>
-                    <span>80 USDT</span>
+                    <span id="checkout-subtotal">0 USDT</span>
                 </div>
                 <div class="cart-total">
                     <span>Shipping:</span>
-                    <span>5 USDT</span>
+                    <span id="checkout-shipping">5 USDT</span>
                 </div>
                 <div class="cart-total">
                     <span>Total:</span>
-                    <span class="total-price">85 USDT</span>
+                    <span class="total-price" id="checkout-total">5 USDT</span>
                 </div>
             </div>
         </div>
     </main>
+
+    <!-- Стилизованный алерт -->
+    <div class="custom-alert" id="custom-alert" style="display: none;">
+        <div class="custom-alert-content">
+            <p id="custom-alert-message"></p>
+            <button class="custom-alert-close">OK</button>
+        </div>
+    </div>
 
     <footer>
         <div class="footer-content">
@@ -176,10 +199,11 @@
         </div>
     </footer>
 
+    <!-- Скрипт для управления полями карты и доставкой -->
     <script>
-        // Простой скрипт для показа/скрытия полей карты
+        // Показ/скрытие полей карты
         document.querySelectorAll('input[name="payment_method"]').forEach(radio => {
-            radio.addEventListener('change', function() {
+            radio.addEventListener('change', function () {
                 const cardDetails = document.querySelector('.card-details');
                 if (this.value === 'card') {
                     cardDetails.style.display = 'block';
@@ -188,8 +212,133 @@
                 }
             });
         });
+
+        // Обновление итога в зависимости от способа доставки
+        document.querySelectorAll('input[name="shipping_method"]').forEach(radio => {
+            radio.addEventListener('change', function () {
+                const shippingCosts = {
+                    'dhl': 5,
+                    'fedex': 7,
+                    'ups': 6
+                };
+                const shippingCost = shippingCosts[this.value];
+                const subtotalElement = document.getElementById('checkout-subtotal');
+                const shippingElement = document.getElementById('checkout-shipping');
+                const totalElement = document.getElementById('checkout-total');
+                const subtotal = parseFloat(subtotalElement.textContent);
+                const newTotal = subtotal + shippingCost;
+
+                shippingElement.textContent = `${shippingCost} USDT`;
+                totalElement.textContent = `${newTotal} USDT`;
+                document.getElementById('cart-amount').value = newTotal; // Обновляем скрытое поле для Plisio
+            });
+        });
+
+        // Функция для получения cookie
+        function getCookie(name) {
+            const nameEQ = name + "=";
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                let cookie = cookies[i].trim();
+                if (cookie.indexOf(nameEQ) === 0) {
+                    return JSON.parse(decodeURIComponent(cookie.substring(nameEQ.length)));
+                }
+            }
+            return null;
+        }
+
+        // Получение корзины из cookies
+        const cart = getCookie('cart') || [];
+
+        // Заполнение "Order Summary"
+        const cartItemsContainer = document.getElementById('checkout-cart-items');
+        const subtotalElement = document.getElementById('checkout-subtotal');
+        const shippingElement = document.getElementById('checkout-shipping');
+        const totalElement = document.getElementById('checkout-total');
+
+        let subtotal = 0;
+        if (cart.length === 0) {
+            cartItemsContainer.innerHTML = '<p>Ваша корзина пуста</p>';
+        } else {
+            cart.forEach(item => {
+                subtotal += item.price;
+                const cartItem = document.createElement('div');
+                cartItem.classList.add('cart-item');
+                cartItem.innerHTML = `
+                <span class="cart-item-title">${item.title}</span>
+                <span class="cart-item-price">${item.price} USDT</span>
+            `;
+                cartItemsContainer.appendChild(cartItem);
+            });
+        }
+
+        // Обновление итогов
+        const shippingCost = 5; // Стоимость доставки по умолчанию (DHL)
+        const total = subtotal + shippingCost;
+
+        subtotalElement.textContent = `${subtotal} USDT`;
+        shippingElement.textContent = `${shippingCost} USDT`;
+        totalElement.textContent = `${total} USDT`;
+
+        // Обновляем скрытое поле с корзиной
+        document.getElementById('cart-items').value = JSON.stringify(cart);
+
+        // Обработка отправки формы через AJAX
+        document.getElementById('checkout-form').addEventListener('submit', async (e) => {
+            e.preventDefault(); // Предотвращаем стандартную отправку формы
+
+            const formData = new FormData(document.getElementById('checkout-form'));
+            const data = Object.fromEntries(formData);
+
+            try {
+                const response = await fetch('/checkout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    // Перенаправляем на страницу оплаты Plisio
+                    const plisioForm = document.createElement('form');
+                    plisioForm.method = 'POST';
+                    plisioForm.action = 'https://plisio.net/invoice';
+
+                    const fields = {
+                        source_currency: 'USDT_TRC20',
+                        source_amount: result.amount,
+                        order_name: 'Checkout Purchase',
+                        order_number: result.order_number,
+                        api_key: '№',
+                        success_url: 'https://yourdomain.com/success',
+                        cancel_url: 'https://yourdomain.com/webshop',
+                        redirect: result.redirect
+                    };
+
+                    for (const [key, value] of Object.entries(fields)) {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = key;
+                        input.value = value;
+                        plisioForm.appendChild(input);
+                    }
+
+                    document.body.appendChild(plisioForm);
+                    plisioForm.submit();
+                } else {
+                    alert(result.error);
+                }
+            } catch (error) {
+                alert('Произошла ошибка при обработке заказа');
+                console.error(error);
+            }
+        });
     </script>
     <script src="js/script.js"></script>
     <script src="/js/cart.js"></script>
 </body>
+
 </html>
