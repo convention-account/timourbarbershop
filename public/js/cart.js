@@ -9,53 +9,62 @@ document.addEventListener('DOMContentLoaded', () => {
     const checkoutBtn = document.querySelector('.checkout-btn');
     const body = document.body;
 
-    // Helper functions for cookies
+    // Функция для установки куки
     function setCookie(name, value, days) {
+        if (!Array.isArray(value)) {
+            console.error('Cart must be an array:', value);
+            value = [];
+        }
         const expires = new Date();
         expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
         const cookieValue = encodeURIComponent(JSON.stringify(value)) + (days ? `; expires=${expires.toUTCString()}` : '');
         document.cookie = `${name}=${cookieValue}; path=/`;
     }
 
+    // Функция для получения куки
     function getCookie(name) {
         const nameEQ = name + "=";
         const cookies = document.cookie.split(';');
         for (let i = 0; i < cookies.length; i++) {
             let cookie = cookies[i].trim();
             if (cookie.indexOf(nameEQ) === 0) {
-                return JSON.parse(decodeURIComponent(cookie.substring(nameEQ.length)));
+                try {
+                    return JSON.parse(decodeURIComponent(cookie.substring(nameEQ.length)));
+                } catch (error) {
+                    console.error('Error parsing cookie:', error.message);
+                    return [];
+                }
             }
         }
-        return null;
+        return [];
     }
 
-    // Initialize cart from cookies
-    let cart = getCookie('cart') || [];
+    // Инициализация корзины из куки
+    let cart = getCookie('cart');
 
-    // Check if all cart-related elements are present
+    // Проверка наличия всех элементов корзины на странице
     if (!cartIcon || !cartModal || !closeCart || !cartItemsContainer || !cartCount || !totalPriceElement || !checkoutBtn) {
         console.warn('Cart elements not found on this page. Skipping cart initialization.');
-        // Update cart count if cartIcon and cartCount exist (for pages like checkout)
         if (cartIcon && cartCount) {
             cartCount.textContent = cart.length;
         }
         return;
     }
 
-    // Open cart
+    // Открытие модального окна корзины
     cartIcon.addEventListener('click', () => {
         cartModal.classList.add('active');
         body.classList.add('cart-open');
         updateCart();
     });
 
-    // Close cart
+    // Закрытие модального окна корзины
     closeCart.addEventListener('click', () => {
         cartModal.classList.remove('active');
         body.classList.remove('cart-open');
     });
 
-    // Update cart display
+    // Обновление отображения корзины
     function updateCart() {
         cartItemsContainer.innerHTML = '';
         let totalUSDT = 0;
@@ -64,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
             cartItemsContainer.innerHTML = '<p>Your cart is empty</p>';
         } else {
             cart.forEach((item, index) => {
-                totalUSDT += item.price;
+                totalUSDT += parseFloat(item.price);
                 const cartItem = document.createElement('div');
                 cartItem.classList.add('cart-item');
                 cartItem.innerHTML = `
@@ -79,11 +88,9 @@ document.addEventListener('DOMContentLoaded', () => {
         cartCount.textContent = cart.length;
         totalPriceElement.textContent = `${totalUSDT} USDT`;
 
-        // Convert USDT to EUR (1 USDT ≈ 0.9 EUR)
         const totalEUR = totalUSDT * 0.9;
         const minimumOrderEUR = 50;
 
-        // Manage button state and minimum order message
         const existingMessage = cartItemsContainer.querySelector('.min-order-message');
         if (existingMessage) existingMessage.remove();
 
@@ -105,7 +112,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setCookie('cart', cart, 7);
 
-        // Remove item handlers
         document.querySelectorAll('.remove-item').forEach(button => {
             button.addEventListener('click', (e) => {
                 const index = parseInt(e.target.dataset.index);
@@ -116,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Handle checkout button click
+    // Обработка нажатия кнопки "Checkout"
     checkoutBtn.addEventListener('click', (e) => {
         e.preventDefault();
         const totalUSDT = parseFloat(totalPriceElement.textContent.match(/\d+(\.\d+)?/)[0]);
@@ -136,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = '/checkout';
     });
 
-    // Helper function to show custom alert
+    // Функция для отображения пользовательского уведомления
     function showAlert(message) {
         const customAlert = document.getElementById('custom-alert');
         const customAlertMessage = document.getElementById('custom-alert-message');
@@ -151,6 +157,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Initialize cart on page load
+    // Инициализация корзины при загрузке страницы
     updateCart();
 });

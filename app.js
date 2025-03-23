@@ -12,7 +12,7 @@ const nodemailer = require('nodemailer');
 const app = express();
 const port = 3001;
 
-// Middleware
+// Middleware для обработки данных формы и JSON
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static('public'));
@@ -20,29 +20,30 @@ app.use(cookieParser());
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'public'));
 
-// Dynamic generation of secret key
+// Динамическая генерация секретного ключа для сессий
 const secretKey = crypto.randomBytes(32).toString('hex');
 
-// Session setup
+// Настройка сессий
 app.use(session({
     secret: secretKey,
     resave: false,
     saveUninitialized: false,
     cookie: {
-        maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        secure: process.env.NODE_ENV === 'production' // Только HTTPS в продакшене
     }
 }));
 
-// Email setup
+// Настройка отправки email через Gmail
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
         user: 'timourbarber@gmail.com',
-        pass: 'pass-word'
+        pass: 'your-app-specific-password' // Замените на пароль приложения Gmail
     }
 });
 
-// Middleware for checking authorization via cookies
+// Middleware для проверки авторизации через hash в URL
 app.use((req, res, next) => {
     const hashFreePaths = ['/login', '/register', '/logout', '/buy-voucher', '/cart', '/order-success', '/admin/update-status'];
     if (!req.query.hash && !hashFreePaths.includes(req.path) && !req.path.startsWith('/product/')) {
@@ -53,13 +54,13 @@ app.use((req, res, next) => {
     next();
 });
 
-// Creating database directory
+// Создание директории для базы данных, если она не существует
 const dbDir = path.join(__dirname, 'database');
 if (!fs.existsSync(dbDir)) {
     fs.mkdirSync(dbDir);
 }
 
-// Connecting to the database
+// Подключение к базе данных SQLite
 const db = new sqlite3.Database(path.join(dbDir, 'users.db'), (err) => {
     if (err) {
         console.error('Database connection error:', err.message);
@@ -67,7 +68,7 @@ const db = new sqlite3.Database(path.join(dbDir, 'users.db'), (err) => {
     }
     console.log('Connected to SQLite database');
 
-    // Creating users table
+    // Создание таблицы пользователей
     db.run(`CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT UNIQUE,
@@ -78,7 +79,7 @@ const db = new sqlite3.Database(path.join(dbDir, 'users.db'), (err) => {
         if (err) console.error('Error creating users table:', err.message);
     });
 
-    // Creating orders table
+    // Создание таблицы заказов
     db.run(`CREATE TABLE IF NOT EXISTS orders (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER,
@@ -94,17 +95,20 @@ const db = new sqlite3.Database(path.join(dbDir, 'users.db'), (err) => {
         if (err) console.error('Error creating orders table:', err.message);
     });
 
-    // Seed admin account if it doesn't exist
+    // Создание учетной записи администратора, если она еще не существует
     db.get('SELECT * FROM users WHERE username = ?', ['admin'], (err, row) => {
         if (!row) {
             bcrypt.hash('PRehp2u6Yry@', 10, (err, hashedPassword) => {
-                db.run('INSERT INTO users (username, password) VALUES (?, ?)', ['admin', hashedPassword]);
+                if (err) console.error('Error hashing admin password:', err.message);
+                db.run('INSERT INTO users (username, password) VALUES (?, ?)', ['admin', hashedPassword], (err) => {
+                    if (err) console.error('Error inserting admin user:', err.message);
+                });
             });
         }
     });
 });
 
-// Homepage
+// Главная страница
 app.get('/', (req, res) => {
     const renderData = {
         user: req.session.user || null,
@@ -116,32 +120,34 @@ app.get('/', (req, res) => {
     res.render('index', renderData);
 });
 
-// Login and registration pages
+// Страница входа
 app.get('/login', (req, res) => {
     res.render('login', { error: null, user: req.session?.user || null });
 });
 
+// Страница регистрации
 app.get('/register', (req, res) => {
     res.render('register', { error: null, user: req.session?.user || null });
 });
 
+// Обработка регистрации
 app.post('/register', async (req, res) => {
     const { username, password } = req.body;
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
-        db.run('INSERT INTO users (username, password, voucher) VALUES (?, ?, 0)',
-            [username, hashedPassword],
-            function (err) {
-                if (err) {
-                    return res.render('register', { error: 'This username is already taken', user: null });
-                }
-                res.redirect('/login');
-            });
+        db.run('INSERT INTO users (username, password, voucher) VALUES (?, ?, 0)', [username, hashedPassword], function (err) {
+            if (err) {
+                return res.render('register', { error: 'This username is already taken', user: null });
+            }
+            res.redirect('/login');
+        });
     } catch (error) {
+        console.error('Registration error:', error.message);
         res.render('register', { error: 'Registration error', user: null });
     }
 });
 
+// Обработка входа
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
     db.get('SELECT * FROM users WHERE username = ?', [username], async (err, user) => {
@@ -167,7 +173,7 @@ app.post('/login', (req, res) => {
     });
 });
 
-// Profile page
+// Страница профиля
 app.get('/profile', (req, res) => {
     if (!req.session.user) {
         return res.redirect('/login');
@@ -177,10 +183,9 @@ app.get('/profile', (req, res) => {
             console.error(err?.message || 'User not found');
             return res.redirect('/');
         }
-        // Fetch user's orders
         db.all('SELECT * FROM orders WHERE user_id = ?', [user.id], (err, orders) => {
             if (err) {
-                console.error(err.message);
+                console.error('Error fetching orders:', err.message);
                 return res.redirect('/');
             }
             const processedOrders = orders.map(order => {
@@ -200,7 +205,7 @@ app.get('/profile', (req, res) => {
     });
 });
 
-// Logout
+// Выход из системы
 app.get('/logout', (req, res) => {
     if (req.session.user) {
         db.run('UPDATE users SET authToken = NULL WHERE username = ?', [req.session.user], (err) => {
@@ -212,7 +217,7 @@ app.get('/logout', (req, res) => {
     res.redirect('/');
 });
 
-// Webshop page
+// Страница магазина
 app.get('/webshop', (req, res) => {
     const renderData = {
         user: req.session.user || null,
@@ -224,7 +229,7 @@ app.get('/webshop', (req, res) => {
     res.render('webshop', renderData);
 });
 
-// Checkout page
+// Страница оформления заказа
 app.get('/checkout', (req, res) => {
     if (!req.session.user) {
         return res.redirect('/login');
@@ -235,11 +240,14 @@ app.get('/checkout', (req, res) => {
     });
 });
 
-// Checkout form processing
+// Обработка формы оформления заказа
 app.post('/checkout', (req, res) => {
-    if (!req.session.user) return res.status(401).json({ error: 'Please log in' });
+    if (!req.session.user) {
+        return res.status(401).json({ error: 'Please log in' });
+    }
 
     console.log('Received request at /checkout:', req.body);
+    console.log('Cart cookie:', req.cookies.cart);
 
     const { full_name, email, address, city, country, postal_code, payment_method, shipping_method } = req.body;
     if (!full_name || !email || !address || !city || !country || !postal_code || !payment_method || !shipping_method) {
@@ -248,7 +256,13 @@ app.post('/checkout', (req, res) => {
 
     let cart;
     try {
-        cart = JSON.parse(req.cookies.cart || '[]');
+        const rawCart = req.cookies.cart;
+        if (!rawCart || typeof rawCart !== 'string' || rawCart.trim() === '') {
+            cart = [];
+        } else {
+            cart = JSON.parse(decodeURIComponent(rawCart));
+        }
+        console.log('Parsed cart:', cart);
     } catch (error) {
         console.error('Error parsing cart:', error.message);
         return res.status(400).json({ error: 'Invalid cart data' });
@@ -264,12 +278,16 @@ app.post('/checkout', (req, res) => {
         return res.status(400).json({ error: 'Invalid cart items' });
     }
 
-    const totalUSDT = cart.reduce((sum, item) => sum + parseFloat(item.price), 0) + (shipping_method === 'dhl' ? 5 : shipping_method === 'fedex' ? 7 : 6);
+    const shippingCosts = { dhl: 5, fedex: 7, ups: 6 };
+    const totalUSDT = cart.reduce((sum, item) => sum + parseFloat(item.price), 0) + (shippingCosts[shipping_method] || 0);
     const shippingAddress = `${full_name}, ${address}, ${city}, ${country}, ${postal_code}, Email: ${email}`;
     const orderNumber = `ORD-${uuidv4().slice(0, 8).toUpperCase()}`;
 
     db.get('SELECT id FROM users WHERE username = ?', [req.session.user], (err, user) => {
-        if (err || !user) return res.status(500).json({ error: 'User not found' });
+        if (err || !user) {
+            console.error('User lookup error:', err?.message || 'User not found');
+            return res.status(500).json({ error: 'User not found' });
+        }
 
         let itemsJson;
         try {
@@ -296,7 +314,7 @@ app.post('/checkout', (req, res) => {
                 });
 
                 transporter.sendMail({
-                    from: 'andreyme0411@gmail.com',
+                    from: 'timourbarber@gmail.com',
                     to: email,
                     subject: `Receipt for Order #${orderNumber}`,
                     html: `
@@ -312,8 +330,8 @@ app.post('/checkout', (req, res) => {
                 });
 
                 transporter.sendMail({
-                    from: 'andreyme0411@gmail.com',
-                    to: 'andreyme0411@gmail.com',
+                    from: 'timourbarber@gmail.com',
+                    to: 'timourbarber@gmail.com',
                     subject: `New Order #${orderNumber}`,
                     html: `
                         <h1>New Order Received</h1>
@@ -333,7 +351,40 @@ app.post('/checkout', (req, res) => {
     });
 });
 
-// Order success page
+// Страница подтверждения заказа
+app.get('/order-confirmation', (req, res) => {
+    const orderNumber = req.query.order;
+    if (!orderNumber) {
+        return res.redirect('/webshop');
+    }
+
+    db.get('SELECT * FROM orders WHERE order_number = ?', [orderNumber], (err, order) => {
+        if (err || !order) {
+            console.error('Error fetching order:', err?.message || 'Order not found');
+            return res.redirect('/webshop');
+        }
+        let items;
+        try {
+            items = JSON.parse(order.items);
+        } catch (parseError) {
+            console.error(`Error parsing items for order #${orderNumber}:`, parseError.message);
+            items = [];
+        }
+        res.render('order-confirmation', {
+            user: req.session.user || null,
+            order: {
+                order_number: order.order_number,
+                total_usdt: order.total_usdt,
+                items: items,
+                shipping_address: order.shipping_address,
+                payment_method: order.payment_method,
+                status: order.status
+            }
+        });
+    });
+});
+
+// Страница успешного заказа (если используется)
 app.get('/order-success', (req, res) => {
     const orderNumber = req.query.order;
     const hash = req.query.hash || '';
@@ -343,6 +394,7 @@ app.get('/order-success', (req, res) => {
 
     db.get('SELECT * FROM orders WHERE order_number = ?', [orderNumber], (err, order) => {
         if (err || !order) {
+            console.error('Error fetching order:', err?.message || 'Order not found');
             return res.redirect('/webshop');
         }
         let items;
@@ -367,34 +419,7 @@ app.get('/order-success', (req, res) => {
     });
 });
 
-app.get('/order-confirmation', (req, res) => {
-    const orderNumber = req.query.order;
-    if (!orderNumber) return res.redirect('/webshop');
-
-    db.get('SELECT * FROM orders WHERE order_number = ?', [orderNumber], (err, order) => {
-        if (err || !order) return res.redirect('/webshop');
-        let items;
-        try {
-            items = JSON.parse(order.items);
-        } catch (parseError) {
-            console.error(`Error parsing items for order #${orderNumber}:`, parseError.message);
-            items = [];
-        }
-        res.render('order-confirmation', {
-            user: req.session.user || null,
-            order: {
-                order_number: order.order_number,
-                total_usdt: order.total_usdt,
-                items: items,
-                shipping_address: order.shipping_address,
-                payment_method: order.payment_method,
-                status: order.status
-            }
-        });
-    });
-});
-
-// Admin panel page
+// Админ-панель
 app.get('/admin', (req, res) => {
     console.log('Received request at /admin, session:', req.session);
     if (req.session.user !== 'admin') {
@@ -421,7 +446,7 @@ app.get('/admin', (req, res) => {
     });
 });
 
-// Update order status
+// Обновление статуса заказа в админ-панели
 app.post('/admin/update-status', (req, res) => {
     console.log('Received request at /admin/update-status:', req.body);
 
@@ -472,7 +497,7 @@ app.post('/admin/update-status', (req, res) => {
 
             if (userEmail) {
                 transporter.sendMail({
-                    from: 'andreyme0411@gmail.com',
+                    from: 'timourbarber@gmail.com',
                     to: userEmail,
                     subject: `Order Status Update #${orderNumber}`,
                     html: `
@@ -499,7 +524,7 @@ app.post('/admin/update-status', (req, res) => {
     });
 });
 
-// Additional routes
+// Дополнительные маршруты
 app.get('/services', (req, res) => {
     const renderData = {
         user: req.session.user || null,
@@ -531,7 +556,7 @@ app.get('/contact', (req, res) => {
     res.render('contact', { user: req.session.user || null });
 });
 
-// Product page route
+// Страница продукта
 app.get('/product/:productId', (req, res) => {
     const productId = req.params.productId;
     const hash = req.query.hash || uuidv4();
@@ -677,7 +702,7 @@ app.get('/product/:productId', (req, res) => {
             title: 'Double Side Hair Comb, Texture Comb',
             price: 6.55,
             priceEUR: 6,
-            description: 'A double-sided hair and texture comb for precise styling, offering both fine and wide teeth for versatile hair control. Perfect for all hair types..',
+            description: 'A double-sided hair and texture comb for precise styling, offering both fine and wide teeth for versatile hair control. Perfect for all hair types.',
             images: ['/img/image11.jpg'],
             features: ['Professional tool', 'Payment in USDT or cash']
         },
@@ -708,14 +733,14 @@ app.get('/product/:productId', (req, res) => {
     });
 });
 
-// Voucher purchase processing
+// Обработка покупки ваучера
 app.post('/buy-voucher', (req, res) => {
     if (!req.session.user) {
         return res.redirect('/login');
     }
     db.get('SELECT voucher FROM users WHERE username = ?', [req.session.user], (err, row) => {
         if (err) {
-            console.error(err.message);
+            console.error('Error fetching voucher status:', err.message);
             return res.redirect('/');
         }
         if (row.voucher === 1) {
@@ -724,7 +749,7 @@ app.post('/buy-voucher', (req, res) => {
         }
         db.run('UPDATE users SET voucher = 1 WHERE username = ?', [req.session.user], (updateErr) => {
             if (updateErr) {
-                console.error(updateErr.message);
+                console.error('Error updating voucher status:', updateErr.message);
                 return res.redirect('/');
             }
             req.session.purchaseSuccess = true;
@@ -733,12 +758,12 @@ app.post('/buy-voucher', (req, res) => {
     });
 });
 
-// Start the server
+// Запуск сервера
 const server = app.listen(port, () => {
     console.log(`Server started at http://localhost:${port}`);
 });
 
-// Handle server shutdown
+// Обработка завершения работы сервера
 process.on('SIGINT', () => {
     server.close(() => {
         console.log('Server stopped');
