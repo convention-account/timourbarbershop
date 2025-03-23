@@ -248,23 +248,30 @@ app.get('/checkout', (req, res) => {
 });
 
 // Обработка формы оформления заказа
-app.post('/checkout', (req, res) => {
+app.post('/checkout', async (req, res) => {
     console.log('Handling POST /checkout request');
+    
+    // Проверяем, авторизован ли пользователь
     if (!req.session.user) {
         console.log('User not logged in, returning 401');
         return res.status(401).json({ error: 'Please log in' });
     }
+    console.log('User is logged in:', req.session.user);
 
+    // Логируем полученные данные из формы
     console.log('Received POST request at /checkout:', req.body);
     console.log('Raw cart cookie:', req.cookies.cart);
     console.log('Type of cart cookie:', typeof req.cookies.cart);
 
+    // Проверяем, что все обязательные поля присутствуют
     const { full_name, email, address, city, country, postal_code, payment_method, shipping_method } = req.body;
     if (!full_name || !email || !address || !city || !country || !postal_code || !payment_method || !shipping_method) {
-        console.log('Missing required fields, returning 400');
+        console.log('Missing required fields:', { full_name, email, address, city, country, postal_code, payment_method, shipping_method });
         return res.status(400).json({ error: 'All fields are required' });
     }
+    console.log('All required fields are present');
 
+    // Обрабатываем корзину
     let cart;
     try {
         const rawCart = req.cookies.cart;
@@ -305,22 +312,35 @@ app.post('/checkout', (req, res) => {
         return res.status(500).json({ error: 'Unexpected error processing cart' });
     }
 
+    // Проверяем, что корзина не пуста
     if (!Array.isArray(cart) || !cart.length) {
         console.log('Cart is empty or not an array after parsing');
         return res.status(400).json({ error: 'Cart is empty' });
     }
+    console.log('Cart is valid and not empty:', cart);
 
+    // Проверяем элементы корзины
     const isValidCart = cart.every(item => item && typeof item === 'object' && 'title' in item && 'price' in item);
     if (!isValidCart) {
         console.error('Invalid cart data:', cart);
         return res.status(400).json({ error: 'Invalid cart items' });
     }
+    console.log('Cart items are valid');
 
+    // Вычисляем итоговую сумму
     const shippingCosts = { dhl: 5, fedex: 7, ups: 6 };
     const totalUSDT = cart.reduce((sum, item) => sum + parseFloat(item.price), 0) + (shippingCosts[shipping_method] || 0);
-    const shippingAddress = `${full_name}, ${address}, ${city}, ${country}, ${postal_code}, Email: ${email}`;
-    const orderNumber = `ORD-${uuidv4().slice(0, 8).toUpperCase()}`;
+    console.log('Calculated totalUSDT:', totalUSDT);
 
+    // Формируем адрес доставки
+    const shippingAddress = `${full_name}, ${address}, ${city}, ${country}, ${postal_code}, Email: ${email}`;
+    console.log('Shipping address:', shippingAddress);
+
+    // Генерируем номер заказа
+    const orderNumber = `ORD-${uuidv4().slice(0, 8).toUpperCase()}`;
+    console.log('Generated order number:', orderNumber);
+
+    // Определяем метод доставки
     let shippingMethodName, shippingIcon;
     switch (shipping_method) {
         case 'dhl':
@@ -339,39 +359,72 @@ app.post('/checkout', (req, res) => {
             shippingMethodName = 'Unknown';
             shippingIcon = '';
     }
+    console.log('Shipping method details:', { shippingMethodName, shippingIcon });
 
+    // Получаем ID пользователя
     db.get('SELECT id FROM users WHERE username = ?', [req.session.user], (err, user) => {
         if (err || !user) {
             console.error('User lookup error:', err?.message || 'User not found');
             return res.status(500).json({ error: 'User not found' });
         }
+        console.log('User found:', user);
 
+        // Сериализуем корзину в JSON
         let itemsJson;
         try {
             itemsJson = JSON.stringify(cart);
+            console.log('Serialized cart to JSON:', itemsJson);
         } catch (stringifyError) {
             console.error('Error converting cart to JSON:', stringifyError.message);
             return res.status(500).json({ error: 'Unable to process cart data' });
         }
 
-        console.log(`Saving items for order #${orderNumber}:`, itemsJson);
+        // Логируем все данные перед вставкой в базу
+        console.log('Preparing to insert order into database with the following data:', {
+            user_id: user.id,
+            order_number: orderNumber,
+            items: itemsJson,
+            total_usdt: totalUSDT,
+            shipping_address: shippingAddress,
+            payment_method: payment_method,
+            status: 'placed'
+        });
 
-        db.run(`INSERT INTO orders (user_id, order_number, items, total_usdt, shipping_address, payment_method, status)
-                VALUES (?, ?, ?, ?, ?, ?, 'placed')`,
-            [user.id, orderNumber, itemsJson, totalUSDT, shippingAddress, payment_method], (err) => {
+        // Вставляем заказ в базу данных
+        db.run(
+            `INSERT INTO orders (user_id, order_number, items, total_usdt, shipping_address, payment_method, status)
+             VALUES (?, ?, ?, ?, ?, ?, 'placed')`,
+            [user.id, orderNumber, itemsJson, totalUSDT, shippingAddress, payment_method],
+            function (err) {
                 if (err) {
                     console.error('Error creating order:', err.message);
                     return res.status(500).json({ error: 'Unable to create order' });
                 }
+                console.log(`Order created: #${orderNumber}, ID: ${this.lastID}`);
 
-                console.log(`Order created: #${orderNumber}`);
-
-                db.run('UPDATE orders SET status = ? WHERE order_number = ?', ['awaiting_payment', orderNumber], (updateErr) => {
-                    if (updateErr) console.error('Error updating order status:', updateErr.message);
+                // Проверяем, что заказ действительно сохранён
+                db.get('SELECT * FROM orders WHERE order_number = ?', [orderNumber], (err, order) => {
+                    if (err || !order) {
+                        console.error('Order not found in database after insert:', err?.message || 'Order not found');
+                    } else {
+                        console.log('Order successfully saved in database:', order);
+                    }
                 });
 
+                // Обновляем статус заказа
+                console.log('Updating order status to awaiting_payment...');
+                db.run('UPDATE orders SET status = ? WHERE order_number = ?', ['awaiting_payment', orderNumber], (updateErr) => {
+                    if (updateErr) {
+                        console.error('Error updating order status:', updateErr.message);
+                    } else {
+                        console.log('Order status updated to awaiting_payment');
+                    }
+                });
+
+                // Отправляем письмо пользователю
+                console.log('Sending email to user:', email);
                 transporter.sendMail({
-                    from: 'andreyme0411@gmail.com',
+                    from: 'timourbarber@gmail.com',
                     to: email,
                     subject: `Receipt for Order #${orderNumber}`,
                     html: `
@@ -391,12 +444,17 @@ app.post('/checkout', (req, res) => {
                         <p>Once the payment is received, we will update your order status and proceed with shipping.</p>
                     `
                 }, (error, info) => {
-                    if (error) console.error('Error sending email to user:', error);
-                    else console.log('Email sent to user:', info.response);
+                    if (error) {
+                        console.error('Error sending email to user:', error);
+                    } else {
+                        console.log('Email sent to user:', info.response);
+                    }
                 });
 
+                // Отправляем письмо администратору
+                console.log('Sending email to admin: timourbarber@gmail.com');
                 transporter.sendMail({
-                    from: 'andreyme0411@gmail.com',
+                    from: 'timourbarber@gmail.com',
                     to: 'timourbarber@gmail.com',
                     subject: `New Order #${orderNumber}`,
                     html: `
@@ -416,13 +474,18 @@ app.post('/checkout', (req, res) => {
                         <p style="color: red; font-weight: bold;">Important: In the transaction comment, the user must include the order number: ${orderNumber}.</p>
                     `
                 }, (error, info) => {
-                    if (error) console.error('Error sending email to admin:', error);
-                    else console.log('Email sent to admin:', info.response);
+                    if (error) {
+                        console.error('Error sending email to admin:', error);
+                    } else {
+                        console.log('Email sent to admin:', info.response);
+                    }
                 });
 
+                // Отправляем успешный ответ
                 console.log('Sending success response with redirect:', `/order-success?order=${orderNumber}`);
                 res.status(200).json({ redirect: `/order-success?order=${orderNumber}` });
-            });
+            }
+        );
     });
 });
 
