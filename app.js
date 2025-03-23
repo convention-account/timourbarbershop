@@ -8,6 +8,27 @@ const fs = require('fs');
 const crypto = require('crypto');
 const { v4: uuidv4 } = require('uuid');
 const nodemailer = require('nodemailer');
+const mysql = require('mysql2');
+
+// Создайте подключение к базе данных
+const connection = mysql.createConnection({
+    host: 'timour-barber.com',  // Хост базы данных (можно изменить на IP, если база удаленная)
+    user: 'phpmyadminuser',  // Имя пользователя, которое вы создали для MySQL
+    password: 'PRehp2u6Yry',  // Пароль пользователя MySQL
+    database: 'users'  // Имя базы данных
+});
+
+// Проверка соединения
+connection.connect((err) => {
+    if (err) {
+        console.error('Ошибка подключения: ' + err.stack);
+        return;
+    }
+    console.log('Подключено к базе данных с ID ' + connection.threadId);
+});
+
+module.exports = connection;  // Экспортируем подключение для использования в других частях проекта
+
 
 const app = express();
 const port = 3001;
@@ -250,7 +271,7 @@ app.get('/checkout', (req, res) => {
 // Обработка формы оформления заказа
 app.post('/checkout', async (req, res) => {
     console.log('Handling POST /checkout request');
-    
+
     // Проверяем, авторизован ли пользователь
     if (!req.session.user) {
         console.log('User not logged in, returning 401');
