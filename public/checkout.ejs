@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout - TimourBarber</title>
     <link rel="icon" type="image/x-icon" href="../media/logo.ico">
-    <link rel="stylesheet" type="text/css" href="css/contact.css">
-    <link rel="stylesheet" href="css/mobile-adaptation.css">
+    <link rel="stylesheet" type="text/css" href="/css/contact.css">
+    <link rel="stylesheet" href="/css/mobile-adaptation.css">
 </head>
 
 <body>
@@ -24,13 +24,13 @@
             </div>
             <ul class="nav-list">
                 <li><a href="/">Home</a></li>
-                <li><a href="academy">Academy</a></li>
-                <li><a href="webshop">Store</a></li>
-                <li><a href="about">About</a></li>
+                <li><a href="/academy">Academy</a></li>
+                <li><a href="/webshop">Store</a></li>
+                <li><a href="/about">About</a></li>
                 <li><a href="/services">Services</a></li>
-                <li><a href="contact">Contact</a></li>
-                <li><a href="job">Job</a></li>
-                <li><a href="coin">Coin</a></li>
+                <li><a href="/contact">Contact</a></li>
+                <li><a href="/job">Job</a></li>
+                <li><a href="/coin">Coin</a></li>
             </ul>
         </nav>
         <div class="login-nav">
@@ -48,7 +48,6 @@
 
     <main class="contact-section checkout-section">
         <div class="contact-wrapper checkout-wrapper">
-            <!-- Заголовок -->
             <div class="contact-intro">
                 <h1 class="headline">
                     <span class="headline-emoji">💳</span>
@@ -57,12 +56,9 @@
                 </h1>
             </div>
 
-            <!-- Форма checkout -->
-            <!-- Форма checkout -->
             <div class="contact-form checkout-form">
                 <h2 class="form-title">Checkout Details</h2>
                 <form id="checkout-form" method="POST">
-                    <!-- Адрес доставки -->
                     <div class="checkout-group">
                         <h3 class="form-subtitle">Shipping Address</h3>
                         <div class="form-group">
@@ -91,7 +87,6 @@
                         </div>
                     </div>
 
-                    <!-- Способы оплаты -->
                     <div class="checkout-group">
                         <h3 class="form-subtitle">Payment Method</h3>
                         <div class="form-group">
@@ -121,7 +116,6 @@
                         </div>
                     </div>
 
-                    <!-- Способы доставки -->
                     <div class="checkout-group">
                         <h3 class="form-subtitle">Shipping Method</h3>
                         <div class="shipping-methods">
@@ -144,15 +138,13 @@
                         </div>
                     </div>
 
-                    <button type="button" class="form-btn checkout-btn" onclick="submitCheckoutForm()">Place
-                        Order</button>
+                    <button type="submit" class="form-btn checkout-btn">Place Order</button>
                 </form>
                 <button class="close-cart" onclick="window.location.href='/webshop'">Back to Store</button>
             </div>
         </div>
     </main>
 
-    <!-- Стилизованный алерт -->
     <div class="custom-alert" id="custom-alert" style="display: none;">
         <div class="custom-alert-content">
             <p id="custom-alert-message"></p>
@@ -171,24 +163,17 @@
         </div>
     </footer>
 
-    <!-- Скрипт для управления полями карты и доставкой -->
     <script>
-        // Обработка отправки формы через AJAX
         const checkoutForm = document.getElementById('checkout-form');
         if (checkoutForm) {
-            console.log('Form findeds');
             checkoutForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                console.log('Form is sending...');
-
-                // Блокируем кнопку отправки
                 const submitButton = checkoutForm.querySelector('button[type="submit"]');
                 submitButton.disabled = true;
-                submitButton.textContent = 'Processing...'; // Визуальная обратная связь
+                submitButton.textContent = 'Processing...';
 
                 const formData = new FormData(checkoutForm);
                 const data = Object.fromEntries(formData);
-                console.log('Data form:', data);
 
                 try {
                     const response = await fetch('/checkout', {
@@ -197,33 +182,26 @@
                         body: JSON.stringify(data)
                     });
 
-                    console.log('Server response:', response);
                     const result = await response.json();
-                    console.log('Result:', result);
-
                     if (response.ok) {
-                        console.log('Clearing cart and redirecting...');
                         document.cookie = 'cart=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-                        console.log('Redirecting:', result.redirect);
                         window.location.href = result.redirect;
                     } else {
-                        console.log('Server error:', result.error);
                         alert(result.error);
                         submitButton.disabled = false;
                         submitButton.textContent = 'Place Order';
                     }
                 } catch (error) {
-                    console.error('Error while sending:', error);
+                    console.error('Error processing order:', error);
                     alert('Error processing order');
                     submitButton.disabled = false;
                     submitButton.textContent = 'Place Order';
                 }
-            }, { once: true }); // Добавляем обработчик только один раз
+            });
         } else {
             console.error('Form with id="checkout-form" not found');
         }
     </script>
-    <script src="js/script.js"></script>
     <script src="/js/cart.js"></script>
 </body>
 

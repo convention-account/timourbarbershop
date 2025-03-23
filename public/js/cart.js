@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const checkoutBtn = document.querySelector('.checkout-btn');
     const body = document.body;
 
-    // Вспомогательные функции для работы с cookies
+    // Helper functions for cookies
     function setCookie(name, value, days) {
         const expires = new Date();
         expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
@@ -29,29 +29,33 @@ document.addEventListener('DOMContentLoaded', () => {
         return null;
     }
 
-    // Инициализация корзины из cookies
+    // Initialize cart from cookies
     let cart = getCookie('cart') || [];
 
-    // Проверка наличия всех элементов
+    // Check if all cart-related elements are present
     if (!cartIcon || !cartModal || !closeCart || !cartItemsContainer || !cartCount || !totalPriceElement || !checkoutBtn) {
-        console.error('Error: items not finded!');
+        console.warn('Cart elements not found on this page. Skipping cart initialization.');
+        // Update cart count if cartIcon and cartCount exist (for pages like checkout)
+        if (cartIcon && cartCount) {
+            cartCount.textContent = cart.length;
+        }
         return;
     }
 
-    // Открытие корзины
+    // Open cart
     cartIcon.addEventListener('click', () => {
         cartModal.classList.add('active');
         body.classList.add('cart-open');
         updateCart();
     });
 
-    // Закрытие корзины
+    // Close cart
     closeCart.addEventListener('click', () => {
         cartModal.classList.remove('active');
         body.classList.remove('cart-open');
     });
 
-    // Обновление корзины
+    // Update cart display
     function updateCart() {
         cartItemsContainer.innerHTML = '';
         let totalUSDT = 0;
@@ -75,20 +79,20 @@ document.addEventListener('DOMContentLoaded', () => {
         cartCount.textContent = cart.length;
         totalPriceElement.textContent = `${totalUSDT} USDT`;
 
-        // Конвертация USDT в евро (1 USDT ≈ 0.9 EUR)
+        // Convert USDT to EUR (1 USDT ≈ 0.9 EUR)
         const totalEUR = totalUSDT * 0.9;
         const minimumOrderEUR = 50;
 
-        // Управление состоянием кнопки и сообщением
+        // Manage button state and minimum order message
         const existingMessage = cartItemsContainer.querySelector('.min-order-message');
-        if (existingMessage) existingMessage.remove(); // Удаляем старое сообщение
+        if (existingMessage) existingMessage.remove();
 
         if (totalEUR < minimumOrderEUR && cart.length > 0) {
             const message = document.createElement('p');
             message.classList.add('min-order-message');
             message.style.color = '#ff4444';
             message.style.textAlign = 'center';
-            message.textContent = `Minimum sum order ${minimumOrderEUR} EUR. Add more items.`;
+            message.textContent = `Minimum order sum is ${minimumOrderEUR} EUR. Add more items.`;
             cartItemsContainer.appendChild(message);
             checkoutBtn.disabled = true;
             checkoutBtn.style.opacity = '0.5';
@@ -101,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setCookie('cart', cart, 7);
 
-        // Обработчики удаления
+        // Remove item handlers
         document.querySelectorAll('.remove-item').forEach(button => {
             button.addEventListener('click', (e) => {
                 const index = parseInt(e.target.dataset.index);
@@ -112,44 +116,41 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Обработка перехода на чекаут
+    // Handle checkout button click
     checkoutBtn.addEventListener('click', (e) => {
-        e.preventDefault(); // Предотвращаем стандартное поведение ссылки
+        e.preventDefault();
         const totalUSDT = parseFloat(totalPriceElement.textContent.match(/\d+(\.\d+)?/)[0]);
         const totalEUR = totalUSDT * 0.9;
         const minimumOrderEUR = 50;
 
         if (cart.length === 0) {
-            const customAlert = document.getElementById('custom-alert');
-            const customAlertMessage = document.getElementById('custom-alert-message');
-            const customAlertClose = document.querySelector('.custom-alert-close');
-
-            customAlertMessage.textContent = 'Your cart is empty!';
-            customAlert.style.display = 'flex';
-
-            customAlertClose.addEventListener('click', () => {
-                customAlert.style.display = 'none';
-            });
+            showAlert('Your cart is empty!');
             return;
         }
 
         if (totalEUR < minimumOrderEUR) {
-            const customAlert = document.getElementById('custom-alert');
-            const customAlertMessage = document.getElementById('custom-alert-message');
-            const customAlertClose = document.querySelector('.custom-alert-close');
-
-            customAlertMessage.textContent = `Minimum sum order ${minimumOrderEUR} EUR. Add more items.`;
-            customAlert.style.display = 'flex';
-
-            customAlertClose.addEventListener('click', () => {
-                customAlert.style.display = 'none';
-            });
+            showAlert(`Minimum order sum is ${minimumOrderEUR} EUR. Add more items.`);
             return;
         }
 
         window.location.href = '/checkout';
     });
 
-    // Инициализация корзины при загрузке страницы
+    // Helper function to show custom alert
+    function showAlert(message) {
+        const customAlert = document.getElementById('custom-alert');
+        const customAlertMessage = document.getElementById('custom-alert-message');
+        const customAlertClose = document.querySelector('.custom-alert-close');
+
+        if (customAlert && customAlertMessage && customAlertClose) {
+            customAlertMessage.textContent = message;
+            customAlert.style.display = 'flex';
+            customAlertClose.addEventListener('click', () => {
+                customAlert.style.display = 'none';
+            }, { once: true });
+        }
+    }
+
+    // Initialize cart on page load
     updateCart();
 });
