@@ -49,6 +49,10 @@ const transporter = nodemailer.createTransport({
 // Middleware для проверки авторизации через hash в URL
 app.use((req, res, next) => {
     const hashFreePaths = ['/login', '/register', '/logout', '/buy-voucher', '/cart', '/order-success', '/admin/update-status'];
+    // Пропускаем POST-запросы, чтобы не перенаправлять их
+    if (req.method === 'POST') {
+        return next();
+    }
     if (!req.query.hash && !hashFreePaths.includes(req.path) && !req.path.startsWith('/product/')) {
         const hash = uuidv4();
         const newUrl = `${req.path}?hash=${hash}`;
@@ -245,12 +249,13 @@ app.get('/checkout', (req, res) => {
 
 // Обработка формы оформления заказа
 app.post('/checkout', (req, res) => {
+    console.log('Handling POST /checkout request');
     if (!req.session.user) {
         console.log('User not logged in, returning 401');
         return res.status(401).json({ error: 'Please log in' });
     }
 
-    console.log('Received request at /checkout:', req.body);
+    console.log('Received POST request at /checkout:', req.body);
     console.log('Raw cart cookie:', req.cookies.cart);
     console.log('Type of cart cookie:', typeof req.cookies.cart);
 
@@ -361,7 +366,7 @@ app.post('/checkout', (req, res) => {
 
                 console.log(`Order created: #${orderNumber}`);
 
-                db.run('UPDATE orders SET status = ? WHERE order_number = ?', ['preparing', orderNumber], (updateErr) => {
+                db.run('UPDATE orders SET status = ? WHERE order_number = ?', ['awaiting_payment', orderNumber], (updateErr) => {
                     if (updateErr) console.error('Error updating order status:', updateErr.message);
                 });
 
@@ -371,13 +376,19 @@ app.post('/checkout', (req, res) => {
                     subject: `Receipt for Order #${orderNumber}`,
                     html: `
                         <h1>Thank you for your order!</h1>
-                        <p>Order #${orderNumber} is being prepared.</p>
+                        <p>Order #${orderNumber} is awaiting payment.</p>
                         <p><strong>Items:</strong></p>
                         <ul>${cart.map(item => `<li>${item.title} - ${item.price} USDT</li>`).join('')}</ul>
                         <p><strong>Shipping Method:</strong> ${shippingMethodName}</p>
-                        <p><img src="http://localhost:3001${shippingIcon}" alt="${shippingMethodName}" style="max-width: 150px;"></p>
+                        <p><img src="https://timour-barber.com${shippingIcon}" alt="${shippingMethodName}" style="max-width: 150px;"></p>
                         <p><strong>Total:</strong> ${totalUSDT.toFixed(2)} USDT</p>
                         <p><strong>Shipping Address:</strong> ${shippingAddress}</p>
+                        <h3>Payment Instructions</h3>
+                        <p>Please send the payment in USDT TRC (Tron) (TRC20) to the following wallet address:</p>
+                        <p><strong>Wallet Address:</strong> TSLutTokZzNEnz1fb8NBDWrgE2GEYF2xet</p>
+                        <p><strong>Amount to Pay:</strong> ${totalUSDT.toFixed(2)} USDT</p>
+                        <p style="color: red; font-weight: bold;">Important: In the transaction comment, you MUST include your order number: ${orderNumber}. This is necessary to match your payment to your order.</p>
+                        <p>Once the payment is received, we will update your order status and proceed with shipping.</p>
                     `
                 }, (error, info) => {
                     if (error) console.error('Error sending email to user:', error);
@@ -395,9 +406,14 @@ app.post('/checkout', (req, res) => {
                         <p><strong>Items:</strong></p>
                         <ul>${cart.map(item => `<li>${item.title} - ${item.price} USDT</li>`).join('')}</ul>
                         <p><strong>Shipping Method:</strong> ${shippingMethodName}</p>
-                        <p><img src="http://localhost:3001${shippingIcon}" alt="${shippingMethodName}" style="max-width: 150px;"></p>
+                        <p><img src="https://timour-barber.com${shippingIcon}" alt="${shippingMethodName}" style="max-width: 150px;"></p>
                         <p><strong>Total:</strong> ${totalUSDT.toFixed(2)} USDT</p>
                         <p><strong>Shipping Address:</strong> ${shippingAddress}</p>
+                        <h3>Payment Instructions (Sent to User)</h3>
+                        <p>Please send the payment in USDT (TRC20) to the following wallet address:</p>
+                        <p><strong>Wallet Address:</strong> TXb1e2f3g4h5j6k7m8n9p0q1r2s3t4u5v6w7x8y9z</p>
+                        <p><strong>Amount to Pay:</strong> ${totalUSDT.toFixed(2)} USDT</p>
+                        <p style="color: red; font-weight: bold;">Important: In the transaction comment, the user must include the order number: ${orderNumber}.</p>
                     `
                 }, (error, info) => {
                     if (error) console.error('Error sending email to admin:', error);
@@ -405,32 +421,8 @@ app.post('/checkout', (req, res) => {
                 });
 
                 console.log('Sending success response with redirect:', `/order-success?order=${orderNumber}`);
-                res.status(200).json({ redirect: `/order-success?order=${orderNumber}` }); // Изменено на /order-success
+                res.status(200).json({ redirect: `/order-success?order=${orderNumber}` });
             });
-    });
-});
-
-app.get('/order-success', (req, res) => {
-    const orderNumber = req.query.order;
-    if (!orderNumber) {
-        return res.status(400).send('Order number is required');
-    }
-
-    db.get('SELECT * FROM orders WHERE order_number = ?', [orderNumber], (err, order) => {
-        if (err || !order) {
-            console.error('Error fetching order:', err?.message || 'Order not found');
-            return res.status(404).send('Order not found');
-        }
-
-        // Парсим items из JSON
-        try {
-            order.items = JSON.parse(order.items);
-        } catch (parseError) {
-            console.error('Error parsing order items:', parseError.message);
-            return res.status(500).send('Error processing order data');
-        }
-
-        res.render('order-success', { order });
     });
 });
 
@@ -505,7 +497,7 @@ app.get('/order-success', (req, res) => {
 // Админ-панель
 app.get('/admin', (req, res) => {
     console.log('Received request at /admin, session:', req.session);
-    if (req.session.user !== 'admin') {
+    if (req.session.user !== 'admin', req.session.user !== 'Andrii Slavutskyi') {
         console.log('User is not an admin, redirecting to /login');
         return res.redirect('/login');
     }

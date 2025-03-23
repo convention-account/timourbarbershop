@@ -6,6 +6,237 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Success - TimourBarber</title>
     <link rel="stylesheet" type="text/css" href="/css/webshop.css">
+    <link rel="stylesheet" type="text/css" href="/css/mobile-adaptation.css">
+    <style>
+        .payment-instructions {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            border: 1px solid #ddd;
+        }
+
+        .payment-instructions h3 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .payment-instructions p {
+            margin: 10px 0;
+        }
+
+        .payment-instructions code {
+            background-color: #e0e0e0;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+
+        .payment-instructions .important {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+
+        /* Стили для основного контейнера */
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Контейнер для карточек заказов */
+        .orders-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            width: 100%;
+        }
+
+        h1 {
+            color: white;
+        }
+
+        /* Стили для карточки заказа */
+        .order-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(159, 127, 243, 0.3);
+        }
+
+        .order-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .order-card h3 {
+            color: #FFF;
+            font-size: 22px;
+            font-weight: 900;
+            margin: 0 0 15px;
+            text-transform: uppercase;
+            border-bottom: 2px solid #9F7FF3;
+            padding-bottom: 5px;
+        }
+
+        .order-card p {
+            color: #FFF;
+            font-size: 16px;
+            margin: 8px 0;
+            line-height: 1.5;
+        }
+
+        .order-card .items {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .order-card .item {
+            color: #CCC;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+
+        .order-card .status {
+            font-weight: 900;
+            text-transform: uppercase;
+            padding: 5px 10px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        .order-card .status.placed {
+            background: rgba(255, 165, 0, 0.2);
+            color: #FFA500;
+            /* Оранжевый для "placed" */
+        }
+
+        .order-card .status.awaiting_payment {
+            background: rgba(255, 215, 0, 0.2);
+            color: #FFD700;
+            /* Жёлтый для "awaiting_payment" */
+        }
+
+        .order-card .status.preparing {
+            background: rgba(255, 165, 0, 0.2);
+            color: #FFA500;
+            /* Оранжевый для "preparing" */
+        }
+
+        .order-card .status.shipped {
+            background: rgba(0, 255, 0, 0.2);
+            color: #00FF00;
+            /* Зеленый для "shipped" */
+        }
+
+        .order-card .status.delivered {
+            background: rgba(0, 206, 209, 0.2);
+            color: #00CED1;
+            /* Бирюзовый для "delivered" */
+        }
+
+        .order-card .status.cancelled {
+            background: rgba(255, 68, 68, 0.2);
+            color: #FF4444;
+            /* Красный для "cancelled" */
+        }
+
+        .back-btn {
+            padding: 25px;
+            font-size: 25px;
+        }
+
+        footer {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            padding: 40px;
+            background: rgba(0, 0, 33, 0.8);
+            color: #FFF;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            main {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 24px;
+                margin-bottom: 30px;
+            }
+
+            .orders-container {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            footer {
+                margin-top: auto !important;
+            }
+
+            .order-card {
+                padding: 15px;
+            }
+
+            .order-card h3 {
+                font-size: 18px;
+                margin-bottom: 10px;
+            }
+
+            .order-card p {
+                font-size: 14px;
+                margin: 6px 0;
+            }
+
+            .order-card .item {
+                font-size: 12px;
+            }
+
+            .order-card .status {
+                font-size: 12px;
+                padding: 4px 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 20px;
+                margin-bottom: 20px;
+            }
+
+            .order-card {
+                padding: 10px;
+            }
+
+            .order-card h3 {
+                font-size: 16px;
+            }
+
+            .order-card p {
+                font-size: 12px;
+            }
+
+            .order-card .item {
+                font-size: 11px;
+            }
+
+            .order-card .status {
+                font-size: 11px;
+                padding: 3px 6px;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -37,7 +268,6 @@
                     <li><a href="/login">Login</a></li>
                     <% } %>
         </div>
-
         <div class="cart-icon">
             🛒
             <span class="cart-count">0</span>
@@ -45,24 +275,50 @@
     </header>
     <main>
         <h1>Order Successful!</h1>
-        <p>Order Number: <%= order.order_number %>
-        </p>
-        <p>Total: <%= order.total_usdt %> USDT</p>
-        <p>Shipping Address: <%= order.shipping_address %>
-        </p>
-        <p>Payment Method: <%= order.payment_method %>
-        </p>
-        <p>Status: <%= order.status %>
-        </p>
-        <h2>Items:</h2>
-        <ul>
-            <% order.items.forEach(item=> { %>
-                <li>
-                    <%= item.title %> - <%= item.price %> USDT
-                </li>
-                <% }); %>
-        </ul>
-        <a href="/webshop">Back to Store</a>
+        <div class="orders-container">
+            <div class="order-card">
+                <h3>Order #<%= order.order_number %>
+                </h3>
+                <p><strong>Status:</strong> <span class="status <%= order.status %>">
+                        <%= order.status %>
+                    </span></p>
+                <p><strong>Total:</strong>
+                    <%= order.total_usdt %> USDT
+                </p>
+                <p><strong>Shipping Address:</strong>
+                    <%= order.shipping_address %>
+                </p>
+                <p><strong>Payment Method:</strong>
+                    <%= order.payment_method %>
+                </p>
+                <p><strong>Items:</strong></p>
+                <div class="items">
+                    <% order.items.forEach(item=> { %>
+                        <p class="item">
+                            <%= item.title %> - <%= item.price %> USDT
+                        </p>
+                        <% }); %>
+                </div>
+            </div>
+        </div>
+
+        <% if (order.payment_method==='usdt_trc20' && order.status==='awaiting_payment' ) { %>
+            <div class="payment-instructions">
+                <h3>Payment Instructions</h3>
+                <p>Your order is awaiting payment. Please send the payment in USDT (TRC20) to the following wallet
+                    address:</p>
+                <p><strong>Wallet Address:</strong> <code>TXb1e2f3g4h5j6k7m8n9p0q1r2s3t4u5v6w7x8y9z</code></p>
+                <p><strong>Amount to Pay:</strong>
+                    <%= order.total_usdt %> USDT
+                </p>
+                <p class="important">Important: In the transaction comment, you MUST include your order number:
+                    <code><%= order.order_number %></code>. This is necessary to match your payment to your order.
+                </p>
+                <p>Once the payment is received, we will update your order status and proceed with shipping.</p>
+            </div>
+            <% } %>
+
+                <a href="/webshop" class="back-btn">Back to Store</a>
     </main>
     <footer>
         <div class="footer-content">
@@ -74,6 +330,8 @@
             </ul>
         </div>
     </footer>
+
+    <script src="./js/script.js"></script>
 </body>
 
 </html>

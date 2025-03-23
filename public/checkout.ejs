@@ -36,9 +36,9 @@
         <div class="login-nav">
             <% if (user) { %>
                 <li>Welcome, <%= user %> | <a href="/profile">Personal Cabinet</a> | <a href="/logout">Logout</a></li>
-                <% } else { %>
-                    <li><a href="/login">Login</a></li>
-                    <% } %>
+            <% } else { %>
+                <li><a href="/login">Login</a></li>
+            <% } %>
         </div>
         <div class="cart-icon">
             🛒
@@ -58,7 +58,7 @@
 
             <div class="contact-form checkout-form">
                 <h2 class="form-title">Checkout Details</h2>
-                <form id="checkout-form" method="POST">
+                <form id="checkout-form">
                     <div class="checkout-group">
                         <h3 class="form-subtitle">Shipping Address</h3>
                         <div class="form-group">
@@ -138,6 +138,8 @@
                         </div>
                     </div>
 
+                    <div id="cart-summary"></div>
+
                     <button type="submit" class="form-btn checkout-btn">Place Order</button>
                 </form>
                 <button class="close-cart" onclick="window.location.href='/webshop'">Back to Store</button>
@@ -188,33 +190,48 @@
         }
 
         const cartSummary = document.getElementById('cart-summary');
-        if (cart.length > 0) {
-            let totalUSDT = cart.reduce((sum, item) => sum + parseFloat(item.price), 0);
-            cartSummary.innerHTML = `
-                <h3>Your Items:</h3>
-                <ul style="list-style: none; padding: 0;">
-                    ${cart.map(item => `<li>${item.title} - ${item.price} USDT</li>`).join('')}
-                </ul>
-                <p><strong>Total (excluding shipping):</strong> ${totalUSDT.toFixed(2)} USDT</p>
-            `;
+        if (cartSummary) {
+            console.log('Cart summary element found');
+            if (cart.length > 0) {
+                let totalUSDT = cart.reduce((sum, item) => sum + parseFloat(item.price), 0);
+                cartSummary.innerHTML = `
+                    <h3>Your Items:</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        ${cart.map(item => `<li>${item.title} - ${item.price} USDT</li>`).join('')}
+                    </ul>
+                    <p><strong>Total (excluding shipping):</strong> ${totalUSDT.toFixed(2)} USDT</p>
+                `;
+            } else {
+                cartSummary.innerHTML = '<p>Your cart is empty. Please add items before checking out.</p>';
+                const checkoutBtn = document.querySelector('.checkout-btn');
+                if (checkoutBtn) {
+                    checkoutBtn.disabled = true;
+                    console.log('Checkout button disabled due to empty cart');
+                }
+            }
         } else {
-            cartSummary.innerHTML = '<p>Your cart is empty. Please add items before checking out.</p>';
-            document.querySelector('.checkout-btn').disabled = true;
+            console.error('Cart summary element not found');
         }
 
         const checkoutForm = document.getElementById('checkout-form');
         if (checkoutForm) {
+            console.log('Checkout form found, attaching event listener');
             checkoutForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
+                console.log('Form submit event triggered');
+                e.preventDefault(); // Предотвращаем стандартную отправку формы
+
                 const submitButton = checkoutForm.querySelector('button[type="submit"]');
-                submitButton.disabled = true;
-                submitButton.textContent = 'Processing...';
+                if (submitButton) {
+                    submitButton.disabled = true;
+                    submitButton.textContent = 'Processing...';
+                }
 
                 const formData = new FormData(checkoutForm);
                 const data = Object.fromEntries(formData);
                 console.log('Form data being sent:', data);
 
                 try {
+                    console.log('Sending fetch request to /checkout');
                     const response = await fetch('/checkout', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -244,21 +261,30 @@
                             console.error('Redirect URL is missing in response:', result);
                             throw new Error('Redirect URL not provided by server');
                         }
+                        console.log('Clearing cart cookie');
                         document.cookie = 'cart=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                        console.log('Performing redirect to:', result.redirect);
                         window.location.href = result.redirect;
+                        console.log('Redirect command executed');
                     } else {
                         console.log('Response not OK, showing error:', result.error);
                         alert(result.error || 'An error occurred during checkout');
-                        submitButton.disabled = false;
-                        submitButton.textContent = 'Place Order';
+                        if (submitButton) {
+                            submitButton.disabled = false;
+                            submitButton.textContent = 'Place Order';
+                        }
                     }
                 } catch (error) {
                     console.error('Error processing checkout:', error);
                     alert('Error processing checkout: ' + error.message);
-                    submitButton.disabled = false;
-                    submitButton.textContent = 'Place Order';
+                    if (submitButton) {
+                        submitButton.disabled = false;
+                        submitButton.textContent = 'Place Order';
+                    }
                 }
             });
+        } else {
+            console.error('Checkout form not found');
         }
     </script>
     <script src="/js/cart.js"></script>
