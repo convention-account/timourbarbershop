@@ -32,6 +32,11 @@
                 <li><a href="job">Job</a></li>
                 <li><a href="coin">Coin</a></li>
             </ul>
+            <div class="login-nav">
+                <% if (user==='admin' ) { %>
+                    <li><a href="/admin">Admin</a></li>
+                    <% } %>
+            </div>
         </nav>
         <div class="login-nav">
             <% if (user) { %>

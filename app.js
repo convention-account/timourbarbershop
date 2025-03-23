@@ -20,16 +20,16 @@ app.use(cookieParser());
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'public'));
 
-// Динамическая генерация секретного ключа
+// Dynamic generation of secret key
 const secretKey = crypto.randomBytes(32).toString('hex');
 
-// Настройка сессии
+// Session setup
 app.use(session({
     secret: secretKey,
     resave: false,
     saveUninitialized: false,
     cookie: {
-        maxAge: 30 * 24 * 60 * 60 * 1000 // 30 дней
+        maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
     }
 }));
 
@@ -42,9 +42,9 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-// Middleware для проверки авторизации через куки
+// Middleware for checking authorization via cookies
 app.use((req, res, next) => {
-    const hashFreePaths = ['/login', '/register', '/logout', '/buy-voucher', '/cart', '/order-success'];
+    const hashFreePaths = ['/login', '/register', '/logout', '/buy-voucher', '/cart', '/order-success', '/admin/update-status'];
     if (!req.query.hash && !hashFreePaths.includes(req.path) && !req.path.startsWith('/product/')) {
         const hash = uuidv4();
         const newUrl = `${req.path}?hash=${hash}`;
@@ -53,32 +53,21 @@ app.use((req, res, next) => {
     next();
 });
 
-// Middleware для добавления хэша в URL
-app.use((req, res, next) => {
-    const hashFreePaths = ['/login', '/register', '/logout', '/buy-voucher', '/checkout', '/cart', '/order-success'];
-    if (!req.query.hash && !hashFreePaths.includes(req.path) && !req.path.startsWith('/product/')) {
-        const hash = uuidv4();
-        const newUrl = `${req.path}?hash=${hash}`;
-        return res.redirect(newUrl);
-    }
-    next();
-});
-
-// Создание директории базы данных
+// Creating database directory
 const dbDir = path.join(__dirname, 'database');
 if (!fs.existsSync(dbDir)) {
     fs.mkdirSync(dbDir);
 }
 
-// Подключение к базе данных
+// Connecting to the database
 const db = new sqlite3.Database(path.join(dbDir, 'users.db'), (err) => {
     if (err) {
-        console.error('Ошибка подключения к базе данных:', err.message);
+        console.error('Database connection error:', err.message);
         process.exit(1);
     }
-    console.log('Подключено к базе данных SQLite');
+    console.log('Connected to SQLite database');
 
-    // Создание таблицы пользователей
+    // Creating users table
     db.run(`CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT UNIQUE,
@@ -86,10 +75,10 @@ const db = new sqlite3.Database(path.join(dbDir, 'users.db'), (err) => {
         voucher INTEGER DEFAULT 0,
         authToken TEXT
     )`, (err) => {
-        if (err) console.error('Ошибка создания таблицы users:', err.message);
+        if (err) console.error('Error creating users table:', err.message);
     });
 
-    // Создание таблицы заказов
+    // Creating orders table
     db.run(`CREATE TABLE IF NOT EXISTS orders (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER,
@@ -102,7 +91,7 @@ const db = new sqlite3.Database(path.join(dbDir, 'users.db'), (err) => {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES users(id)
     )`, (err) => {
-        if (err) console.error('Ошибка создания таблицы orders:', err.message);
+        if (err) console.error('Error creating orders table:', err.message);
     });
 
     // Seed admin account if it doesn't exist
@@ -115,7 +104,7 @@ const db = new sqlite3.Database(path.join(dbDir, 'users.db'), (err) => {
     });
 });
 
-// Главная страница
+// Homepage
 app.get('/', (req, res) => {
     const renderData = {
         user: req.session.user || null,
@@ -127,7 +116,7 @@ app.get('/', (req, res) => {
     res.render('index', renderData);
 });
 
-// Страницы авторизации и регистрации
+// Login and registration pages
 app.get('/login', (req, res) => {
     res.render('login', { error: null, user: req.session?.user || null });
 });
@@ -149,7 +138,7 @@ app.post('/register', async (req, res) => {
                 res.redirect('/login');
             });
     } catch (error) {
-        res.render('register', { error: 'Registration failed', user: null });
+        res.render('register', { error: 'Registration error', user: null });
     }
 });
 
@@ -157,14 +146,14 @@ app.post('/login', (req, res) => {
     const { username, password } = req.body;
     db.get('SELECT * FROM users WHERE username = ?', [username], async (err, user) => {
         if (err || !user) {
-            return res.render('login', { error: 'Incorrect login info', user: null });
+            return res.render('login', { error: 'Invalid login credentials', user: null });
         }
         const isValid = await bcrypt.compare(password, user.password);
         if (isValid) {
             req.session.user = username;
             const authToken = crypto.randomBytes(16).toString('hex');
             db.run('UPDATE users SET authToken = ? WHERE username = ?', [authToken, username], (updateErr) => {
-                if (updateErr) console.error('Ошибка сохранения токена:', updateErr.message);
+                if (updateErr) console.error('Error saving token:', updateErr.message);
             });
             res.cookie('authToken', authToken, {
                 maxAge: 30 * 24 * 60 * 60 * 1000,
@@ -173,12 +162,12 @@ app.post('/login', (req, res) => {
             });
             res.redirect('/');
         } else {
-            res.render('login', { error: 'Invalid login data', user: null });
+            res.render('login', { error: 'Invalid login credentials', user: null });
         }
     });
 });
 
-// Страница профиля
+// Profile page
 app.get('/profile', (req, res) => {
     if (!req.session.user) {
         return res.redirect('/login');
@@ -198,7 +187,7 @@ app.get('/profile', (req, res) => {
                 try {
                     return { ...order, items: JSON.parse(order.items) };
                 } catch (parseError) {
-                    console.error(`Ошибка разбора items для заказа #${order.order_number}:`, parseError.message);
+                    console.error(`Error parsing items for order #${order.order_number}:`, parseError.message);
                     return { ...order, items: [] };
                 }
             });
@@ -211,11 +200,11 @@ app.get('/profile', (req, res) => {
     });
 });
 
-// Выход
+// Logout
 app.get('/logout', (req, res) => {
     if (req.session.user) {
         db.run('UPDATE users SET authToken = NULL WHERE username = ?', [req.session.user], (err) => {
-            if (err) console.error('Ошибка очистки токена:', err.message);
+            if (err) console.error('Error clearing token:', err.message);
         });
     }
     res.clearCookie('authToken');
@@ -223,7 +212,7 @@ app.get('/logout', (req, res) => {
     res.redirect('/');
 });
 
-// Страница магазина
+// Webshop page
 app.get('/webshop', (req, res) => {
     const renderData = {
         user: req.session.user || null,
@@ -235,7 +224,7 @@ app.get('/webshop', (req, res) => {
     res.render('webshop', renderData);
 });
 
-// Страница чекаута
+// Checkout page
 app.get('/checkout', (req, res) => {
     if (!req.session.user) {
         return res.redirect('/login');
@@ -246,11 +235,11 @@ app.get('/checkout', (req, res) => {
     });
 });
 
-// Обработка формы чекаута
+// Checkout form processing
 app.post('/checkout', (req, res) => {
     if (!req.session.user) return res.status(401).json({ error: 'Please log in' });
 
-    console.log('Получен запрос на /checkout:', req.body);
+    console.log('Received request at /checkout:', req.body);
 
     const { full_name, email, address, city, country, postal_code, payment_method, shipping_method } = req.body;
     if (!full_name || !email || !address || !city || !country || !postal_code || !payment_method || !shipping_method) {
@@ -261,7 +250,7 @@ app.post('/checkout', (req, res) => {
     try {
         cart = JSON.parse(req.cookies.cart || '[]');
     } catch (error) {
-        console.error('Ошибка разбора корзины:', error.message);
+        console.error('Error parsing cart:', error.message);
         return res.status(400).json({ error: 'Invalid cart data' });
     }
 
@@ -271,7 +260,7 @@ app.post('/checkout', (req, res) => {
 
     const isValidCart = cart.every(item => item && typeof item === 'object' && 'title' in item && 'price' in item);
     if (!isValidCart) {
-        console.error('Некорректные данные в корзине:', cart);
+        console.error('Invalid cart data:', cart);
         return res.status(400).json({ error: 'Invalid cart items' });
     }
 
@@ -282,37 +271,44 @@ app.post('/checkout', (req, res) => {
     db.get('SELECT id FROM users WHERE username = ?', [req.session.user], (err, user) => {
         if (err || !user) return res.status(500).json({ error: 'User not found' });
 
-        const itemsJson = JSON.stringify(cart);
-        console.log(`Записываем items для заказа #${orderNumber}:`, itemsJson);
+        let itemsJson;
+        try {
+            itemsJson = JSON.stringify(cart);
+        } catch (stringifyError) {
+            console.error('Error converting cart to JSON:', stringifyError.message);
+            return res.status(500).json({ error: 'Unable to process cart data' });
+        }
+
+        console.log(`Saving items for order #${orderNumber}:`, itemsJson);
 
         db.run(`INSERT INTO orders (user_id, order_number, items, total_usdt, shipping_address, payment_method, status)
                 VALUES (?, ?, ?, ?, ?, ?, 'placed')`,
             [user.id, orderNumber, itemsJson, totalUSDT, shippingAddress, payment_method], (err) => {
                 if (err) {
-                    console.error('Ошибка создания заказа:', err.message);
-                    return res.status(500).json({ error: 'Failed to create order' });
+                    console.error('Error creating order:', err.message);
+                    return res.status(500).json({ error: 'Unable to create order' });
                 }
 
-                console.log(`Заказ создан: #${orderNumber}`);
+                console.log(`Order created: #${orderNumber}`);
 
                 db.run('UPDATE orders SET status = ? WHERE order_number = ?', ['preparing', orderNumber], (updateErr) => {
-                    if (updateErr) console.error('Ошибка обновления статуса заказа:', updateErr.message);
+                    if (updateErr) console.error('Error updating order status:', updateErr.message);
                 });
 
                 transporter.sendMail({
                     from: 'andreyme0411@gmail.com',
                     to: email,
-                    subject: `Order #${orderNumber} Receipt`,
+                    subject: `Receipt for Order #${orderNumber}`,
                     html: `
-                        <h1>Thank You for Your Order!</h1>
+                        <h1>Thank you for your order!</h1>
                         <p>Order #${orderNumber} is being prepared.</p>
                         <p><strong>Items:</strong> ${cart.map(item => `${item.title} - ${item.price} USDT`).join('<br>')}</p>
                         <p><strong>Total:</strong> ${totalUSDT.toFixed(2)} USDT</p>
                         <p><strong>Shipping:</strong> ${shippingAddress}</p>
                     `
                 }, (error, info) => {
-                    if (error) console.error('Ошибка отправки письма пользователю:', error);
-                    else console.log('Письмо отправлено пользователю:', info.response);
+                    if (error) console.error('Error sending email to user:', error);
+                    else console.log('Email sent to user:', info.response);
                 });
 
                 transporter.sendMail({
@@ -328,8 +324,8 @@ app.post('/checkout', (req, res) => {
                         <p><strong>Shipping:</strong> ${shippingAddress}</p>
                     `
                 }, (error, info) => {
-                    if (error) console.error('Ошибка отправки письма администратору:', error);
-                    else console.log('Письмо отправлено администратору:', info.response);
+                    if (error) console.error('Error sending email to admin:', error);
+                    else console.log('Email sent to admin:', info.response);
                 });
 
                 res.json({ redirect: `/order-confirmation?order=${orderNumber}` });
@@ -337,7 +333,7 @@ app.post('/checkout', (req, res) => {
     });
 });
 
-// Страница успешного заказа
+// Order success page
 app.get('/order-success', (req, res) => {
     const orderNumber = req.query.order;
     const hash = req.query.hash || '';
@@ -353,7 +349,7 @@ app.get('/order-success', (req, res) => {
         try {
             items = JSON.parse(order.items);
         } catch (parseError) {
-            console.error(`Ошибка разбора items для заказа #${orderNumber}:`, parseError.message);
+            console.error(`Error parsing items for order #${orderNumber}:`, parseError.message);
             items = [];
         }
         res.render('order-success', {
@@ -381,7 +377,7 @@ app.get('/order-confirmation', (req, res) => {
         try {
             items = JSON.parse(order.items);
         } catch (parseError) {
-            console.error(`Ошибка разбора items для заказа #${orderNumber}:`, parseError.message);
+            console.error(`Error parsing items for order #${orderNumber}:`, parseError.message);
             items = [];
         }
         res.render('order-confirmation', {
@@ -398,19 +394,23 @@ app.get('/order-confirmation', (req, res) => {
     });
 });
 
-// Страница админ-панели
+// Admin panel page
 app.get('/admin', (req, res) => {
-    if (req.session.user !== 'admin') return res.redirect('/login');
+    console.log('Received request at /admin, session:', req.session);
+    if (req.session.user !== 'admin') {
+        console.log('User is not an admin, redirecting to /login');
+        return res.redirect('/login');
+    }
     db.all('SELECT o.*, u.username FROM orders o JOIN users u ON o.user_id = u.id', (err, orders) => {
         if (err) {
-            console.error('Ошибка получения заказов:', err.message);
+            console.error('Error fetching orders:', err.message);
             return res.redirect('/');
         }
         const processedOrders = orders.map(order => {
             try {
                 return { ...order, items: JSON.parse(order.items) };
             } catch (parseError) {
-                console.error(`Ошибка разбора items для заказа #${order.order_number}:`, parseError.message);
+                console.error(`Error parsing items for order #${order.order_number}:`, parseError.message);
                 return { ...order, items: [] };
             }
         });
@@ -421,15 +421,23 @@ app.get('/admin', (req, res) => {
     });
 });
 
-// Обновление статуса заказа
+// Update order status
 app.post('/admin/update-status', (req, res) => {
-    if (req.session.user !== 'admin') return res.status(403).json({ error: 'Unauthorized' });
+    console.log('Received request at /admin/update-status:', req.body);
+
+    if (req.session.user !== 'admin') {
+        return res.status(403).json({ success: false, error: 'Unauthorized access' });
+    }
 
     const { orderNumber, status } = req.body;
 
     const validStatuses = ['placed', 'preparing', 'ready to ship', 'delivered', 'cancelled'];
     if (!validStatuses.includes(status)) {
-        return res.status(400).json({ error: 'Invalid status' });
+        return res.status(400).json({ success: false, error: 'Invalid status' });
+    }
+
+    if (!orderNumber || !status) {
+        return res.status(400).json({ success: false, error: 'orderNumber and status are required' });
     }
 
     db.get(`
@@ -439,14 +447,14 @@ app.post('/admin/update-status', (req, res) => {
         WHERE o.order_number = ?
     `, [orderNumber], (err, order) => {
         if (err || !order) {
-            console.error('Ошибка получения заказа:', err?.message);
-            return res.status(500).json({ error: 'Order not found' });
+            console.error('Error fetching order:', err?.message || 'Order not found');
+            return res.status(500).json({ success: false, error: 'Order not found' });
         }
 
         db.run('UPDATE orders SET status = ? WHERE order_number = ?', [status, orderNumber], (updateErr) => {
             if (updateErr) {
-                console.error('Ошибка обновления статуса:', updateErr.message);
-                return res.status(500).json({ error: 'Failed to update status' });
+                console.error('Error updating status:', updateErr.message);
+                return res.status(500).json({ success: false, error: 'Unable to update status' });
             }
 
             const emailMatch = order.shipping_address.match(/Email: ([^\s]+)/);
@@ -459,14 +467,14 @@ app.post('/admin/update-status', (req, res) => {
                     itemsList = items.map(item => `${item.title} - ${item.price} USDT`).join('<br>');
                 }
             } catch (parseError) {
-                console.error(`Ошибка разбора items для заказа #${orderNumber}:`, parseError.message);
+                console.error(`Error parsing items for order #${orderNumber}:`, parseError.message);
             }
 
             if (userEmail) {
                 transporter.sendMail({
                     from: 'andreyme0411@gmail.com',
                     to: userEmail,
-                    subject: `Order #${orderNumber} Status Update`,
+                    subject: `Order Status Update #${orderNumber}`,
                     html: `
                         <h1>Order Status Update</h1>
                         <p>Your order #${orderNumber} has been updated.</p>
@@ -477,13 +485,13 @@ app.post('/admin/update-status', (req, res) => {
                     `
                 }, (error, info) => {
                     if (error) {
-                        console.error('Ошибка отправки письма пользователю:', error);
+                        console.error('Error sending email to user:', error);
                     } else {
-                        console.log('Уведомление о статусе отправлено пользователю:', info.response);
+                        console.log('Status notification sent to user:', info.response);
                     }
                 });
             } else {
-                console.warn(`Не удалось извлечь email из shipping_address для заказа #${orderNumber}`);
+                console.warn(`Unable to extract email from shipping_address for order #${orderNumber}`);
             }
 
             res.json({ success: true });
@@ -491,7 +499,7 @@ app.post('/admin/update-status', (req, res) => {
     });
 });
 
-// Дополнительные маршруты
+// Additional routes
 app.get('/services', (req, res) => {
     const renderData = {
         user: req.session.user || null,
@@ -523,7 +531,7 @@ app.get('/contact', (req, res) => {
     res.render('contact', { user: req.session.user || null });
 });
 
-// Маршрут для страницы продукта
+// Product page route
 app.get('/product/:productId', (req, res) => {
     const productId = req.params.productId;
     const hash = req.query.hash || uuidv4();
@@ -700,7 +708,7 @@ app.get('/product/:productId', (req, res) => {
     });
 });
 
-// Обработка покупки ваучера
+// Voucher purchase processing
 app.post('/buy-voucher', (req, res) => {
     if (!req.session.user) {
         return res.redirect('/login');
@@ -725,17 +733,17 @@ app.post('/buy-voucher', (req, res) => {
     });
 });
 
-// Запуск сервера
+// Start the server
 const server = app.listen(port, () => {
-    console.log(`Сервер запущен на http://localhost:${port}`);
+    console.log(`Server started at http://localhost:${port}`);
 });
 
-// Обработка завершения работы сервера
+// Handle server shutdown
 process.on('SIGINT', () => {
     server.close(() => {
-        console.log('Сервер остановлен');
+        console.log('Server stopped');
         db.close(() => {
-            console.log('Соединение с базой данных закрыто');
+            console.log('Database connection closed');
             process.exit(0);
         });
     });
