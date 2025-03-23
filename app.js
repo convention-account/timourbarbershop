@@ -7,13 +7,14 @@ const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
 const { v4: uuidv4 } = require('uuid');
+const nodemailer = require('nodemailer');
 
 const app = express();
 const port = 3001;
 
 // Middleware
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json()); // Добавляем поддержку JSON для обработки данных из фронтенда
+app.use(express.json());
 app.use(express.static('public'));
 app.use(cookieParser());
 app.set('view engine', 'ejs');
@@ -31,6 +32,15 @@ app.use(session({
         maxAge: 30 * 24 * 60 * 60 * 1000 // 30 дней
     }
 }));
+
+// Email setup
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'andreyme0411@gmail.com',
+        pass: 'fgsjqaccwmmuzrnl'
+    }
+});
 
 // Middleware для проверки авторизации через куки
 app.use((req, res, next) => {
@@ -93,6 +103,15 @@ const db = new sqlite3.Database(path.join(dbDir, 'users.db'), (err) => {
         FOREIGN KEY (user_id) REFERENCES users(id)
     )`, (err) => {
         if (err) console.error('Ошибка создания таблицы orders:', err.message);
+    });
+
+    // Seed admin account if it doesn't exist
+    db.get('SELECT * FROM users WHERE username = ?', ['admin'], (err, row) => {
+        if (!row) {
+            bcrypt.hash('PRehp2u6Yry@', 10, (err, hashedPassword) => {
+                db.run('INSERT INTO users (username, password) VALUES (?, ?)', ['admin', hashedPassword]);
+            });
+        }
     });
 });
 
@@ -164,12 +183,31 @@ app.get('/profile', (req, res) => {
     if (!req.session.user) {
         return res.redirect('/login');
     }
-    db.get('SELECT voucher FROM users WHERE username = ?', [req.session.user], (err, row) => {
-        if (err) {
-            console.error(err.message);
+    db.get('SELECT id, voucher FROM users WHERE username = ?', [req.session.user], (err, user) => {
+        if (err || !user) {
+            console.error(err?.message || 'User not found');
             return res.redirect('/');
         }
-        res.render('profile', { user: req.session.user, hasVoucher: row.voucher });
+        // Fetch user's orders
+        db.all('SELECT * FROM orders WHERE user_id = ?', [user.id], (err, orders) => {
+            if (err) {
+                console.error(err.message);
+                return res.redirect('/');
+            }
+            const processedOrders = orders.map(order => {
+                try {
+                    return { ...order, items: JSON.parse(order.items) };
+                } catch (parseError) {
+                    console.error(`Ошибка разбора items для заказа #${order.order_number}:`, parseError.message);
+                    return { ...order, items: [] };
+                }
+            });
+            res.render('profile', {
+                user: req.session.user,
+                hasVoucher: user.voucher === 1,
+                orders: processedOrders || []
+            });
+        });
     });
 });
 
@@ -210,66 +248,91 @@ app.get('/checkout', (req, res) => {
 
 // Обработка формы чекаута
 app.post('/checkout', (req, res) => {
-    if (!req.session.user) {
-        return res.status(401).json({ error: 'Please log in to complete your purchase' });
-    }
+    if (!req.session.user) return res.status(401).json({ error: 'Please log in' });
 
-    const { full_name, email, address, city, country, postal_code, payment_method, cart } = req.body;
+    console.log('Получен запрос на /checkout:', req.body);
 
-    // Валидация данных
-    if (!full_name || !email || !address || !city || !country || !postal_code || !payment_method || !cart) {
+    const { full_name, email, address, city, country, postal_code, payment_method, shipping_method } = req.body;
+    if (!full_name || !email || !address || !city || !country || !postal_code || !payment_method || !shipping_method) {
         return res.status(400).json({ error: 'All fields are required' });
     }
 
-    let cartItems;
+    let cart;
     try {
-        cartItems = JSON.parse(cart);
-    } catch (e) {
+        cart = JSON.parse(req.cookies.cart || '[]');
+    } catch (error) {
+        console.error('Ошибка разбора корзины:', error.message);
         return res.status(400).json({ error: 'Invalid cart data' });
     }
 
-    if (!Array.isArray(cartItems) || cartItems.length === 0) {
-        return res.status(400).json({ error: 'Cart is empty or invalid' });
+    if (!Array.isArray(cart) || !cart.length) {
+        return res.status(400).json({ error: 'Cart is empty' });
     }
 
-    // Рассчитываем общую сумму
-    const totalUSDT = cartItems.reduce((sum, item) => sum + parseFloat(item.price), 0);
-    const totalEUR = totalUSDT * 0.9; // Примерный курс
-    const minimumOrderEUR = 50;
-
-    if (totalEUR < minimumOrderEUR) {
-        return res.status(400).json({ error: `Minimum order amount is ${minimumOrderEUR} EUR` });
+    const isValidCart = cart.every(item => item && typeof item === 'object' && 'title' in item && 'price' in item);
+    if (!isValidCart) {
+        console.error('Некорректные данные в корзине:', cart);
+        return res.status(400).json({ error: 'Invalid cart items' });
     }
 
-    // Формируем адрес доставки
+    const totalUSDT = cart.reduce((sum, item) => sum + parseFloat(item.price), 0) + (shipping_method === 'dhl' ? 5 : shipping_method === 'fedex' ? 7 : 6);
     const shippingAddress = `${full_name}, ${address}, ${city}, ${country}, ${postal_code}, Email: ${email}`;
-
-    // Генерируем уникальный номер заказа
     const orderNumber = `ORD-${uuidv4().slice(0, 8).toUpperCase()}`;
 
-    // Получаем ID пользователя
     db.get('SELECT id FROM users WHERE username = ?', [req.session.user], (err, user) => {
-        if (err || !user) {
-            return res.status(500).json({ error: 'User not found' });
-        }
+        if (err || !user) return res.status(500).json({ error: 'User not found' });
 
-        // Сохраняем заказ в базе данных
+        const itemsJson = JSON.stringify(cart);
+        console.log(`Записываем items для заказа #${orderNumber}:`, itemsJson);
+
         db.run(`INSERT INTO orders (user_id, order_number, items, total_usdt, shipping_address, payment_method, status)
-                VALUES (?, ?, ?, ?, ?, ?, 'pending')`,
-            [user.id, orderNumber, JSON.stringify(cartItems), totalUSDT, shippingAddress, payment_method],
-            function (err) {
+                VALUES (?, ?, ?, ?, ?, ?, 'placed')`,
+            [user.id, orderNumber, itemsJson, totalUSDT, shippingAddress, payment_method], (err) => {
                 if (err) {
-                    console.error('Ошибка сохранения заказа:', err.message);
+                    console.error('Ошибка создания заказа:', err.message);
                     return res.status(500).json({ error: 'Failed to create order' });
                 }
 
-                // Возвращаем данные для оплаты через Plisio
-                const paymentData = {
-                    order_number: orderNumber,
-                    amount: totalUSDT,
-                    redirect: `/order-success?order=${orderNumber}`
-                };
-                res.json(paymentData);
+                console.log(`Заказ создан: #${orderNumber}`);
+
+                db.run('UPDATE orders SET status = ? WHERE order_number = ?', ['preparing', orderNumber], (updateErr) => {
+                    if (updateErr) console.error('Ошибка обновления статуса заказа:', updateErr.message);
+                });
+
+                transporter.sendMail({
+                    from: 'andreyme0411@gmail.com',
+                    to: email,
+                    subject: `Order #${orderNumber} Receipt`,
+                    html: `
+                        <h1>Thank You for Your Order!</h1>
+                        <p>Order #${orderNumber} is being prepared.</p>
+                        <p><strong>Items:</strong> ${cart.map(item => `${item.title} - ${item.price} USDT`).join('<br>')}</p>
+                        <p><strong>Total:</strong> ${totalUSDT.toFixed(2)} USDT</p>
+                        <p><strong>Shipping:</strong> ${shippingAddress}</p>
+                    `
+                }, (error, info) => {
+                    if (error) console.error('Ошибка отправки письма пользователю:', error);
+                    else console.log('Письмо отправлено пользователю:', info.response);
+                });
+
+                transporter.sendMail({
+                    from: 'andreyme0411@gmail.com',
+                    to: 'andreyme0411@gmail.com',
+                    subject: `New Order #${orderNumber}`,
+                    html: `
+                        <h1>New Order Received</h1>
+                        <p>Order #${orderNumber}</p>
+                        <p><strong>User:</strong> ${req.session.user}</p>
+                        <p><strong>Items:</strong> ${cart.map(item => `${item.title} - ${item.price} USDT`).join('<br>')}</p>
+                        <p><strong>Total:</strong> ${totalUSDT.toFixed(2)} USDT</p>
+                        <p><strong>Shipping:</strong> ${shippingAddress}</p>
+                    `
+                }, (error, info) => {
+                    if (error) console.error('Ошибка отправки письма администратору:', error);
+                    else console.log('Письмо отправлено администратору:', info.response);
+                });
+
+                res.json({ redirect: `/order-confirmation?order=${orderNumber}` });
             });
     });
 });
@@ -277,7 +340,7 @@ app.post('/checkout', (req, res) => {
 // Страница успешного заказа
 app.get('/order-success', (req, res) => {
     const orderNumber = req.query.order;
-    const hash = req.query.hash || ''; // Получаем хэш из query-параметров
+    const hash = req.query.hash || '';
     if (!orderNumber) {
         return res.redirect('/webshop');
     }
@@ -286,17 +349,144 @@ app.get('/order-success', (req, res) => {
         if (err || !order) {
             return res.redirect('/webshop');
         }
+        let items;
+        try {
+            items = JSON.parse(order.items);
+        } catch (parseError) {
+            console.error(`Ошибка разбора items для заказа #${orderNumber}:`, parseError.message);
+            items = [];
+        }
         res.render('order-success', {
             user: req.session.user || null,
             order: {
                 order_number: order.order_number,
                 total_usdt: order.total_usdt,
-                items: JSON.parse(order.items),
+                items: items,
                 shipping_address: order.shipping_address,
                 payment_method: order.payment_method,
                 status: order.status
             },
-            hash: hash // Передаем хэш в шаблон
+            hash: hash
+        });
+    });
+});
+
+app.get('/order-confirmation', (req, res) => {
+    const orderNumber = req.query.order;
+    if (!orderNumber) return res.redirect('/webshop');
+
+    db.get('SELECT * FROM orders WHERE order_number = ?', [orderNumber], (err, order) => {
+        if (err || !order) return res.redirect('/webshop');
+        let items;
+        try {
+            items = JSON.parse(order.items);
+        } catch (parseError) {
+            console.error(`Ошибка разбора items для заказа #${orderNumber}:`, parseError.message);
+            items = [];
+        }
+        res.render('order-confirmation', {
+            user: req.session.user || null,
+            order: {
+                order_number: order.order_number,
+                total_usdt: order.total_usdt,
+                items: items,
+                shipping_address: order.shipping_address,
+                payment_method: order.payment_method,
+                status: order.status
+            }
+        });
+    });
+});
+
+// Страница админ-панели
+app.get('/admin', (req, res) => {
+    if (req.session.user !== 'admin') return res.redirect('/login');
+    db.all('SELECT o.*, u.username FROM orders o JOIN users u ON o.user_id = u.id', (err, orders) => {
+        if (err) {
+            console.error('Ошибка получения заказов:', err.message);
+            return res.redirect('/');
+        }
+        const processedOrders = orders.map(order => {
+            try {
+                return { ...order, items: JSON.parse(order.items) };
+            } catch (parseError) {
+                console.error(`Ошибка разбора items для заказа #${order.order_number}:`, parseError.message);
+                return { ...order, items: [] };
+            }
+        });
+        res.render('admin', {
+            user: req.session.user,
+            orders: processedOrders
+        });
+    });
+});
+
+// Обновление статуса заказа
+app.post('/admin/update-status', (req, res) => {
+    if (req.session.user !== 'admin') return res.status(403).json({ error: 'Unauthorized' });
+
+    const { orderNumber, status } = req.body;
+
+    const validStatuses = ['placed', 'preparing', 'ready to ship', 'delivered', 'cancelled'];
+    if (!validStatuses.includes(status)) {
+        return res.status(400).json({ error: 'Invalid status' });
+    }
+
+    db.get(`
+        SELECT o.*, u.username 
+        FROM orders o 
+        JOIN users u ON o.user_id = u.id 
+        WHERE o.order_number = ?
+    `, [orderNumber], (err, order) => {
+        if (err || !order) {
+            console.error('Ошибка получения заказа:', err?.message);
+            return res.status(500).json({ error: 'Order not found' });
+        }
+
+        db.run('UPDATE orders SET status = ? WHERE order_number = ?', [status, orderNumber], (updateErr) => {
+            if (updateErr) {
+                console.error('Ошибка обновления статуса:', updateErr.message);
+                return res.status(500).json({ error: 'Failed to update status' });
+            }
+
+            const emailMatch = order.shipping_address.match(/Email: ([^\s]+)/);
+            const userEmail = emailMatch ? emailMatch[1] : null;
+
+            let itemsList = 'Unable to display items due to data error';
+            try {
+                const items = JSON.parse(order.items);
+                if (Array.isArray(items)) {
+                    itemsList = items.map(item => `${item.title} - ${item.price} USDT`).join('<br>');
+                }
+            } catch (parseError) {
+                console.error(`Ошибка разбора items для заказа #${orderNumber}:`, parseError.message);
+            }
+
+            if (userEmail) {
+                transporter.sendMail({
+                    from: 'andreyme0411@gmail.com',
+                    to: userEmail,
+                    subject: `Order #${orderNumber} Status Update`,
+                    html: `
+                        <h1>Order Status Update</h1>
+                        <p>Your order #${orderNumber} has been updated.</p>
+                        <p><strong>New Status:</strong> ${status}</p>
+                        <p><strong>Items:</strong> ${itemsList}</p>
+                        <p><strong>Total:</strong> ${order.total_usdt.toFixed(2)} USDT</p>
+                        <p><strong>Shipping Address:</strong> ${order.shipping_address}</p>
+                    `
+                }, (error, info) => {
+                    if (error) {
+                        console.error('Ошибка отправки письма пользователю:', error);
+                    } else {
+                        console.log('Уведомление о статусе отправлено пользователю:', info.response);
+                    }
+                });
+            } else {
+                console.warn(`Не удалось извлечь email из shipping_address для заказа #${orderNumber}`);
+            }
+
+            res.json({ success: true });
         });
     });
 });
@@ -305,11 +495,10 @@ app.get('/order-success', (req, res) => {
 app.get('/services', (req, res) => {
     const renderData = {
         user: req.session.user || null,
-        purchaseSuccess: req.session.purchaseSuccess === true, // Явно задаем false, если undefined
-        voucherAlreadyOwned: req.session.voucherAlreadyOwned === true // Явно задаем false, если undefined
+        purchaseSuccess: req.session.purchaseSuccess === true,
+        voucherAlreadyOwned: req.session.voucherAlreadyOwned === true
     };
     res.render('services', renderData);
-    // Удаляем после рендера, чтобы не терять значения до обработки
     if (req.session.purchaseSuccess) delete req.session.purchaseSuccess;
     if (req.session.voucherAlreadyOwned) delete req.session.voucherAlreadyOwned;
 });

@@ -58,9 +58,10 @@
             </div>
 
             <!-- Форма checkout -->
+            <!-- Форма checkout -->
             <div class="contact-form checkout-form">
                 <h2 class="form-title">Checkout Details</h2>
-                <form id="checkout-form" method="POST" action="https://plisio.net/invoice">
+                <form id="checkout-form" method="POST">
                     <!-- Адрес доставки -->
                     <div class="checkout-group">
                         <h3 class="form-subtitle">Shipping Address</h3>
@@ -103,7 +104,6 @@
                                 Credit/Debit Card (NOT AVAILABLE AT THE MOMENT)
                             </label>
                         </div>
-                        <!-- Дополнительные поля для карты -->
                         <div class="card-details" style="display: none;">
                             <div class="form-group">
                                 <label for="card-number">Card Number</label>
@@ -127,7 +127,7 @@
                         <div class="shipping-methods">
                             <label class="shipping-option">
                                 <input type="radio" name="shipping_method" value="dhl" checked>
-                                <img src="../media/lp-express-s.png" alt="LP    " class="shipping-icon">
+                                <img src="../media/lp-express-s.png" alt="LP" class="shipping-icon">
                                 <span>LPExpress - 5 USDT (3-5 days) - Baltics regions</span>
                             </label>
                             <label class="shipping-option">
@@ -144,38 +144,10 @@
                         </div>
                     </div>
 
-                    <!-- Скрытые поля для Plisio -->
-                    <input type="hidden" name="source_currency" value="USDT_TRC20">
-                    <input type="hidden" name="source_amount" id="cart-amount" value="0">
-                    <input type="hidden" name="order_name" value="Checkout Purchase">
-                    <input type="hidden" name="order_number" value="checkout-001">
-                    <input type="hidden" name="api_key" value="№">
-                    <input type="hidden" name="success_url" value="https://yourdomain.com/success">
-                    <input type="hidden" name="cancel_url" value="https://yourdomain.com/webshop">
-
-                    <button type="submit" class="form-btn checkout-btn">Place Order</button>
+                    <button type="button" class="form-btn checkout-btn" onclick="submitCheckoutForm()">Place
+                        Order</button>
                 </form>
                 <button class="close-cart" onclick="window.location.href='/webshop'">Back to Store</button>
-            </div>
-
-            <!-- Обзор заказа -->
-            <div class="contact-info checkout-info">
-                <h2 class="form-title">Order Summary</h2>
-                <div class="cart-items" id="checkout-cart-items">
-                    <!-- Динамически заполняется через JavaScript -->
-                </div>
-                <div class="cart-total">
-                    <span>Subtotal:</span>
-                    <span id="checkout-subtotal">0 USDT</span>
-                </div>
-                <div class="cart-total">
-                    <span>Shipping:</span>
-                    <span id="checkout-shipping">5 USDT</span>
-                </div>
-                <div class="cart-total">
-                    <span>Total:</span>
-                    <span class="total-price" id="checkout-total">5 USDT</span>
-                </div>
             </div>
         </div>
     </main>
@@ -201,141 +173,55 @@
 
     <!-- Скрипт для управления полями карты и доставкой -->
     <script>
-        // Показ/скрытие полей карты
-        document.querySelectorAll('input[name="payment_method"]').forEach(radio => {
-            radio.addEventListener('change', function () {
-                const cardDetails = document.querySelector('.card-details');
-                if (this.value === 'card') {
-                    cardDetails.style.display = 'block';
-                } else {
-                    cardDetails.style.display = 'none';
-                }
-            });
-        });
-
-        // Обновление итога в зависимости от способа доставки
-        document.querySelectorAll('input[name="shipping_method"]').forEach(radio => {
-            radio.addEventListener('change', function () {
-                const shippingCosts = {
-                    'dhl': 5,
-                    'fedex': 7,
-                    'ups': 6
-                };
-                const shippingCost = shippingCosts[this.value];
-                const subtotalElement = document.getElementById('checkout-subtotal');
-                const shippingElement = document.getElementById('checkout-shipping');
-                const totalElement = document.getElementById('checkout-total');
-                const subtotal = parseFloat(subtotalElement.textContent);
-                const newTotal = subtotal + shippingCost;
-
-                shippingElement.textContent = `${shippingCost} USDT`;
-                totalElement.textContent = `${newTotal} USDT`;
-                document.getElementById('cart-amount').value = newTotal; // Обновляем скрытое поле для Plisio
-            });
-        });
-
-        // Функция для получения cookie
-        function getCookie(name) {
-            const nameEQ = name + "=";
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                let cookie = cookies[i].trim();
-                if (cookie.indexOf(nameEQ) === 0) {
-                    return JSON.parse(decodeURIComponent(cookie.substring(nameEQ.length)));
-                }
-            }
-            return null;
-        }
-
-        // Получение корзины из cookies
-        const cart = getCookie('cart') || [];
-
-        // Заполнение "Order Summary"
-        const cartItemsContainer = document.getElementById('checkout-cart-items');
-        const subtotalElement = document.getElementById('checkout-subtotal');
-        const shippingElement = document.getElementById('checkout-shipping');
-        const totalElement = document.getElementById('checkout-total');
-
-        let subtotal = 0;
-        if (cart.length === 0) {
-            cartItemsContainer.innerHTML = '<p>Your cart is empty</p>';
-        } else {
-            cart.forEach(item => {
-                subtotal += item.price;
-                const cartItem = document.createElement('div');
-                cartItem.classList.add('cart-item');
-                cartItem.innerHTML = `
-                <span class="cart-item-title">${item.title}</span>
-                <span class="cart-item-price">${item.price} USDT</span>
-            `;
-                cartItemsContainer.appendChild(cartItem);
-            });
-        }
-
-        // Обновление итогов
-        const shippingCost = 5; // Стоимость доставки по умолчанию (DHL)
-        const total = subtotal + shippingCost;
-
-        subtotalElement.textContent = `${subtotal} USDT`;
-        shippingElement.textContent = `${shippingCost} USDT`;
-        totalElement.textContent = `${total} USDT`;
-
-        // Обновляем скрытое поле с корзиной
-        document.getElementById('cart-items').value = JSON.stringify(cart);
-
         // Обработка отправки формы через AJAX
-        document.getElementById('checkout-form').addEventListener('submit', async (e) => {
-            e.preventDefault(); // Предотвращаем стандартную отправку формы
+        const checkoutForm = document.getElementById('checkout-form');
+        if (checkoutForm) {
+            console.log('Form findeds');
+            checkoutForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                console.log('Form is sending...');
 
-            const formData = new FormData(document.getElementById('checkout-form'));
-            const data = Object.fromEntries(formData);
+                // Блокируем кнопку отправки
+                const submitButton = checkoutForm.querySelector('button[type="submit"]');
+                submitButton.disabled = true;
+                submitButton.textContent = 'Processing...'; // Визуальная обратная связь
 
-            try {
-                const response = await fetch('/checkout', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
+                const formData = new FormData(checkoutForm);
+                const data = Object.fromEntries(formData);
+                console.log('Data form:', data);
 
-                const result = await response.json();
+                try {
+                    const response = await fetch('/checkout', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
 
-                if (response.ok) {
-                    // Перенаправляем на страницу оплаты Plisio
-                    const plisioForm = document.createElement('form');
-                    plisioForm.method = 'POST';
-                    plisioForm.action = 'https://plisio.net/invoice';
+                    console.log('Server response:', response);
+                    const result = await response.json();
+                    console.log('Result:', result);
 
-                    const fields = {
-                        source_currency: 'USDT_TRC20',
-                        source_amount: result.amount,
-                        order_name: 'Checkout Purchase',
-                        order_number: result.order_number,
-                        api_key: '№',
-                        success_url: 'https://yourdomain.com/success',
-                        cancel_url: 'https://yourdomain.com/webshop',
-                        redirect: result.redirect
-                    };
-
-                    for (const [key, value] of Object.entries(fields)) {
-                        const input = document.createElement('input');
-                        input.type = 'hidden';
-                        input.name = key;
-                        input.value = value;
-                        plisioForm.appendChild(input);
+                    if (response.ok) {
+                        console.log('Clearing cart and redirecting...');
+                        document.cookie = 'cart=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                        console.log('Redirecting:', result.redirect);
+                        window.location.href = result.redirect;
+                    } else {
+                        console.log('Server error:', result.error);
+                        alert(result.error);
+                        submitButton.disabled = false;
+                        submitButton.textContent = 'Place Order';
                     }
-
-                    document.body.appendChild(plisioForm);
-                    plisioForm.submit();
-                } else {
-                    alert(result.error);
+                } catch (error) {
+                    console.error('Error while sending:', error);
+                    alert('Error processing order');
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Place Order';
                 }
-            } catch (error) {
-                alert('Order transaction failed');
-                console.error(error);
-            }
-        });
+            }, { once: true }); // Добавляем обработчик только один раз
+        } else {
+            console.error('Form with id="checkout-form" not found');
+        }
     </script>
     <script src="js/script.js"></script>
     <script src="/js/cart.js"></script>
