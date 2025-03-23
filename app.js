@@ -39,7 +39,10 @@ const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
         user: 'timourbarber@gmail.com',
-        pass: 'your-app-specific-password' // Замените на пароль приложения Gmail
+        pass: 'uhoalcumtbjfswqi'
+
+        // user: 'andreyme0411@gmail.com',
+        // pass: 'ronapadzvqoqrbdq'
     }
 });
 
@@ -243,32 +246,62 @@ app.get('/checkout', (req, res) => {
 // Обработка формы оформления заказа
 app.post('/checkout', (req, res) => {
     if (!req.session.user) {
+        console.log('User not logged in, returning 401');
         return res.status(401).json({ error: 'Please log in' });
     }
 
     console.log('Received request at /checkout:', req.body);
-    console.log('Cart cookie:', req.cookies.cart);
+    console.log('Raw cart cookie:', req.cookies.cart);
+    console.log('Type of cart cookie:', typeof req.cookies.cart);
 
     const { full_name, email, address, city, country, postal_code, payment_method, shipping_method } = req.body;
     if (!full_name || !email || !address || !city || !country || !postal_code || !payment_method || !shipping_method) {
+        console.log('Missing required fields, returning 400');
         return res.status(400).json({ error: 'All fields are required' });
     }
 
     let cart;
     try {
         const rawCart = req.cookies.cart;
-        if (!rawCart || typeof rawCart !== 'string' || rawCart.trim() === '') {
+        console.log('Attempting to parse cart:', rawCart);
+
+        if (!rawCart || typeof rawCart !== 'string') {
+            console.log('Cart cookie is missing or not a string, setting to empty array');
+            cart = [];
+        } else if (rawCart.trim() === '') {
+            console.log('Cart cookie is an empty string, setting to empty array');
             cart = [];
         } else {
-            cart = JSON.parse(decodeURIComponent(rawCart));
+            let decodedCart;
+            try {
+                decodedCart = decodeURIComponent(rawCart);
+                console.log('Decoded cart:', decodedCart);
+            } catch (decodeError) {
+                console.error('Error decoding cart cookie:', decodeError.message);
+                return res.status(400).json({ error: 'Invalid cart data (decoding failed)' });
+            }
+
+            if (decodedCart === 'undefined' || decodedCart === 'null' || decodedCart === '') {
+                console.log('Cart cookie contains invalid value (undefined/null/empty), setting to empty array');
+                cart = [];
+            } else {
+                try {
+                    cart = JSON.parse(decodedCart);
+                    console.log('Parsed cart:', cart);
+                } catch (parseError) {
+                    console.error('Error parsing cart JSON:', parseError.message);
+                    console.error('Problematic cart data (decoded):', decodedCart);
+                    return res.status(400).json({ error: 'Invalid cart data (parsing failed)' });
+                }
+            }
         }
-        console.log('Parsed cart:', cart);
     } catch (error) {
-        console.error('Error parsing cart:', error.message);
-        return res.status(400).json({ error: 'Invalid cart data' });
+        console.error('Unexpected error in cart processing:', error.message);
+        return res.status(500).json({ error: 'Unexpected error processing cart' });
     }
 
     if (!Array.isArray(cart) || !cart.length) {
+        console.log('Cart is empty or not an array after parsing');
         return res.status(400).json({ error: 'Cart is empty' });
     }
 
@@ -282,6 +315,25 @@ app.post('/checkout', (req, res) => {
     const totalUSDT = cart.reduce((sum, item) => sum + parseFloat(item.price), 0) + (shippingCosts[shipping_method] || 0);
     const shippingAddress = `${full_name}, ${address}, ${city}, ${country}, ${postal_code}, Email: ${email}`;
     const orderNumber = `ORD-${uuidv4().slice(0, 8).toUpperCase()}`;
+
+    let shippingMethodName, shippingIcon;
+    switch (shipping_method) {
+        case 'dhl':
+            shippingMethodName = 'LPExpress';
+            shippingIcon = '/media/lp-express-s.png';
+            break;
+        case 'fedex':
+            shippingMethodName = 'DPD';
+            shippingIcon = '/media/dpd.png';
+            break;
+        case 'ups':
+            shippingMethodName = 'Omniva';
+            shippingIcon = '/media/omniva_horizontal_orange-1024x410-1.webp';
+            break;
+        default:
+            shippingMethodName = 'Unknown';
+            shippingIcon = '';
+    }
 
     db.get('SELECT id FROM users WHERE username = ?', [req.session.user], (err, user) => {
         if (err || !user) {
@@ -314,15 +366,18 @@ app.post('/checkout', (req, res) => {
                 });
 
                 transporter.sendMail({
-                    from: 'timourbarber@gmail.com',
+                    from: 'andreyme0411@gmail.com',
                     to: email,
                     subject: `Receipt for Order #${orderNumber}`,
                     html: `
                         <h1>Thank you for your order!</h1>
                         <p>Order #${orderNumber} is being prepared.</p>
-                        <p><strong>Items:</strong> ${cart.map(item => `${item.title} - ${item.price} USDT`).join('<br>')}</p>
+                        <p><strong>Items:</strong></p>
+                        <ul>${cart.map(item => `<li>${item.title} - ${item.price} USDT</li>`).join('')}</ul>
+                        <p><strong>Shipping Method:</strong> ${shippingMethodName}</p>
+                        <p><img src="http://localhost:3001${shippingIcon}" alt="${shippingMethodName}" style="max-width: 150px;"></p>
                         <p><strong>Total:</strong> ${totalUSDT.toFixed(2)} USDT</p>
-                        <p><strong>Shipping:</strong> ${shippingAddress}</p>
+                        <p><strong>Shipping Address:</strong> ${shippingAddress}</p>
                     `
                 }, (error, info) => {
                     if (error) console.error('Error sending email to user:', error);
@@ -330,24 +385,52 @@ app.post('/checkout', (req, res) => {
                 });
 
                 transporter.sendMail({
-                    from: 'timourbarber@gmail.com',
+                    from: 'andreyme0411@gmail.com',
                     to: 'timourbarber@gmail.com',
                     subject: `New Order #${orderNumber}`,
                     html: `
                         <h1>New Order Received</h1>
                         <p>Order #${orderNumber}</p>
                         <p><strong>User:</strong> ${req.session.user}</p>
-                        <p><strong>Items:</strong> ${cart.map(item => `${item.title} - ${item.price} USDT`).join('<br>')}</p>
+                        <p><strong>Items:</strong></p>
+                        <ul>${cart.map(item => `<li>${item.title} - ${item.price} USDT</li>`).join('')}</ul>
+                        <p><strong>Shipping Method:</strong> ${shippingMethodName}</p>
+                        <p><img src="http://localhost:3001${shippingIcon}" alt="${shippingMethodName}" style="max-width: 150px;"></p>
                         <p><strong>Total:</strong> ${totalUSDT.toFixed(2)} USDT</p>
-                        <p><strong>Shipping:</strong> ${shippingAddress}</p>
+                        <p><strong>Shipping Address:</strong> ${shippingAddress}</p>
                     `
                 }, (error, info) => {
                     if (error) console.error('Error sending email to admin:', error);
                     else console.log('Email sent to admin:', info.response);
                 });
 
-                res.json({ redirect: `/order-confirmation?order=${orderNumber}` });
+                console.log('Sending success response with redirect:', `/order-success?order=${orderNumber}`);
+                res.status(200).json({ redirect: `/order-success?order=${orderNumber}` }); // Изменено на /order-success
             });
+    });
+});
+
+app.get('/order-success', (req, res) => {
+    const orderNumber = req.query.order;
+    if (!orderNumber) {
+        return res.status(400).send('Order number is required');
+    }
+
+    db.get('SELECT * FROM orders WHERE order_number = ?', [orderNumber], (err, order) => {
+        if (err || !order) {
+            console.error('Error fetching order:', err?.message || 'Order not found');
+            return res.status(404).send('Order not found');
+        }
+
+        // Парсим items из JSON
+        try {
+            order.items = JSON.parse(order.items);
+        } catch (parseError) {
+            console.error('Error parsing order items:', parseError.message);
+            return res.status(500).send('Error processing order data');
+        }
+
+        res.render('order-success', { order });
     });
 });
 

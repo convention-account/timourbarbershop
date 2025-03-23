@@ -1,5 +1,15 @@
-// public/js/cart.js
 document.addEventListener('DOMContentLoaded', () => {
+    // Проверяем, что мы не на странице checkout
+    if (window.location.pathname === '/checkout') {
+        console.log('On checkout page, skipping full cart initialization.');
+        const cartCount = document.querySelector('.cart-count');
+        if (cartCount) {
+            const cart = getCookie('cart');
+            cartCount.textContent = cart.length;
+        }
+        return;
+    }
+
     const cartIcon = document.querySelector('.cart-icon');
     const cartModal = document.querySelector('.cart-modal');
     const closeCart = document.querySelector('.close-cart');
@@ -9,7 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const checkoutBtn = document.querySelector('.checkout-btn');
     const body = document.body;
 
-    // Функция для установки куки
     function setCookie(name, value, days) {
         if (!Array.isArray(value)) {
             console.error('Cart must be an array:', value);
@@ -21,7 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.cookie = `${name}=${cookieValue}; path=/`;
     }
 
-    // Функция для получения куки
     function getCookie(name) {
         const nameEQ = name + "=";
         const cookies = document.cookie.split(';');
@@ -39,10 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return [];
     }
 
-    // Инициализация корзины из куки
     let cart = getCookie('cart');
 
-    // Проверка наличия всех элементов корзины на странице
     if (!cartIcon || !cartModal || !closeCart || !cartItemsContainer || !cartCount || !totalPriceElement || !checkoutBtn) {
         console.warn('Cart elements not found on this page. Skipping cart initialization.');
         if (cartIcon && cartCount) {
@@ -51,20 +57,17 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // Открытие модального окна корзины
     cartIcon.addEventListener('click', () => {
         cartModal.classList.add('active');
         body.classList.add('cart-open');
         updateCart();
     });
 
-    // Закрытие модального окна корзины
     closeCart.addEventListener('click', () => {
         cartModal.classList.remove('active');
         body.classList.remove('cart-open');
     });
 
-    // Обновление отображения корзины
     function updateCart() {
         cartItemsContainer.innerHTML = '';
         let totalUSDT = 0;
@@ -122,7 +125,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Обработка нажатия кнопки "Checkout"
     checkoutBtn.addEventListener('click', (e) => {
         e.preventDefault();
         const totalUSDT = parseFloat(totalPriceElement.textContent.match(/\d+(\.\d+)?/)[0]);
@@ -142,7 +144,6 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = '/checkout';
     });
 
-    // Функция для отображения пользовательского уведомления
     function showAlert(message) {
         const customAlert = document.getElementById('custom-alert');
         const customAlertMessage = document.getElementById('custom-alert-message');
@@ -157,6 +158,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Инициализация корзины при загрузке страницы
     updateCart();
 });

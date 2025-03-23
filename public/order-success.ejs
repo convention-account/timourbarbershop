@@ -1,32 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Success - TimourBarber</title>
     <link rel="stylesheet" type="text/css" href="/css/webshop.css">
 </head>
+
 <body>
     <header>
-        <!-- Ваш хедер -->
+        <div class="logo">
+            <img src="../media/icon.png" alt="Logo" class="logo-icon">
+        </div>
+        <nav class="navbar">
+            <div class="burger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-list">
+                <li><a href="/">Home</a></li>
+                <li><a href="academy">Academy</a></li>
+                <li><a href="webshop">Store</a></li>
+                <li><a href="about">About</a></li>
+                <li><a href="/services">Services</a></li>
+                <li><a href="contact">Contact</a></li>
+                <li><a href="job">Job</a></li>
+                <li><a href="coin">Coin</a></li>
+            </ul>
+        </nav>
+        <div class="login-nav">
+            <% if (user) { %>
+                <li>Welcome, <%= user %> | <a href="/profile">Personal Cabinet</a> | <a href="/logout">Logout</a></li>
+                <% } else { %>
+                    <li><a href="/login">Login</a></li>
+                    <% } %>
+        </div>
+
+        <div class="cart-icon">
+            🛒
+            <span class="cart-count">0</span>
+        </div>
     </header>
     <main>
         <h1>Order Successful!</h1>
-        <p>Order Number: <%= order.order_number %></p>
+        <p>Order Number: <%= order.order_number %>
+        </p>
         <p>Total: <%= order.total_usdt %> USDT</p>
-        <p>Shipping Address: <%= order.shipping_address %></p>
-        <p>Payment Method: <%= order.payment_method %></p>
-        <p>Status: <%= order.status %></p>
+        <p>Shipping Address: <%= order.shipping_address %>
+        </p>
+        <p>Payment Method: <%= order.payment_method %>
+        </p>
+        <p>Status: <%= order.status %>
+        </p>
         <h2>Items:</h2>
         <ul>
-            <% order.items.forEach(item => { %>
-                <li><%= item.title %> - <%= item.price %> USDT</li>
-            <% }); %>
+            <% order.items.forEach(item=> { %>
+                <li>
+                    <%= item.title %> - <%= item.price %> USDT
+                </li>
+                <% }); %>
         </ul>
         <a href="/webshop">Back to Store</a>
     </main>
     <footer>
-        <!-- Ваш футер -->
+        <div class="footer-content">
+            <p>© 2025 Timour Barber. All rights reserved.</p>
+            <ul class="footer-links">
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Terms of Use</a></li>
+                <li><a href="#">Contact Us</a></li>
+            </ul>
+        </div>
     </footer>
 </body>
+
 </html>
