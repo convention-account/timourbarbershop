@@ -588,9 +588,12 @@ app.get('/admin', (req, res) => {
 app.post('/admin/update-status', (req, res) => {
     console.log('Received request at /admin/update-status:', req.body);
 
-    if (req.session.user !== 'admin') {
+    // Разрешаем доступ для 'admin' и 'Andrii Slavutskyi'
+    if (req.session.user !== 'admin' && req.session.user !== 'Andrii Slavutskyi') {
+        console.log('Unauthorized access attempt by user:', req.session.user);
         return res.status(403).json({ success: false, error: 'Unauthorized access' });
     }
+    console.log('User authorized to update status:', req.session.user);
 
     const { orderNumber, status } = req.body;
 
