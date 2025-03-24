@@ -288,7 +288,7 @@ footer {
         width: 100%;
         height: 100vh;
         background-color: rgba(0, 0, 0, 0.95);
-        padding: 60px 0;
+        padding: 35px 0 !important;
         opacity: 0;
         transform: translateY(-100%);
         transition: transform 0.5s ease-in-out, opacity 0.3s ease-in-out;
