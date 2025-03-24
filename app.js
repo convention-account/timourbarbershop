@@ -69,7 +69,7 @@ const transporter = nodemailer.createTransport({
 
 // Middleware для проверки авторизации через hash в URL
 app.use((req, res, next) => {
-    const hashFreePaths = ['/login', '/register', '/logout', '/buy-voucher', '/cart', '/order-success', '/admin/update-status'];
+    const hashFreePaths = ['/logout', '/buy-voucher', '/cart', '/order-success', '/admin/update-status'];
     // Пропускаем POST-запросы, чтобы не перенаправлять их
     if (req.method === 'POST') {
         return next();
@@ -231,6 +231,11 @@ app.get('/profile', (req, res) => {
             });
         });
     });
+});
+
+// Страница "Why Crypto is Easier"
+app.get('/cryptoeasier', (req, res) => {
+    res.render('cryptoeasier', { user: req.session.user || null });
 });
 
 // Выход из системы
@@ -463,6 +468,9 @@ app.post('/checkout', async (req, res) => {
                         <p><strong>Amount to Pay:</strong> ${totalUSDT.toFixed(2)} USDT</p>
                         <p style="color: red; font-weight: bold;">Important: In the transaction comment, you MUST include your order number: ${orderNumber}. This is necessary to match your payment to your order.</p>
                         <p>Once the payment is received, we will update your order status and proceed with shipping.</p>
+                        <p><img src="https://timour-barber.com/media/icon.png" alt="TimourBarber" style="max-width: 250px;"></p>
+                        <p><strong><a href="https://timour-barber.com/">Our website</a></strong></p>
+                        <p><strong>TimourBarber 2025&copy;</strong></p>
                     `
                 }, (error, info) => {
                     if (error) {
@@ -493,6 +501,9 @@ app.post('/checkout', async (req, res) => {
                         <p><strong>Wallet Address:</strong> TXb1e2f3g4h5j6k7m8n9p0q1r2s3t4u5v6w7x8y9z</p>
                         <p><strong>Amount to Pay:</strong> ${totalUSDT.toFixed(2)} USDT</p>
                         <p style="color: red; font-weight: bold;">Important: In the transaction comment, the user must include the order number: ${orderNumber}.</p>
+                        <p><img src="https://timour-barber.com/media/icon.png" alt="TimourBarber" style="max-width: 250px;"></p>
+                        <p><strong><a href="https://timour-barber.com/">Our website</a></strong></p>
+                        <p><strong>TimourBarber 2025&copy;</strong></p>
                     `
                 }, (error, info) => {
                     if (error) {

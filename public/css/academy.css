@@ -777,3 +777,302 @@ footer {
         height: 25px;
     }
 }
+
+/* Общие стили для кнопок */
+.about-btn, .blog-btn, .contact-btn, .crypto-more-btn {
+    display: inline-block;
+    background: #FFF;
+    color: #000;
+    padding: 15px 30px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 900;
+    text-transform: uppercase;
+    border-radius: 5px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Ховер-эффект: масштабирование и свечение */
+.about-btn:hover, .blog-btn:hover, .contact-btn:hover, .crypto-more-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(159, 127, 243, 0.8);
+    opacity: 1;
+}
+
+/* Добавляем псевдоэлемент для эффекта волны */
+.about-btn::after, .blog-btn::after, .contact-btn::after, .crypto-more-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(159, 127, 243, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease, height 0.6s ease;
+    z-index: 0;
+}
+
+.about-btn:hover::after, .blog-btn:hover::after, .contact-btn:hover::after, .crypto-more-btn:hover::after {
+    width: 300px;
+    height: 300px;
+}
+
+/* Текст кнопки поверх эффекта */
+.about-btn span, .blog-btn span, .contact-btn span, .crypto-more-btn span {
+    position: relative;
+    z-index: 1;
+}
+
+/* Ховер для ссылок в навигации */
+.nav-list li a, .footer-links a, .login-nav li a {
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.nav-list li a:hover, .footer-links a:hover, .login-nav li a:hover {
+    transform: translateY(-2px);
+    color: #9F7FF3;
+}
+
+/* Стили для основного контента (Academy) */
+.academy-section {
+    position: relative;
+    z-index: 2;
+    padding: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.academy-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.academy-intro {
+    text-align: center;
+}
+
+.headline {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.headline-emoji {
+    font-size: 40px;
+    margin-right: 10px;
+}
+
+.headline-main {
+    color: #FFF;
+    font-size: 48px;
+    font-weight: 900;
+    text-transform: uppercase;
+    line-height: 1.2;
+    text-shadow: 0 5px 20px rgba(255, 255, 255, 0.5);
+    display: inline;
+}
+
+.headline-sub {
+    color: #9F7FF3;
+    font-size: 48px;
+    font-weight: 900;
+    text-transform: uppercase;
+    line-height: 1.2;
+    -webkit-text-stroke: 1px #9F7FF3;
+    text-shadow: 0 5px 25px rgba(159, 127, 243, 0.8);
+    display: inline;
+    margin-left: 10px;
+}
+
+/* Описание академии */
+.academy-main {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    padding: 20px;
+    color: #FFF;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.academy-main:hover {
+    transform: perspective(1000px) rotateX(2deg) rotateY(2deg);
+    box-shadow: 0 10px 40px rgba(159, 127, 243, 0.5);
+}
+
+.academy-text {
+    font-size: 19px;
+    font-weight: 900;
+    line-height: 1.5;
+    margin: 15px 0;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+/* Преимущества */
+.academy-benefits {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    padding: 20px;
+    color: #FFF;
+    min-height: auto;
+    overflow: visible;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.academy-benefits:hover {
+    transform: perspective(1000px) rotateX(2deg) rotateY(2deg);
+    box-shadow: 0 10px 40px rgba(159, 127, 243, 0.5);
+}
+
+.benefits-title {
+    font-size: 24px;
+    font-weight: 900;
+    text-transform: uppercase;
+    margin: 0 0 15px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.benefits-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.benefits-list li {
+    margin-bottom: 10px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+/* Фото/видео и кнопка */
+.academy-media {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    position: relative;
+    width: 100%;
+}
+
+.media-image {
+    width: 100%;
+    max-width: 600px;
+    border-radius: 10px;
+    object-fit: cover;
+    transition: transform 0.1s ease-out;
+    will-change: transform;
+    z-index: 1;
+    position: relative;
+}
+
+.academy-btn {
+    display: inline-block;
+    background: #FFF;
+    color: #000;
+    padding: 12px 25px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 900;
+    text-transform: uppercase;
+    border-radius: 5px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s;
+    position: relative;
+    overflow: hidden;
+    z-index: 2;
+}
+
+.academy-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(159, 127, 243, 0.8);
+    opacity: 1;
+}
+
+.academy-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(159, 127, 243, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease, height 0.6s ease;
+    z-index: 0;
+}
+
+.academy-btn:hover::after {
+    width: 300px;
+    height: 300px;
+}
+
+/* Анимация появления */
+.headline-main, .headline-sub, .academy-text, .benefits-title, .benefits-list li {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.headline-sub { transition-delay: 0.2s; }
+.academy-text:nth-child(1) { transition-delay: 0.1s; }
+.academy-text:nth-child(2) { transition-delay: 0.2s; }
+.academy-text:nth-child(3) { transition-delay: 0.3s; }
+.benefits-title { transition-delay: 0.4s; }
+.benefits-list li:nth-child(1) { transition-delay: 0.5s; }
+.benefits-list li:nth-child(2) { transition-delay: 0.6s; }
+.benefits-list li:nth-child(3) { transition-delay: 0.7s; }
+.benefits-list li:nth-child(4) { transition-delay: 0.8s; }
+.benefits-list li:nth-child(5) { transition-delay: 0.9s; }
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .academy-section {
+        padding: 20px;
+        padding-top: 70px;
+    }
+
+    .academy-media {
+        gap: 15px;
+    }
+
+    .media-image {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .academy-btn {
+        padding: 10px 20px;
+        font-size: 14px;
+        width: 100%;
+        max-width: 300px;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .media-image {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .academy-btn {
+        padding: 8px 15px;
+        font-size: 12px;
+    }
+}

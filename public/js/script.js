@@ -114,3 +114,26 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 });
+// Функция для проверки видимости элемента
+function isInViewport(element) {
+    const rect = element.getBoundingClientRect();
+    return rect.top >= 0 && rect.top <= window.innerHeight * 0.8;
+}
+
+// Анимация при загрузке и скролле
+document.addEventListener('DOMContentLoaded', () => {
+    const elements = document.querySelectorAll('.headline-main, .headline-sub, .welcome-text, .blog-text, .additional-info');
+
+    function checkVisibility() {
+        elements.forEach(el => {
+            if (isInViewport(el)) {
+                el.classList.add('visible');
+            }
+        });
+    }
+
+    // Проверка при загрузке
+    checkVisibility();
+    // Проверка при скролле
+    window.addEventListener('scroll', checkVisibility);
+});
