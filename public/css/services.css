@@ -904,3 +904,59 @@ footer {
     transform: perspective(1000px) rotateX(2deg) rotateY(2deg);
     box-shadow: 0 10px 40px rgba(159, 127, 243, 0.5);
 }
+
+/* Discount Badge Styling */
+.discount-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #9F7FF3, #FF4444); /* Gradient matching theme */
+    color: #FFF;
+    font-size: 14px;
+    font-weight: 900;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    border-radius: 20px; /* Rounded pill shape */
+    margin-left: 10px;
+    box-shadow: 0 2px 10px rgba(159, 127, 243, 0.5); /* Subtle glow */
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hover Effect for Discount Badge */
+.discount-badge:hover {
+    transform: scale(1.1); /* Slight scale-up on hover */
+    box-shadow: 0 4px 15px rgba(159, 127, 243, 0.8); /* Enhanced glow */
+}
+
+/* Optional Shine Animation */
+.discount-badge::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(30deg);
+    transition: all 0.5s ease;
+}
+
+.discount-badge:hover::before {
+    left: 150%; /* Shine moves across on hover */
+}
+
+/* Adjust for Mobile */
+@media (max-width: 768px) {
+    .discount-badge {
+        font-size: 12px;
+        padding: 4px 8px;
+        margin-left: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .discount-badge {
+        font-size: 10px;
+        padding: 3px 6px;
+    }
+}
