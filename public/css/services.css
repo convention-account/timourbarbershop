@@ -660,10 +660,13 @@ footer {
     display: flex;
     gap: 20px;
     color: pink;
-    padding: 10px 20px; /* Add horizontal padding */
-    margin-left: auto; /* Push to the right */
+    padding: 10px 20px;
+    /* Add horizontal padding */
+    margin-left: auto;
+    /* Push to the right */
     margin-left: 20px;
-    white-space: nowrap; /* Prevent wrapping */
+    white-space: nowrap;
+    /* Prevent wrapping */
 }
 
 .login-nav li a {
@@ -678,7 +681,8 @@ footer {
 /* Стили для всплывающего уведомления */
 .crypto-popup {
     position: fixed;
-    bottom: -100px; /* Изначально скрыто ниже экрана */
+    bottom: -100px;
+    /* Изначально скрыто ниже экрана */
     right: 20px;
     width: 300px;
     background: rgba(159, 127, 243, 0.95);
@@ -690,7 +694,8 @@ footer {
 }
 
 .crypto-popup.active {
-    bottom: 20px; /* Появляется внизу справа */
+    bottom: 20px;
+    /* Появляется внизу справа */
 }
 
 .crypto-popup-content {
@@ -773,31 +778,20 @@ footer {
     }
 }
 
-/* Общие стили для кнопок */
-.about-btn, .blog-btn, .contact-btn, .crypto-more-btn {
-    display: inline-block;
-    background: #FFF;
-    color: #000;
-    padding: 15px 30px;
-    text-decoration: none;
-    font-size: 16px;
-    font-weight: 900;
-    text-transform: uppercase;
-    border-radius: 5px;
+/* Плавные ховер-анимации для кнопок */
+.service-btn {
     transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s;
     position: relative;
     overflow: hidden;
 }
 
-/* Ховер-эффект: масштабирование и свечение */
-.about-btn:hover, .blog-btn:hover, .contact-btn:hover, .crypto-more-btn:hover {
+.service-btn:hover {
     transform: scale(1.05);
     box-shadow: 0 0 15px rgba(159, 127, 243, 0.8);
     opacity: 1;
 }
 
-/* Добавляем псевдоэлемент для эффекта волны */
-.about-btn::after, .blog-btn::after, .contact-btn::after, .crypto-more-btn::after {
+.service-btn::after {
     content: '';
     position: absolute;
     top: 50%;
@@ -811,23 +805,102 @@ footer {
     z-index: 0;
 }
 
-.about-btn:hover::after, .blog-btn:hover::after, .contact-btn:hover::after, .crypto-more-btn:hover::after {
+.service-btn:hover::after {
     width: 300px;
     height: 300px;
 }
 
-/* Текст кнопки поверх эффекта */
-.about-btn span, .blog-btn span, .contact-btn span, .crypto-more-btn span {
+.service-btn span {
     position: relative;
     z-index: 1;
 }
 
-/* Ховер для ссылок в навигации */
-.nav-list li a, .footer-links a, .login-nav li a {
+/* Ховер для ссылок */
+.nav-list li a,
+.footer-links a,
+.login-nav li a {
     transition: transform 0.3s ease, color 0.3s ease;
 }
 
-.nav-list li a:hover, .footer-links a:hover, .login-nav li a:hover {
+.nav-list li a:hover,
+.footer-links a:hover,
+.login-nav li a:hover {
     transform: translateY(-2px);
     color: #9F7FF3;
+}
+
+/* Анимация появления */
+.headline-main,
+.headline-sub,
+.welcome-text,
+.service-content h2,
+.service-details li,
+.service-price,
+.service-location {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.service-card.visible .service-content h2,
+.service-card.visible .service-details li,
+.service-card.visible .service-price,
+.service-card.visible .service-location {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.headline-sub {
+    transition-delay: 0.2s;
+}
+
+.welcome-text:nth-child(1) {
+    transition-delay: 0.3s;
+}
+
+.welcome-text:nth-child(2) {
+    transition-delay: 0.4s;
+}
+
+.service-card.visible .service-content h2 {
+    transition-delay: 0.5s;
+}
+
+.service-card.visible .service-details li:nth-child(1) {
+    transition-delay: 0.6s;
+}
+
+.service-card.visible .service-details li:nth-child(2) {
+    transition-delay: 0.7s;
+}
+
+.service-card.visible .service-details li:nth-child(3) {
+    transition-delay: 0.8s;
+}
+
+.service-card.visible .service-details li:nth-child(4) {
+    transition-delay: 0.9s;
+}
+
+.service-card.visible .service-price {
+    transition-delay: 1.0s;
+}
+
+.service-card.visible .service-location {
+    transition-delay: 1.1s;
+}
+
+/* Интерактивность карточек */
+.service-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.service-card:hover {
+    transform: perspective(1000px) rotateX(2deg) rotateY(2deg);
+    box-shadow: 0 10px 40px rgba(159, 127, 243, 0.5);
 }
