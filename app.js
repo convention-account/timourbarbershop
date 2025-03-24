@@ -713,6 +713,14 @@ app.get('/academy', (req, res) => {
     res.render('academy', { user: req.session.user || null });
 });
 
+app.get('/cookie-policy', (req, res) => {
+    res.render('cookie-policy', { user: req.session.user || null });
+});
+
+app.get('/terms-of-service', (req, res) => {
+    res.render('terms-of-service', { user: req.session.user || null });
+});
+
 app.get('/about', (req, res) => {
     res.render('about', { user: req.session.user || null });
 });
