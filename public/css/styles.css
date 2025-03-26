@@ -4,87 +4,74 @@
     src: url('../../font/Nexa-Heavy.ttf');
 }
 
-.fade-out {
-    opacity: 0;
-    transition: opacity 0.5s;
-}
-
-.fade-in {
-    opacity: 0;
-    animation: fadeIn 0.5s forwards;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
-}
-
 /* Базовые стили для body */
 body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    /* Оставляем только это для корректной высоты страницы */
-    overflow-x: hidden;
-    /* Убеждаемся, что горизонтальный скроллинг отключен */
-    -webkit-overflow-scrolling: touch;
-    /* Оптимизация скролла для iOS */
-    touch-action: pan-y;
-    /* Ограничиваем скроллинг только по вертикали */
     margin: 0;
     padding: 0;
     background: linear-gradient(135deg, #1a0033, #000033);
     position: relative;
-    overflow-x: hidden;
+    overflow-x: hidden !important;
     font-family: 'Nexa', sans-serif;
+    transition: opacity 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
 }
 
+body.menu-open {
+    overflow: hidden;
+}
+
+body.menu-open > *:not(header) {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Контейнеры */
 .content-wrapper,
 .second-content,
 .third-content,
 main {
     width: 100%;
-    max-width: 1200px;
+    max-width: 1600px;
     margin: 0 auto;
     box-sizing: border-box;
-    /* Убеждаемся, что padding не увеличивает ширину */
 }
-
-/* Затемнение фона (now using overlay for wave effect across all sections and footer) */
-/* .background-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('../../media/neon-wave-background-merged.png');
-    background-size: cover;
-    background-position: center -0rem;
-    background-repeat: no-repeat;
-    opacity: 0.5;
-    z-index: 0;
-} */
 
 /* Стили для хедера */
 header {
     position: relative;
-    z-index: 2;
+    z-index: 100;
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
     padding: 20px 40px;
-    max-width: 1200px;
-    margin: 0;
+    max-width: 1600px;
+    margin: 0 auto;
+    transition: all 0.3s ease;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+header.fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    max-width: none;
+    padding: 10px 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    background: rgba(32, 0, 83, 0.97);
 }
 
 .logo-icon {
     width: 60px;
-    display: flex;
     height: 60px;
     flex-shrink: 0;
 }
@@ -109,14 +96,14 @@ header {
     font-weight: 900;
     text-transform: uppercase;
     text-decoration: none;
-    transition: opacity 0.3s;
+    transition: transform 0.3s ease, color 0.3s ease;
 }
 
 .nav-list li a:hover {
-    opacity: 0.8;
+    transform: translateY(-2px);
+    color: #9F7FF3;
 }
 
-/* Бургер-меню */
 .burger-menu {
     display: none;
     flex-direction: column;
@@ -131,7 +118,6 @@ header {
     transition: all 0.3s ease;
 }
 
-/* Анимация бургера в крестик */
 .burger-menu.toggle span:nth-child(1) {
     transform: rotate(45deg) translate(7px, 7px);
 }
@@ -144,106 +130,27 @@ header {
     transform: rotate(-45deg) translate(7px, -7px);
 }
 
-/* Media queries for mobile */
-@media (max-width: 768px) {
-    .nav-list {
-        display: none;
-        flex-direction: column;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100vh;
-        background-color: rgba(0, 0, 0, 0.95);
-        padding: 35px 0 !important;
-        opacity: 0;
-        transform: translateY(-100%);
-        transition: transform 0.5s ease-in-out, opacity 0.3s ease-in-out;
-        z-index: 1000;
-        justify-content: flex-start;
-        align-items: center;
-    }
-
-    .nav-list.active {
-        display: flex;
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    .nav-list li {
-        margin: 20px 0;
-        text-align: center;
-        opacity: 0;
-        transform: translateY(20px);
-        transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
-    }
-
-    .nav-list.active li {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    .nav-list.active li:nth-child(1) {
-        transition-delay: 0s;
-    }
-
-    .nav-list.active li:nth-child(2) {
-        transition-delay: 0.1s;
-    }
-
-    .nav-list.active li:nth-child(3) {
-        transition-delay: 0.2s;
-    }
-
-    .nav-list.active li:nth-child(4) {
-        transition-delay: 0.3s;
-    }
-
-    .nav-list.active li:nth-child(5) {
-        transition-delay: 0.4s;
-    }
-
-    .nav-list.active li:nth-child(6) {
-        transition-delay: 0.5s;
-    }
-
-    .nav-list.active li:nth-child(7) {
-        transition-delay: 0.6s;
-    }
-
-    .nav-list.active li:nth-child(8) {
-        transition-delay: 0.7s;
-    }
-
-    .burger-menu {
-        display: flex;
-        flex-direction: column;
-        cursor: pointer;
-        z-index: 1100;
-    }
-
-    header {
-        padding: 20px;
-    }
-}
-
 /* Стили для основного контента */
 main {
     position: relative;
     z-index: 2;
     padding: 40px 0 0 40px;
-    max-width: 1200px;
-    margin: 0;
+    max-width: 1600px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
 }
 
 .content-wrapper {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
-    justify-content: flex-start;
+    gap: 40px;
+    justify-content: space-between;
     align-items: flex-start;
     position: relative;
     min-height: calc(100vh - 100px);
@@ -251,7 +158,7 @@ main {
 }
 
 .text-content {
-    max-width: 100%;
+    max-width: 50%;
     z-index: 2;
 }
 
@@ -268,6 +175,8 @@ main {
     line-height: 1.2;
     margin: 0;
     text-shadow: 0 5px 30px rgba(255, 255, 255, 0.3);
+    opacity: 1 !important;
+    display: block !important;
 }
 
 .headline-sub {
@@ -279,6 +188,8 @@ main {
     -webkit-text-stroke: 1px #9F7FF3;
     text-shadow: 0 5px 25px rgba(159, 127, 243, 0.8);
     margin: 0;
+    opacity: 1 !important;
+    display: block !important;
 }
 
 .welcome-text {
@@ -288,6 +199,8 @@ main {
     line-height: 1.5;
     margin: 20px 0;
     max-width: 100%;
+    opacity: 1 !important;
+    display: block !important;
 }
 
 .about-btn {
@@ -300,34 +213,39 @@ main {
     font-weight: 900;
     text-transform: uppercase;
     border-radius: 5px;
-    transition: opacity 0.3s;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s;
+    position: relative;
+    overflow: hidden;
+    opacity: 1 !important;
 }
 
 .about-btn:hover {
-    opacity: 0.8;
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(159, 127, 243, 0.8);
+    opacity: 1;
 }
 
 .scissors {
-    position: absolute;
-    right: -490px;
-    top: 46%;
-    transform: translateY(-50%);
-    width: 670px;
+    position: relative;
+    width: 45%;
+    max-width: 670px;
     z-index: 1;
+    margin-top: 20px;
 }
 
 .course-section {
-    position: absolute;
-    bottom: 0px;
-    left: 0;
+    position: relative;
     width: 40%;
     height: 400px;
     background: rgba(255, 255, 255, 0.12);
-    border-radius: 27.143px 27.143px 0px 0px;
+    border-radius: 27.143px;
     box-shadow: 0px 3.878px 41.684px 0px rgba(0, 0, 0, 0.80);
     backdrop-filter: blur(98.39351654052734px);
     overflow: hidden;
     z-index: 2;
+    opacity: 1 !important;
+    display: block !important;
+    margin-top: 40px;
 }
 
 .course-image {
@@ -336,14 +254,13 @@ main {
     object-fit: cover;
 }
 
-.play-button {
+.play-button-second {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    bottom: 20px;
+    right: 20px;
     width: 60px;
     height: 60px;
-    background: rgba(255, 255, 255, 0.8);
+    background: #FF69B4;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -351,11 +268,11 @@ main {
     cursor: pointer;
 }
 
-.play-button::after {
+.play-button-second::after {
     content: '';
     width: 0;
     height: 0;
-    border-left: 20px solid #000;
+    border-left: 20px solid #FFF;
     border-top: 10px solid transparent;
     border-bottom: 10px solid transparent;
 }
@@ -383,13 +300,15 @@ main {
 .second-section {
     position: relative;
     width: 100%;
-    padding: 0 40px 60px;
-    background: none;
+    padding: 60px 40px;
     z-index: 1;
-    min-height: 100vh;
+    min-height: auto;
     display: flex;
     justify-content: flex-start;
     align-items: center;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
 }
 
 .second-overlay {
@@ -399,18 +318,18 @@ main {
 .second-content {
     position: relative;
     z-index: 2;
-    max-width: 1200px;
-    margin: 0 0 0 0;
+    max-width: 1600px;
+    margin: 0 auto;
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
-    justify-content: flex-start;
+    gap: 40px;
+    justify-content: space-between;
     align-items: flex-start;
     width: 100%;
 }
 
 .text-content-second {
-    max-width: 100%;
+    max-width: 50%;
     z-index: 2;
     text-align: left;
 }
@@ -422,30 +341,31 @@ main {
 
 .headline-main-second {
     color: #FFF;
-    text-shadow: 0px 4.892px 34.242px rgba(255, 255, 255, 0.33);
-    font-family: Nexa;
     font-size: 48px;
-    font-style: normal;
     font-weight: 900;
+    text-transform: uppercase;
     line-height: normal;
     letter-spacing: 0.24px;
-    text-transform: uppercase;
     margin: 0;
+    text-shadow: 0px 4.892px 34.242px rgba(255, 255, 255, 0.33);
+    opacity: 1 !important;
+    display: block !important;
+    max-width: 80%;
 }
 
 .headline-sub-second {
     color: #9F7FF3;
-    /* text-shadow: 0px 4.892px 29.35px rgba(218, 204, 255, 0.80); */
-    -webkit-text-stroke-width: 2.45px;
-    -webkit-text-stroke-color: #9F7FF3;
-    font-family: Nexa;
     font-size: 67.688px;
-    font-style: normal;
     font-weight: 900;
+    text-transform: uppercase;
     line-height: normal;
     letter-spacing: 3.723px;
-    text-transform: uppercase;
     margin: 0;
+    -webkit-text-stroke-width: 2.45px;
+    -webkit-text-stroke-color: #9F7FF3;
+    opacity: 1 !important;
+    display: block !important;
+    max-width: 80%;
 }
 
 .blog-btn {
@@ -458,12 +378,18 @@ main {
     font-weight: 900;
     text-transform: uppercase;
     border-radius: 5px;
-    transition: opacity 0.3s;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s;
+    position: relative;
+    overflow: hidden;
     margin: 20px 0;
+    opacity: 1 !important;
+    display: inline-block !important;
 }
 
 .blog-btn:hover {
-    opacity: 0.8;
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(159, 127, 243, 0.8);
+    opacity: 1;
 }
 
 .blog-text {
@@ -473,45 +399,24 @@ main {
     line-height: 1.5;
     margin: 0 0 20px;
     text-align: left;
+    opacity: 1 !important;
+    display: block !important;
 }
 
 .info-card {
-    position: absolute;
-    bottom: -330px;
-    right: -680px;
+    position: relative;
     width: 40%;
     height: 300px;
     background: rgba(255, 255, 255, 0.12);
-    border-radius: 27.143px 27.143px 0px 0px;
+    border-radius: 27.143px;
     box-shadow: 0px 3.878px 41.684px 0px rgba(0, 0, 0, 0.80);
     backdrop-filter: blur(98.39351654052734px);
     overflow: hidden;
     display: flex;
     flex-direction: column;
     z-index: 2;
-}
-
-.play-button-second {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    width: 60px;
-    height: 60px;
-    background: #FF69B4;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-}
-
-.play-button-second::after {
-    content: '';
-    width: 0;
-    height: 0;
-    border-left: 20px solid #FFF;
-    border-top: 10px solid transparent;
-    border-bottom: 10px solid transparent;
+    opacity: 1 !important;
+    margin-top: 40px;
 }
 
 .info-text {
@@ -534,24 +439,26 @@ main {
 .third-section {
     position: relative;
     width: 100%;
-    padding: 0 40px 60px;
+    padding: 60px 40px;
     z-index: 1;
-    min-height: 100vh;
+    min-height: auto;
     display: flex;
     justify-content: flex-start;
     align-items: center;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
 }
 
-/* Удаляем .third-section::before, так как фон уже задаётся через .background-overlay */
 .third-content {
     position: relative;
     z-index: 2;
-    max-width: 1200px;
-    margin: 0 0 0 0;
+    max-width: 1600px;
+    margin: 0 auto;
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
-    justify-content: flex-start;
+    gap: 40px;
+    justify-content: space-between;
     align-items: flex-start;
     width: 100%;
 }
@@ -561,7 +468,7 @@ main {
 }
 
 .text-content-third {
-    max-width: 100%;
+    max-width: 50%;
     z-index: 2;
     text-align: left;
 }
@@ -579,6 +486,9 @@ main {
     line-height: 1.2;
     margin: 0;
     text-shadow: 0 5px 30px rgba(255, 255, 255, 0.3);
+    opacity: 1 !important;
+    display: block !important;
+    max-width: 80%;
 }
 
 .contact-btn {
@@ -591,12 +501,18 @@ main {
     font-weight: 900;
     text-transform: uppercase;
     border-radius: 5px;
-    transition: opacity 0.3s;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s;
+    position: relative;
+    overflow: hidden;
     margin: 20px 0;
+    opacity: 1 !important;
+    display: inline-block !important;
 }
 
 .contact-btn:hover {
-    opacity: 0.8;
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(159, 127, 243, 0.8);
+    opacity: 1;
 }
 
 .additional-info {
@@ -606,22 +522,24 @@ main {
     line-height: 1.5;
     margin: 0 0 20px;
     text-align: left;
+    opacity: 1 !important;
+    display: block !important;
 }
 
 .offer-card {
-    position: absolute;
-    bottom: -411px;
-    left: -40px;
+    position: relative;
     width: 40%;
     height: 300px;
     background: rgba(255, 255, 255, 0.12);
-    border-radius: 27.143px 27.143px 0px 0px;
+    border-radius: 27.143px;
     box-shadow: 0px 3.878px 41.684px 0px rgba(0, 0, 0, 0.80);
     backdrop-filter: blur(98.39351654052734px);
     overflow: hidden;
     display: flex;
     flex-direction: column;
     z-index: 2;
+    opacity: 1 !important;
+    margin-top: 40px;
 }
 
 .play-button-third {
@@ -674,16 +592,14 @@ main {
 }
 
 .third-image {
-    position: absolute;
-    right: -500px;
-    top: 151%;
-    transform: translateY(-50%);
-    width: 100%;
+    position: relative;
+    width: 30% !important;
     max-width: 700px;
-    min-width: 400px;
     z-index: 1;
     border-radius: 10px;
     overflow: hidden;
+    opacity: 1 !important;
+    margin-top: 20px;
 }
 
 /* Стили для футера */
@@ -691,16 +607,18 @@ footer {
     position: relative;
     z-index: 2;
     width: 100%;
-    padding: 40px 40px;
+    padding: 40px;
     background: rgba(0, 0, 33, 0.8);
     color: #FFF;
     text-align: center;
     margin-top: auto;
-    /* Ensures footer stays at the very bottom */
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
 }
 
 .footer-content {
-    max-width: 1200px;
+    max-width: 1600px;
     margin: 0 auto;
 }
 
@@ -719,158 +637,534 @@ footer {
     gap: 20px;
 }
 
-.footer-links li {
-    display: inline;
-}
-
 .footer-links a {
     color: #FFF;
     text-decoration: none;
     font-size: 14px;
     font-weight: 900;
     text-transform: uppercase;
-    transition: opacity 0.3s;
+    transition: transform 0.3s ease, color 0.3s ease;
 }
 
 .footer-links a:hover {
+    transform: translateY(-2px);
+    color: #9F7FF3;
+}
+
+/* Стили для login-nav */
+.login-nav {
+    background-color: rgb(67, 1, 121);
+    border-radius: 15px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 20px;
+    color: pink;
+    padding: 10px 20px;
+    margin-left: auto;
+    white-space: nowrap;
+}
+
+.login-nav li a {
+    color: #FFF;
+    font-size: 14px;
+    font-weight: 900;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.login-nav li a:hover {
+    transform: translateY(-2px);
+    color: #9F7FF3;
+}
+
+/* Стили для иконки корзины */
+.cart-icon {
+    position: relative;
+    color: #FFF;
+    font-size: 30px;
+    cursor: pointer;
+    margin-left: auto;
+    margin-right: 20px;
+    padding: 10px 20px;
+    background: rgba(159, 127, 243, 0.8);
+    border-radius: 10px;
+    transition: opacity 0.3s;
+}
+
+.cart-icon:hover {
     opacity: 0.8;
 }
 
-/* Адаптивность */
-@media (max-width: 768px) {
-    .content-wrapper {
-        flex-direction: column;
-        align-items: flex-start;
-        position: static;
-        min-height: auto;
-        padding-left: 20px;
-    }
+header.fixed .cart-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    top: auto;
+    left: auto;
+    margin-left: 0;
+    z-index: 1000;
+}
 
-    .text-content,
-    .course-section {
-        max-width: 100%;
-        position: static;
-        width: 100%;
-    }
+.cart-count {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: #ff4444;
+    color: #FFF;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+}
 
-    .scissors {
-        position: relative;
-        right: auto;
-        top: auto;
-        transform: none;
-        width: 320px;
-        margin: 20px 0;
-    }
+/* Стили для модального окна корзины */
+.cart-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
 
-    .course-section {
-        bottom: 0;
-        left: 0;
-        height: 300px;
-        margin-top: 20px;
+.cart-modal.active {
+    display: flex;
+}
+
+.cart-content {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    padding: 30px;
+    width: 90%;
+    max-width: 600px;
+    color: #FFF;
+    position: relative;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Стили для всплывающего уведомления */
+.crypto-popup {
+    position: fixed;
+    bottom: -100px;
+    right: 20px;
+    width: 300px;
+    background: rgba(159, 127, 243, 0.95);
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    transition: bottom 0.5s ease-in-out;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+.crypto-popup.active {
+    bottom: 20px;
+}
+
+/* Общие стили для кнопок */
+.about-btn, .blog-btn, .contact-btn, .crypto-more-btn {
+    display: inline-block;
+    background: #FFF;
+    color: #000;
+    padding: 15px 30px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 900;
+    text-transform: uppercase;
+    border-radius: 5px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.about-btn:hover, .blog-btn:hover, .contact-btn:hover, .crypto-more-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(159, 127, 243, 0.8);
+    opacity: 1;
+}
+
+.about-btn::after, .blog-btn::after, .contact-btn::after, .crypto-more-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(159, 127, 243, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease, height 0.6s ease;
+    z-index: 0;
+}
+
+.about-btn:hover::after, .blog-btn:hover::after, .contact-btn:hover::after, .crypto-more-btn:hover::after {
+    width: 300px;
+    height: 300px;
+}
+
+.about-btn span, .blog-btn span, .contact-btn span, .crypto-more-btn span {
+    position: relative;
+    z-index: 1;
+}
+
+/* Эффект наклона для карточек */
+.course-section, .info-card, .offer-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.course-section:hover, .info-card:hover, .offer-card:hover {
+    transform: perspective(1000px) rotateX(2deg) rotateY(2deg);
+    box-shadow: 0 10px 40px rgba(159, 127, 243, 0.5);
+}
+
+/* Анимация кнопок воспроизведения */
+.play-button-second, .play-button-third {
+    transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.play-button-second:hover, .play-button-third:hover {
+    transform: scale(1.1);
+    background: rgba(255, 105, 180, 0.9);
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.play-button-second, .play-button-third {
+    animation: pulse 2s infinite;
+}
+
+/* Анимация появления */
+.headline-main, .headline-sub, .welcome-text, .blog-text, .additional-info {
+    opacity: 1 !important;
+    transform: translateY(0);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    display: block !important;
+}
+
+.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.headline-sub, .headline-sub-second {
+    transition-delay: 0.2s;
+}
+
+/* Адаптивность для больших экранов (1920px и выше) */
+@media (min-width: 1920px) {
+    .content-wrapper,
+    .second-content,
+    .third-content,
+    main,
+    header,
+    footer {
+        max-width: 1800px;
     }
 
     .headline-main {
-        font-size: 48px !important;
+        font-size: 80px;
     }
 
     .headline-sub {
-        font-size: 49px !important;
+        font-size: 78px;
+    }
+
+    .welcome-text {
+        font-size: 24px;
+    }
+
+    .scissors {
+        width: 50%;
+        max-width: 800px;
+    }
+
+    .course-section {
+        width: 45%;
+        height: 500px;
+    }
+
+    .headline-main-second {
+        font-size: 60px;
+    }
+
+    .headline-sub-second {
+        font-size: 80px;
+    }
+
+    .info-card {
+        width: 45%;
+        height: 400px;
+    }
+
+    .headline-main-third {
+        font-size: 80px;
+    }
+
+    .offer-card {
+        width: 45%;
+        height: 400px;
+    }
+
+    .third-image {
+        width: 50%;
+        max-width: 900px;
+    }
+
+    .cart-icon {
+        margin-right: 40px;
+    }
+}
+
+/* Адаптивность для средних экранов (768px–1200px) */
+@media (min-width: 769px) and (max-width: 1200px) {
+    .content-wrapper,
+    .second-content,
+    .third-content,
+    main,
+    header,
+    footer {
+        max-width: 100%;
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .text-content,
+    .text-content-second,
+    .text-content-third {
+        max-width: 100%;
+    }
+
+    .headline-main {
+        font-size: 56px;
+    }
+
+    .headline-sub {
+        font-size: 54px;
     }
 
     .welcome-text {
         font-size: 16px;
     }
 
-    .second-section {
-        padding: 40px 20px;
-        min-height: auto;
+    .scissors {
+        width: 100%;
+        max-width: 500px;
     }
 
-    .second-content {
-        flex-direction: column;
+    .course-section {
+        width: 100%;
+        height: 350px;
     }
 
-    .text-content-second {
-        max-width: 100%;
+    .headline-main-second {
+        font-size: 40px;
+    }
+
+    .headline-sub-second {
+        font-size: 56px;
     }
 
     .info-card {
-        position: static;
         width: 100%;
-        height: 300px;
-        margin-top: 20px;
-        right: auto;
-        bottom: auto;
-    }
-
-    .play-button-second {
-        bottom: 20px;
-        right: 20px;
-    }
-
-    .third-section {
-        padding: 40px 20px;
-        min-height: auto;
-    }
-
-    .third-content {
-        flex-direction: column;
-    }
-
-    .text-content-third {
-        max-width: 100%;
-    }
-
-    .offer-card {
-        position: static;
-        width: 100%;
-        height: 300px;
-        margin-top: 20px;
-        left: auto;
-        bottom: auto;
-    }
-
-    .play-button-third {
-        bottom: 20px;
-        right: 30px !important;
-    }
-
-    .third-image {
-        position: relative;
-        right: auto;
-        top: auto;
-        transform: none;
-        width: 100%;
-        max-width: 100%;
-        margin-top: 20px;
-        margin-bottom: -2rem !important;
+        height: 250px;
     }
 
     .headline-main-third {
-        font-size: 48px;
+        font-size: 56px;
     }
 
-    footer {
-        padding: 20px;
+    .offer-card {
+        width: 100%;
+        height: 250px;
     }
 
-    .footer-links {
-        flex-direction: column;
-        gap: 10px;
+    .third-image {
+        width: 100%;
+        max-width: 500px;
+    }
+
+    .cart-icon {
+        margin-left: 10rem;
     }
 }
 
-/* Адаптивность для мобильных устройств */
+/* Адаптивность для мобильных устройств (768px и меньше) */
 @media (max-width: 768px) {
-
-    /* Общие настройки для body */
-    body {
+    header {
+        padding: 20px;
+        background: rgba(32, 0, 83, 0.97) !important;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 100%;
         overflow-x: hidden;
     }
 
-    /* Основной контент (main) */
+    header.fixed {
+        padding: 10px;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(32, 0, 83, 0.97) !important;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .nav-list {
+        display: none;
+        flex-direction: column;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.95);
+        padding: 35px 0 !important;
+        opacity: 0;
+        transform: translateY(-100%);
+        transition: transform 0.5s ease-in-out, opacity 0.3s ease-in-out;
+        z-index: 2000;
+        justify-content: flex-start;
+        align-items: center;
+        overflow-y: auto;
+    }
+
+    .nav-list.active {
+        display: flex;
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .nav-list li {
+        margin: 10px 0;
+        text-align: center;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+    }
+
+    .nav-list.active li {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .nav-list.active li:nth-child(1) { transition-delay: 0s; }
+    .nav-list.active li:nth-child(2) { transition-delay: 0.1s; }
+    .nav-list.active li:nth-child(3) { transition-delay: 0.2s; }
+    .nav-list.active li:nth-child(4) { transition-delay: 0.3s; }
+    .nav-list.active li:nth-child(5) { transition-delay: 0.4s; }
+    .nav-list.active li:nth-child(6) { transition-delay: 0.5s; }
+    .nav-list.active li:nth-child(7) { transition-delay: 0.6s; }
+    .nav-list.active li:nth-child(8) { transition-delay: 0.7s; }
+
+    .nav-list.active li a {
+        display: block;
+        padding: 10px 20px;
+        text-align: center;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .burger-menu {
+        display: flex;
+        z-index: 2100;
+    }
+
+    .login-nav {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        padding: 5px 10px;
+        gap: 10px;
+        margin-left: 0;
+        max-width: 250px;
+        width: auto;
+        background-color: rgb(67, 1, 121);
+        border-radius: 15px;
+        position: relative;
+        margin: 0 auto;
+    }
+
+    header.fixed .login-nav {
+        max-width: 200px;
+        padding: 5px 8px;
+        font-size: 12px;
+    }
+
+    .login-nav li {
+        font-size: 14px;
+        text-align: center;
+        white-space: normal;
+        overflow-wrap: break-word;
+        overflow: visible;
+    }
+
+    .login-nav li a {
+        font-size: 14px;
+        padding: 5px;
+        white-space: normal;
+        overflow-wrap: break-word;
+    }
+
+    header.fixed .login-nav li,
+    header.fixed .login-nav li a {
+        font-size: 12px;
+    }
+
+    .cart-icon {
+        margin-right: 10px;
+        padding: 10px;
+        font-size: 24px;
+        margin-left: auto;
+    }
+
+    header.fixed .cart-icon {
+        font-size: 36px;
+        padding: 15px;
+        border-radius: 15px;
+    }
+
+    .cart-modal.active {
+        display: flex;
+        align-items: flex-end;
+    }
+
+    .cart-content {
+        width: 100%;
+        max-width: none;
+        padding: 15px;
+        border-radius: 20px 20px 0 0;
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+
     main {
         padding: 20px;
+        padding-top: 70px;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
     }
 
     .content-wrapper {
@@ -882,10 +1176,11 @@ footer {
         gap: 15px;
     }
 
-    .text-content {
+    .text-content,
+    .text-content-second,
+    .text-content-third {
         max-width: 100%;
         text-align: center;
-        padding: 0 10px;
     }
 
     .headline-main {
@@ -904,25 +1199,21 @@ footer {
         margin: 15px 0;
     }
 
-    .about-btn {
+    .about-btn,
+    .blog-btn,
+    .contact-btn {
         padding: 12px 25px;
         font-size: 14px;
     }
 
     .scissors {
-        position: relative;
-        right: auto;
-        top: auto;
-        transform: none;
-        width: 70vw;
-        /* Пропорциональная ширина относительно экрана */
+        width: 100%;
         max-width: 300px;
         margin: 15px auto;
         display: block;
     }
 
     .course-section {
-        position: relative;
         width: 100%;
         height: 250px;
         margin-top: 20px;
@@ -940,6 +1231,8 @@ footer {
     .play-button-second {
         width: 50px;
         height: 50px;
+        bottom: 15px;
+        right: 15px;
     }
 
     .play-button-second::after {
@@ -948,7 +1241,6 @@ footer {
         border-bottom: 8px solid transparent;
     }
 
-    /* Второй блок */
     .second-section {
         padding: 30px 20px;
         min-height: auto;
@@ -961,14 +1253,10 @@ footer {
         gap: 15px;
     }
 
-    .text-content-second {
-        max-width: 100%;
-        text-align: center;
-    }
-
     .headline-main-second {
         font-size: 28px;
         line-height: 1.2;
+        max-width: 100%;
     }
 
     .headline-sub-second {
@@ -976,12 +1264,7 @@ footer {
         line-height: 1.2;
         -webkit-text-stroke-width: 1px;
         letter-spacing: 2px;
-    }
-
-    .blog-btn {
-        padding: 12px 25px;
-        font-size: 14px;
-        margin: 15px 0;
+        max-width: 100%;
     }
 
     .blog-text {
@@ -991,7 +1274,6 @@ footer {
     }
 
     .info-card {
-        position: relative;
         width: 100%;
         height: 220px;
         margin-top: 20px;
@@ -1004,14 +1286,6 @@ footer {
         width: 85%;
     }
 
-    .play-button-second {
-        bottom: 15px;
-        right: 15px;
-        width: 50px;
-        height: 50px;
-    }
-
-    /* Третий блок */
     .third-section {
         padding: 30px 20px;
         min-height: auto;
@@ -1024,20 +1298,10 @@ footer {
         gap: 15px;
     }
 
-    .text-content-third {
-        max-width: 100%;
-        text-align: center;
-    }
-
     .headline-main-third {
         font-size: 36px;
         line-height: 1.1;
-    }
-
-    .contact-btn {
-        padding: 12px 25px;
-        font-size: 14px;
-        margin: 15px 0;
+        max-width: 100%;
     }
 
     .additional-info {
@@ -1046,7 +1310,6 @@ footer {
     }
 
     .offer-card {
-        position: relative;
         width: 100%;
         height: 260px;
         margin-top: 20px;
@@ -1077,24 +1340,24 @@ footer {
     }
 
     .third-image {
-        position: relative;
-        right: auto;
-        top: auto;
-        transform: none;
-        width: 80vw;
-        /* Пропорциональная ширина */
+        width: 100% !important;
         max-width: 400px;
         margin: 20px auto;
         display: block;
     }
 
-    /* Футер */
-    footer {
-        padding: 20px;
+    .crypto-popup {
+        width: 90%;
+        max-width: 280px;
+        right: 10px;
+        padding: 10px;
     }
 
-    .footer-content p {
-        font-size: 14px;
+    footer {
+        padding: 20px;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
     }
 
     .footer-links {
@@ -1107,29 +1370,29 @@ footer {
     }
 }
 
-/* Дополнительная оптимизация для очень маленьких экранов */
+/* Дополнительная оптимизация для очень маленьких экранов (480px и меньше) */
 @media (max-width: 480px) {
     .headline-main {
-        font-size: 58px;
+        font-size: 28px;
     }
 
     .headline-sub {
-        font-size: 44px;
+        font-size: 26px;
     }
 
     .welcome-text {
-        font-size: 22px;
+        font-size: 12px;
     }
 
     .about-btn,
     .blog-btn,
     .contact-btn {
         padding: 10px 20px;
-        font-size: 22px;
+        font-size: 12px;
     }
 
     .scissors {
-        width: 60vw;
+        width: 100%;
         max-width: 250px;
     }
 
@@ -1146,7 +1409,7 @@ footer {
     }
 
     .headline-main-second {
-        font-size: 40px;
+        font-size: 24px;
     }
 
     .headline-sub-second {
@@ -1158,7 +1421,7 @@ footer {
     }
 
     .info-text {
-        font-size: 15px !important;
+        font-size: 12px;
     }
 
     .headline-main-third {
@@ -1170,823 +1433,72 @@ footer {
     }
 
     .offer-text {
-        font-size: 15px !important
+        font-size: 12px;
     }
 
     .third-image {
-        width: 70vw;
+        width: 100%;
         max-width: 300px;
     }
 }
 
-
-/* Базовые стили для body */
-body {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    margin: 0;
-    padding: 0;
-    background: linear-gradient(135deg, #1a0033, #000033);
-    position: relative;
-    overflow-x: hidden;
-    font-family: 'Nexa', sans-serif;
-    transition: opacity 0.3s ease;
-    /* Для плавного скрытия контента */
-}
-
-/* Новый класс для блокировки тела при открытом меню */
-body.menu-open {
-    overflow: hidden;
-    /* Блокируем прокрутку */
-}
-
-body.menu-open>*:not(header) {
-    opacity: 0;
-    /* Скрываем все элементы кроме header */
-    pointer-events: none;
-    /* Отключаем взаимодействие с элементами */
-}
-
-/* Стили для хедера */
-header {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 20px 40px;
-    max-width: 1200px;
-    margin: 0;
-    background: rgba(0, 0, 33, 0.9);
-    /* Фон для видимости при скролле */
-    transition: all 0.3s ease;
-    /* Плавная анимация */
-}
-
-header.fixed {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    max-width: none;
-    padding: 10px 20px;
-    /* Уменьшаем отступы для компактности */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-    /* Тень для выделения */
-}
-
-/* Стили для мобильного меню */
-@media (max-width: 768px) {
-    .nav-list {
-        display: none;
-        flex-direction: column;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100vh;
-        background-color: rgba(0, 0, 0, 0.95);
-        /* Плотный фон */
-        padding: 60px 0;
-        opacity: 0;
-        transform: translateY(-100%);
-        transition: transform 0.5s ease-in-out, opacity 0.3s ease-in-out;
-        z-index: 2000;
-        /* Высокий z-index */
-        justify-content: flex-start;
-        align-items: center;
+/* Поддержка ультрашироких экранов (2560px и выше) */
+@media (min-width: 2560px) {
+    .content-wrapper,
+    .second-content,
+    .third-content,
+    main,
+    header,
+    footer {
+        max-width: 2000px;
     }
 
-    .nav-list.active {
-        display: flex;
-        opacity: 1;
-        transform: translateY(0);
+    .headline-main {
+        font-size: 100px;
     }
 
-    .nav-list li {
-        margin: 20px 0;
-        text-align: center;
-        opacity: 0;
-        transform: translateY(20px);
-        transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+    .headline-sub {
+        font-size: 98px;
     }
 
-    .nav-list.active li {
-        opacity: 1;
-        transform: translateY(0);
+    .welcome-text {
+        font-size: 28px;
     }
 
-    .nav-list.active li:nth-child(1) {
-        transition-delay: 0s;
+    .scissors {
+        width: 50%;
+        max-width: 1000px;
     }
 
-    .nav-list.active li:nth-child(2) {
-        transition-delay: 0.1s;
+    .course-section {
+        width: 45%;
+        height: 600px;
     }
 
-    .nav-list.active li:nth-child(3) {
-        transition-delay: 0.2s;
+    .headline-main-second {
+        font-size: 72px;
     }
 
-    .nav-list.active li:nth-child(4) {
-        transition-delay: 0.3s;
+    .headline-sub-second {
+        font-size: 96px;
     }
 
-    .nav-list.active li:nth-child(5) {
-        transition-delay: 0.4s;
+    .info-card {
+        width: 45%;
+        height: 500px;
     }
 
-    .nav-list.active li:nth-child(6) {
-        transition-delay: 0.5s;
+    .headline-main-third {
+        font-size: 100px;
     }
 
-    .nav-list.active li:nth-child(7) {
-        transition-delay: 0.6s;
+    .offer-card {
+        width: 45%;
+        height: 500px;
     }
 
-    .nav-list.active li:nth-child(8) {
-        transition-delay: 0.7s;
+    .third-image {
+        width: 50%;
+        max-width: 1100px;
     }
-
-    .burger-menu {
-        display: flex;
-        flex-direction: column;
-        cursor: pointer;
-        z-index: 2100;
-    }
-
-    header {
-        padding: 20px;
-    }
-}
-
-/* Адаптивность для мобильных устройств */
-@media (max-width: 768px) {
-
-    /* Дополнительные настройки для фиксированного header */
-    header.fixed {
-        padding: 10px;
-    }
-
-    /* Убедимся, что контент под header не перекрывается */
-    main {
-        padding-top: 70px;
-        /* Смещаем контент вниз, чтобы учесть высоту фиксированного header */
-    }
-}
-
-/* Стили для хедера */
-header {
-    position: relative;
-    z-index: 100 !important;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 20px 40px;
-    max-width: 1200px;
-    margin: 0;
-    background: none !important;
-    transition: all 0.3s ease;
-}
-
-header.fixed {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    max-width: none !important;
-    padding: 10px 20px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5) !important;
-}
-
-/* Адаптивность для мобильных устройств */
-@media (max-width: 768px) {
-    header {
-        padding: 20px;
-        /* background: rgba(0, 0, 33, 0.97) !important; */
-        background: rgba(32, 0, 83, 0.97) !important;
-    }
-
-    header.fixed {
-        position: fixed;
-        /* Оставляем фиксирование только для мобильных */
-    }
-
-    main {
-        padding-top: 70px;
-        /* Смещаем контент вниз для мобильных */
-    }
-}
-
-/* Убираем фиксирование для ПК */
-@media (min-width: 769px) {
-    header.fixed {
-        position: relative;
-        /* Отключаем фиксирование на ПК */
-        top: auto;
-        left: auto;
-        width: auto;
-        max-width: 1200px;
-        padding: 20px 40px;
-        box-shadow: none;
-    }
-
-    main {
-        padding-top: 0;
-        /* Убираем отступ для ПК */
-    }
-}
-
-/* Стили для авторизации и регистрации */
-.auth-section {
-    position: relative;
-    z-index: 2;
-    padding: 40px;
-    max-width: 1200px;
-    margin: 0 auto;
-    min-height: calc(100vh - 200px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.auth-wrapper {
-    background: rgba(255, 255, 255, 0.12);
-    border-radius: 20px;
-    padding: 40px;
-    width: 100%;
-    max-width: 500px;
-    box-shadow: 0 5px 30px rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(10px);
-}
-
-.auth-headline {
-    margin: 0 0 30px;
-    text-align: center;
-}
-
-.auth-headline .headline-main {
-    color: #FFF;
-    font-size: 48px;
-    font-weight: 900;
-    text-transform: uppercase;
-    text-shadow: 0 5px 20px rgba(255, 255, 255, 0.3);
-}
-
-.auth-headline .headline-sub {
-    color: #9F7FF3;
-    font-size: 32px;
-    font-weight: 500;
-    text-transform: uppercase;
-    -webkit-text-stroke: 1px #9F7FF3;
-    text-shadow: 0 5px 20px rgba(159, 127, 243, 0.8);
-}
-
-.auth-form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.auth-input {
-    background: rgba(255, 255, 255, 0.1);
-    border: none;
-    padding: 15px;
-    border-radius: 5px;
-    color: #FFF;
-    font-size: 16px;
-    font-family: 'Nexa', sans-serif;
-    font-weight: 500;
-    outline: none;
-    transition: all 0.3s ease;
-}
-
-.auth-input::placeholder {
-    color: rgba(255, 255, 255, 0.5);
-}
-
-.auth-input:focus {
-    background: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 0 10px rgba(159, 127, 243, 0.5);
-}
-
-.auth-btn {
-    background: #FFF;
-    color: #000;
-    padding: 15px;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    font-weight: 900;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: opacity 0.3s ease;
-}
-
-.auth-btn:hover {
-    opacity: 0.8;
-}
-
-.auth-text {
-    color: #FFF;
-    font-size: 14px;
-    text-align: center;
-    margin-top: 10px;
-}
-
-.auth-text a {
-    color: #9F7FF3;
-    text-decoration: none;
-    font-weight: 900;
-    transition: opacity 0.3s;
-}
-
-.auth-text a:hover {
-    opacity: 0.8;
-}
-
-/* Адаптивность */
-@media (max-width: 768px) {
-    .auth-section {
-        padding: 20px;
-    }
-
-    .auth-wrapper {
-        padding: 20px;
-    }
-
-    .auth-headline .headline-main {
-        font-size: 36px;
-    }
-
-    .auth-headline .headline-sub {
-        font-size: 24px;
-    }
-
-    .auth-input {
-        padding: 12px;
-        font-size: 14px;
-    }
-
-    .auth-btn {
-        padding: 12px;
-        font-size: 14px;
-    }
-}
-
-.flash-message {
-    padding: 10px;
-    margin: 10px 0;
-    background-color: #f8d7da;
-    color: #721c24;
-    border-radius: 5px;
-    text-align: center;
-}
-
-.login-nav {
-    background-color: rgb(67, 1, 121);
-    border-radius: 15px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    color: pink;
-    gap: 20px;
-    padding: 10px;
-    margin-left: 15px;
-}
-
-.login-nav li a {
-    color: #FFF;
-    font-size: 14px;
-    font-weight: 900;
-    text-transform: uppercase;
-    text-decoration: none;
-    transition: opacity 0.3s;
-}
-
-.nav-list.active li a {
-    display: block;
-    /* Делаем ссылки блочными элементами */
-    padding: 10px 20px;
-    /* Добавляем отступы */
-    text-align: center;
-    /* Центрируем текст */
-    width: 100%;
-    /* Занимаем всю ширину */
-    box-sizing: border-box;
-    /* Учитываем отступы и границы */
-}
-
-
-/* Стили для иконки корзины справа */
-.cart-icon {
-    position: relative;
-    color: #FFF;
-    font-size: 30px;
-    /* Увеличенный значок */
-    cursor: pointer;
-    margin-left: 25rem;
-    padding: 10px 20px;
-    background: rgba(159, 127, 243, 0.8);
-    /* Фон кнопки */
-    border-radius: 10px;
-    transition: opacity 0.3s;
-}
-
-.cart-icon:hover {
-    opacity: 0.8;
-}
-
-.cart-count {
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    background: #ff4444;
-    color: #FFF;
-    border-radius: 50%;
-    width: 25px;
-    /* Увеличенный размер счетчика */
-    height: 25px;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 900;
-}
-
-/* Стили для модального окна корзины */
-.cart-modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    z-index: 2000;
-    justify-content: center;
-    align-items: center;
-}
-
-.cart-modal.active {
-    display: flex;
-}
-
-.cart-content {
-    background: rgba(255, 255, 255, 0.12);
-    border-radius: 20px;
-    padding: 30px;
-    width: 90%;
-    max-width: 600px;
-    /* Увеличенная ширина */
-    color: #FFF;
-    position: relative;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-}
-
-.cart-content h2 {
-    margin: 0 0 20px;
-    font-size: 28px;
-    text-transform: uppercase;
-    text-align: center;
-}
-
-.cart-items {
-    max-height: 400px;
-    /* Увеличенная высота для списка */
-    overflow-y: auto;
-    margin-bottom: 20px;
-    padding: 10px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-}
-
-.cart-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    font-size: 16px;
-}
-
-.cart-item-title {
-    flex: 1;
-}
-
-.cart-item-price {
-    margin: 0 20px;
-}
-
-.remove-item {
-    background: #ff4444;
-    color: #FFF;
-    border: none;
-    padding: 5px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.cart-total {
-    display: flex;
-    justify-content: space-between;
-    padding: 15px 0;
-    font-size: 20px;
-    font-weight: 900;
-    background: rgba(159, 127, 243, 0.2);
-    border-radius: 10px;
-    margin-bottom: 20px;
-}
-
-.checkout-btn,
-.close-cart {
-    display: block;
-    width: 100%;
-    padding: 15px;
-    margin: 10px 0;
-    border: none;
-    border-radius: 10px;
-    font-size: 18px;
-    font-weight: 900;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: opacity 0.3s;
-}
-
-.checkout-btn {
-    background: #9F7FF3;
-    color: #FFF;
-}
-
-.checkout-btn:hover,
-.close-cart:hover {
-    opacity: 0.8;
-}
-
-.close-cart {
-    background: #FFF;
-    color: #000;
-}
-
-/* Адаптивность */
-@media (max-width: 768px) {
-    .cart-icon {
-        margin-right: 10px;
-        padding: 10px;
-        font-size: 24px;
-        margin-left: 15rem;
-    }
-
-    .cart-count {
-        width: 20px;
-        height: 20px;
-        font-size: 12px;
-    }
-
-    .cart-content {
-        width: 95%;
-        padding: 20px;
-    }
-
-    .cart-items {
-        max-height: 300px;
-    }
-}
-
-.login-nav {
-    background-color: rgb(67, 1, 121);
-    border-radius: 15px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    gap: 20px;
-    color: pink;
-    padding: 10px 20px;
-    /* Add horizontal padding */
-    margin-left: auto;
-    /* Push to the right */
-    margin-left: 20px;
-    white-space: nowrap;
-    /* Prevent wrapping */
-}
-
-.login-nav li a {
-    color: #FFF;
-    font-size: 14px;
-    font-weight: 900;
-    text-transform: uppercase;
-    text-decoration: none;
-    transition: opacity 0.3s;
-}
-
-/* Стили для всплывающего уведомления */
-.crypto-popup {
-    position: fixed;
-    bottom: -100px;
-    /* Изначально скрыто ниже экрана */
-    right: 20px;
-    width: 300px;
-    background: rgba(159, 127, 243, 0.95);
-    border-radius: 15px;
-    padding: 15px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    z-index: 1000;
-    transition: bottom 0.5s ease-in-out;
-}
-
-.crypto-popup.active {
-    bottom: 20px;
-    /* Появляется внизу справа */
-}
-
-.crypto-popup-content {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.crypto-popup-content p {
-    margin: 0;
-    color: #FFF;
-    font-size: 16px;
-    font-weight: 900;
-    text-transform: uppercase;
-}
-
-.crypto-popup-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.crypto-more-btn {
-    background: #FFF;
-    color: #000;
-    padding: 8px 20px;
-    border-radius: 5px;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 900;
-    text-transform: uppercase;
-    transition: opacity 0.3s;
-}
-
-.crypto-more-btn:hover {
-    opacity: 0.8;
-}
-
-.crypto-close-btn {
-    background: none;
-    border: none;
-    color: #FFF;
-    font-size: 24px;
-    cursor: pointer;
-    padding: 0;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: opacity 0.3s;
-}
-
-.crypto-close-btn:hover {
-    opacity: 0.8;
-}
-
-/* Адаптивность для мобильных устройств */
-@media (max-width: 768px) {
-    .crypto-popup {
-        width: 90%;
-        max-width: 280px;
-        right: 10px;
-        padding: 10px;
-    }
-
-    .crypto-popup-content p {
-        font-size: 14px;
-    }
-
-    .crypto-more-btn {
-        padding: 6px 15px;
-        font-size: 12px;
-    }
-
-    .crypto-close-btn {
-        font-size: 20px;
-        width: 25px;
-        height: 25px;
-    }
-}
-
-/* Общие стили для кнопок */
-.about-btn, .blog-btn, .contact-btn, .crypto-more-btn {
-    display: inline-block;
-    background: #FFF;
-    color: #000;
-    padding: 15px 30px;
-    text-decoration: none;
-    font-size: 16px;
-    font-weight: 900;
-    text-transform: uppercase;
-    border-radius: 5px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s;
-    position: relative;
-    overflow: hidden;
-}
-
-/* Ховер-эффект: масштабирование и свечение */
-.about-btn:hover, .blog-btn:hover, .contact-btn:hover, .crypto-more-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 15px rgba(159, 127, 243, 0.8);
-    opacity: 1;
-}
-
-/* Добавляем псевдоэлемент для эффекта волны */
-.about-btn::after, .blog-btn::after, .contact-btn::after, .crypto-more-btn::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    background: rgba(159, 127, 243, 0.3);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    transition: width 0.6s ease, height 0.6s ease;
-    z-index: 0;
-}
-
-.about-btn:hover::after, .blog-btn:hover::after, .contact-btn:hover::after, .crypto-more-btn:hover::after {
-    width: 300px;
-    height: 300px;
-}
-
-/* Текст кнопки поверх эффекта */
-.about-btn span, .blog-btn span, .contact-btn span, .crypto-more-btn span {
-    position: relative;
-    z-index: 1;
-}
-
-/* Ховер для ссылок в навигации */
-.nav-list li a, .footer-links a, .login-nav li a {
-    transition: transform 0.3s ease, color 0.3s ease;
-}
-
-.nav-list li a:hover, .footer-links a:hover, .login-nav li a:hover {
-    transform: translateY(-2px);
-    color: #9F7FF3;
-}
-
-/* Изначально скрываем элементы */
-.headline-main, .headline-sub, .welcome-text, .blog-text, .additional-info {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-}
-
-/* Класс для появления */
-.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* Задержка для субтитров */
-.headline-sub, .headline-sub-second {
-    transition-delay: 0.2s;
-}
-
-/* Эффект наклона для карточек */
-.course-section, .info-card, .offer-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.course-section:hover, .info-card:hover, .offer-card:hover {
-    transform: perspective(1000px) rotateX(2deg) rotateY(2deg);
-    box-shadow: 0 10px 40px rgba(159, 127, 243, 0.5);
-}
-
-/* Анимация кнопок воспроизведения */
-.play-button, .play-button-second, .play-button-third {
-    transition: transform 0.3s ease, background 0.3s ease;
-}
-
-.play-button:hover, .play-button-second:hover, .play-button-third:hover {
-    transform: scale(1.1);
-    background: rgba(255, 105, 180, 0.9); /* Розовый цвет при наведении */
-}
-
-/* Пульсация кнопок */
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-}
-
-.play-button-second, .play-button-third {
-    animation: pulse 2s infinite;
 }

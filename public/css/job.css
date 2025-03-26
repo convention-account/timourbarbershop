@@ -13,16 +13,18 @@ body {
     padding: 0;
     background: linear-gradient(135deg, #1a0033, #000033);
     position: relative;
-    overflow-x: hidden;
+    overflow-x: hidden !important;
     font-family: 'Nexa', sans-serif;
     transition: opacity 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 body.menu-open {
     overflow: hidden;
 }
 
-body.menu-open>*:not(header) {
+body.menu-open > *:not(header) {
     opacity: 0;
     pointer-events: none;
 }
@@ -38,6 +40,10 @@ header {
     max-width: 1200px;
     margin: 0;
     transition: all 0.3s ease;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
 }
 
 header.fixed {
@@ -76,11 +82,12 @@ header.fixed {
     font-weight: 900;
     text-transform: uppercase;
     text-decoration: none;
-    transition: opacity 0.3s;
+    transition: transform 0.3s ease, color 0.3s ease;
 }
 
 .nav-list li a:hover {
-    opacity: 0.8;
+    transform: translateY(-2px);
+    color: #9F7FF3;
 }
 
 .burger-menu {
@@ -116,6 +123,10 @@ header.fixed {
     padding: 40px;
     max-width: 1200px;
     margin: 0 auto;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
 }
 
 .job-wrapper {
@@ -228,11 +239,39 @@ header.fixed {
     text-transform: uppercase;
     border-radius: 5px;
     text-decoration: none;
-    transition: opacity 0.3s;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s;
+    position: relative;
+    overflow: hidden;
 }
 
 .opening-btn:hover {
-    opacity: 0.8;
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(159, 127, 243, 0.8);
+    opacity: 1;
+}
+
+.opening-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(159, 127, 243, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease, height 0.6s ease;
+    z-index: 0;
+}
+
+.opening-btn:hover::after {
+    width: 300px;
+    height: 300px;
+}
+
+.opening-btn span {
+    position: relative;
+    z-index: 1;
 }
 
 /* Форма подачи заявки */
@@ -271,7 +310,7 @@ header.fixed {
     background: rgba(255, 255, 255, 0.2);
     border: none;
     border-radius: 5px;
-    color: #312b36;
+    color: #FFF; /* Исправлено с #312b36 на #FFF для лучшей читаемости */
     outline: none;
     transition: background 0.3s;
 }
@@ -297,11 +336,39 @@ header.fixed {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    transition: opacity 0.3s;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s;
+    position: relative;
+    overflow: hidden;
 }
 
 .form-btn:hover {
-    opacity: 0.8;
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(159, 127, 243, 0.8);
+    opacity: 1;
+}
+
+.form-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(159, 127, 243, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease, height 0.6s ease;
+    z-index: 0;
+}
+
+.form-btn:hover::after {
+    width: 300px;
+    height: 300px;
+}
+
+.form-btn span {
+    position: relative;
+    z-index: 1;
 }
 
 /* Стили для футера */
@@ -314,6 +381,9 @@ footer {
     color: #FFF;
     text-align: center;
     margin-top: auto;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
 }
 
 .footer-content {
@@ -342,11 +412,12 @@ footer {
     font-size: 14px;
     font-weight: 900;
     text-transform: uppercase;
-    transition: opacity 0.3s;
+    transition: transform 0.3s ease, color 0.3s ease;
 }
 
 .footer-links a:hover {
-    opacity: 0.8;
+    transform: translateY(-2px);
+    color: #9F7FF3;
 }
 
 /* Стили для login-nav */
@@ -361,7 +432,6 @@ footer {
     color: pink;
     padding: 10px 20px;
     margin-left: auto;
-    margin-left: 20px;
     white-space: nowrap;
 }
 
@@ -371,10 +441,15 @@ footer {
     font-weight: 900;
     text-transform: uppercase;
     text-decoration: none;
-    transition: opacity 0.3s;
+    transition: transform 0.3s ease, color 0.3s ease;
 }
 
-/* Стили для иконки корзины справа */
+.login-nav li a:hover {
+    transform: translateY(-2px);
+    color: #9F7FF3;
+}
+
+/* Стили для иконки корзины */
 .cart-icon {
     position: relative;
     color: #FFF;
@@ -389,6 +464,16 @@ footer {
 
 .cart-icon:hover {
     opacity: 0.8;
+}
+
+header.fixed .cart-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    top: auto;
+    left: auto;
+    margin-left: 0;
+    z-index: 1000;
 }
 
 .cart-count {
@@ -419,6 +504,9 @@ footer {
     z-index: 2000;
     justify-content: center;
     align-items: center;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
 }
 
 .cart-modal.active {
@@ -520,30 +608,205 @@ footer {
     color: #000;
 }
 
+/* Стили для всплывающего уведомления */
+.crypto-popup {
+    position: fixed;
+    bottom: -100px;
+    right: 20px;
+    width: 300px;
+    background: rgba(159, 127, 243, 0.95);
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    transition: bottom 0.5s ease-in-out;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+.crypto-popup.active {
+    bottom: 20px;
+}
+
+.crypto-popup-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.crypto-popup-content p {
+    margin: 0;
+    color: #FFF;
+    font-size: 16px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.crypto-popup-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.crypto-more-btn {
+    background: #FFF;
+    color: #000;
+    padding: 8px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 900;
+    text-transform: uppercase;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.crypto-more-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(159, 127, 243, 0.8);
+    opacity: 1;
+}
+
+.crypto-more-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(159, 127, 243, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease, height 0.6s ease;
+    z-index: 0;
+}
+
+.crypto-more-btn:hover::after {
+    width: 300px;
+    height: 300px;
+}
+
+.crypto-more-btn span {
+    position: relative;
+    z-index: 1;
+}
+
+.crypto-close-btn {
+    background: none;
+    border: none;
+    color: #FFF;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s;
+}
+
+.crypto-close-btn:hover {
+    opacity: 0.8;
+}
+
+/* Стили для fade-out (из inline-стилей) */
+.fade-out {
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+
+/* Анимация появления */
+.headline-main,
+.headline-sub,
+.job-text,
+.apply-title,
+.form-group {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.headline-sub {
+    transition-delay: 0.2s;
+}
+
+.job-text:nth-child(1) {
+    transition-delay: 0.3s;
+}
+
+.job-text:nth-child(2) {
+    transition-delay: 0.4s;
+}
+
+.apply-title {
+    transition-delay: 0.5s;
+}
+
+.form-group:nth-child(1) {
+    transition-delay: 0.6s;
+}
+
+.form-group:nth-child(2) {
+    transition-delay: 0.7s;
+}
+
+.form-group:nth-child(3) {
+    transition-delay: 0.8s;
+}
+
+.form-group:nth-child(4) {
+    transition-delay: 0.9s;
+}
+
+.form-group:nth-child(5) {
+    transition-delay: 1.0s;
+}
+
+.form-btn {
+    transition-delay: 1.1s;
+}
+
+/* Эффект наклона для блоков */
+.job-main,
+.job-apply {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.job-main:hover,
+.job-apply:hover {
+    transform: perspective(1000px) rotateX(2deg) rotateY(2deg);
+    box-shadow: 0 10px 40px rgba(159, 127, 243, 0.5);
+}
+
 /* Адаптивность для мобильных устройств */
 @media (max-width: 768px) {
     header {
         padding: 20px;
         background: rgba(32, 0, 83, 0.97) !important;
         flex-wrap: wrap;
-        /* Разрешаем перенос элементов */
         justify-content: space-between;
-        /* Распределяем элементы */
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
     }
 
     header.fixed {
         padding: 10px;
         flex-wrap: wrap;
-        /* Убедимся, что элементы переносятся */
         justify-content: space-between;
-        /* Распределяем элементы */
         align-items: center;
-        /* Центрируем по вертикали */
         background: rgba(32, 0, 83, 0.97) !important;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     }
 
-    /* Адаптация nav-list */
     .nav-list {
         display: none;
         flex-direction: column;
@@ -560,6 +823,7 @@ footer {
         z-index: 2000;
         justify-content: flex-start;
         align-items: center;
+        overflow-y: auto;
     }
 
     .nav-list.active {
@@ -569,7 +833,7 @@ footer {
     }
 
     .nav-list li {
-        margin: 20px 0;
+        margin: 10px 0; /* Уменьшено с 20px для компактности */
         width: 100%;
         max-width: 300px;
         display: flex;
@@ -601,121 +865,70 @@ footer {
         transform: translateY(0);
     }
 
-    /* Задержки для анимации */
-    .nav-list.active li:nth-child(1) {
-        transition-delay: 0s;
-    }
-
-    .nav-list.active li:nth-child(2) {
-        transition-delay: 0.1s;
-    }
-
-    .nav-list.active li:nth-child(3) {
-        transition-delay: 0.2s;
-    }
-
-    .nav-list.active li:nth-child(4) {
-        transition-delay: 0.3s;
-    }
-
-    .nav-list.active li:nth-child(5) {
-        transition-delay: 0.4s;
-    }
-
-    .nav-list.active li:nth-child(6) {
-        transition-delay: 0.5s;
-    }
-
-    .nav-list.active li:nth-child(7) {
-        transition-delay: 0.6s;
-    }
-
-    .nav-list.active li:nth-child(8) {
-        transition-delay: 0.7s;
-    }
+    .nav-list.active li:nth-child(1) { transition-delay: 0s; }
+    .nav-list.active li:nth-child(2) { transition-delay: 0.1s; }
+    .nav-list.active li:nth-child(3) { transition-delay: 0.2s; }
+    .nav-list.active li:nth-child(4) { transition-delay: 0.3s; }
+    .nav-list.active li:nth-child(5) { transition-delay: 0.4s; }
+    .nav-list.active li:nth-child(6) { transition-delay: 0.5s; }
+    .nav-list.active li:nth-child(7) { transition-delay: 0.6s; }
+    .nav-list.active li:nth-child(8) { transition-delay: 0.7s; }
 
     .burger-menu {
         display: flex;
         z-index: 2100;
     }
 
-    /* Адаптация login-nav */
     .login-nav {
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
-        /* Разрешаем перенос элементов */
         align-items: center;
         justify-content: center;
-        /* Центрируем элементы */
         padding: 5px 10px;
-        /* Минимизируем отступы */
         gap: 10px;
-        /* Расстояние между элементами */
         margin-left: 0;
-        /* Убираем отступ слева */
         max-width: 250px;
-        /* Уменьшаем ширину */
         width: auto;
-        /* Адаптивная ширина */
         background-color: rgb(67, 1, 121);
         border-radius: 15px;
         position: relative;
         margin: 0 auto;
-        /* Центрируем блок */
     }
 
-    /* Дополнительно корректируем login-nav в режиме fixed */
     header.fixed .login-nav {
         max-width: 200px;
-        /* Еще сильнее уменьшаем ширину в режиме fixed */
         padding: 5px 8px;
-        /* Уменьшаем отступы */
         font-size: 12px;
-        /* Уменьшаем шрифт для компактности */
     }
 
     .login-nav li {
         font-size: 14px;
-        /* Сохраняем читаемый шрифт */
         text-align: center;
         white-space: normal;
-        /* Разрешаем перенос текста */
         overflow-wrap: break-word;
-        /* Разрешаем перенос длинных слов */
         overflow: visible;
-        /* Убираем обрезку */
     }
 
     .login-nav li a {
-        color: #FFF;
         font-size: 14px;
-        /* Сохраняем шрифт */
         padding: 5px;
-        text-transform: uppercase;
-        text-decoration: none;
-        transition: opacity 0.3s;
         white-space: normal;
         overflow-wrap: break-word;
     }
 
-    /* Дополнительно корректируем шрифт в режиме fixed */
     header.fixed .login-nav li,
     header.fixed .login-nav li a {
         font-size: 12px;
-        /* Уменьшаем шрифт в режиме fixed */
     }
 
-    /* Уменьшаем логотип в режиме fixed */
     .logo-icon {
         width: 155px !important;
-        /* Увеличиваем логотип */
         height: 155px !important;
     }
 
     header.fixed .logo-icon {
         width: 80px !important;
-        /* Уменьшаем логотип в режиме fixed */
         height: 80px !important;
     }
 
@@ -724,15 +937,12 @@ footer {
         padding: 10px;
         font-size: 24px;
         margin-left: auto;
-        /* Выравниваем вправо */
     }
 
-    /* Уменьшаем корзину в режиме fixed */
     header.fixed .cart-icon {
-        font-size: 20px;
-        /* Уменьшаем размер иконки */
-        padding: 5px 8px;
-        /* Уменьшаем отступы */
+        font-size: 36px; /* Увеличено с 20px до 36px */
+        padding: 15px; /* Увеличено для большей области нажатия */
+        border-radius: 15px; /* Увеличено скругление */
     }
 
     .cart-count {
@@ -741,18 +951,55 @@ footer {
         font-size: 12px;
     }
 
+    .cart-modal.active {
+        display: flex;
+        align-items: flex-end;
+    }
+
     .cart-content {
-        width: 95%;
-        padding: 20px;
+        width: 100%;
+        max-width: none;
+        padding: 15px;
+        border-radius: 20px 20px 0 0;
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+
+    .cart-content h2 {
+        font-size: 20px;
     }
 
     .cart-items {
         max-height: 300px;
     }
 
+    .cart-item {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .remove-item {
+        padding: 5px 10px;
+        font-size: 12px;
+    }
+
+    .cart-total {
+        font-size: 16px;
+        padding: 10px 0;
+    }
+
+    .checkout-btn,
+    .close-cart {
+        padding: 12px;
+        font-size: 16px;
+    }
+
     .job-section {
         padding: 20px;
         padding-top: 70px;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
     }
 
     .job-intro {
@@ -817,95 +1064,6 @@ footer {
         font-size: 14px;
     }
 
-    footer {
-        padding: 20px;
-    }
-
-    .footer-links {
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    .footer-links a {
-        font-size: 12px;
-    }
-}
-
-/* Стили для всплывающего уведомления */
-.crypto-popup {
-    position: fixed;
-    bottom: -100px; /* Изначально скрыто ниже экрана */
-    right: 20px;
-    width: 300px;
-    background: rgba(159, 127, 243, 0.95);
-    border-radius: 15px;
-    padding: 15px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    z-index: 1000;
-    transition: bottom 0.5s ease-in-out;
-}
-
-.crypto-popup.active {
-    bottom: 20px; /* Появляется внизу справа */
-}
-
-.crypto-popup-content {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.crypto-popup-content p {
-    margin: 0;
-    color: #FFF;
-    font-size: 16px;
-    font-weight: 900;
-    text-transform: uppercase;
-}
-
-.crypto-popup-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.crypto-more-btn {
-    background: #FFF;
-    color: #000;
-    padding: 8px 20px;
-    border-radius: 5px;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 900;
-    text-transform: uppercase;
-    transition: opacity 0.3s;
-}
-
-.crypto-more-btn:hover {
-    opacity: 0.8;
-}
-
-.crypto-close-btn {
-    background: none;
-    border: none;
-    color: #FFF;
-    font-size: 24px;
-    cursor: pointer;
-    padding: 0;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: opacity 0.3s;
-}
-
-.crypto-close-btn:hover {
-    opacity: 0.8;
-}
-
-/* Адаптивность для мобильных устройств */
-@media (max-width: 768px) {
     .crypto-popup {
         width: 90%;
         max-width: 280px;
@@ -927,37 +1085,53 @@ footer {
         width: 25px;
         height: 25px;
     }
+
+    footer {
+        padding: 20px;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    .footer-links {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .footer-links a {
+        font-size: 12px;
+    }
 }
 
-/* Общие стили для кнопок */
-.about-btn, .blog-btn, .contact-btn, .crypto-more-btn {
-    display: inline-block;
-    background: #FFF;
-    color: #000;
-    padding: 15px 30px;
-    text-decoration: none;
-    font-size: 16px;
-    font-weight: 900;
-    text-transform: uppercase;
-    border-radius: 5px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s;
-    position: relative;
-    overflow: hidden;
-}
+/* Дополнительная оптимизация для очень маленьких экранов */
+@media (max-width: 480px) {
+    .headline-emoji {
+        font-size: 25px;
+    }
 
-/* Ховер-эффект: масштабирование и свечение */
-.about-btn:hover, .blog-btn:hover, .contact-btn:hover, .crypto-more-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 15px rgba(159, 127, 243, 0.8);
-    opacity: 1;
-}
+    .headline-main {
+        font-size: 24px;
+    }
 
-/* Ховер для ссылок в навигации */
-.nav-list li a, .footer-links a, .login-nav li a {
-    transition: transform 0.3s ease, color 0.3s ease;
-}
+    .headline-sub {
+        font-size: 24px;
+    }
 
-.nav-list li a:hover, .footer-links a:hover, .login-nav li a:hover {
-    transform: translateY(-2px);
-    color: #9F7FF3;
+    .job-text {
+        font-size: 12px;
+    }
+
+    .apply-title {
+        font-size: 18px;
+    }
+
+    .form-group label {
+        font-size: 12px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        font-size: 12px;
+    }
 }

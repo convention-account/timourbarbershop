@@ -13,16 +13,18 @@ body {
     padding: 0;
     background: linear-gradient(135deg, #1a0033, #000033);
     position: relative;
-    overflow-x: hidden;
+    overflow-x: hidden !important;
     font-family: 'Nexa', sans-serif;
     transition: opacity 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 body.menu-open {
     overflow: hidden;
 }
 
-body.menu-open>*:not(header) {
+body.menu-open > *:not(header) {
     opacity: 0;
     pointer-events: none;
 }
@@ -33,13 +35,15 @@ header {
     z-index: 100;
     display: flex;
     justify-content: flex-start;
-    /* Выравнивание по левому краю */
     align-items: center;
     padding: 20px 40px;
     max-width: 1200px;
     margin: 0;
-    /* Убираем центрирование */
     transition: all 0.3s ease;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
 }
 
 header.fixed {
@@ -78,11 +82,12 @@ header.fixed {
     font-weight: 900;
     text-transform: uppercase;
     text-decoration: none;
-    transition: opacity 0.3s;
+    transition: transform 0.3s ease, color 0.3s ease;
 }
 
 .nav-list li a:hover {
-    opacity: 0.8;
+    transform: translateY(-2px);
+    color: #9F7FF3;
 }
 
 .burger-menu {
@@ -118,6 +123,10 @@ header.fixed {
     padding: 40px;
     max-width: 1200px;
     margin: 0 auto;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
 }
 
 .services-wrapper {
@@ -138,6 +147,9 @@ header.fixed {
     line-height: 1.2;
     margin: 0;
     text-shadow: 0 5px 30px rgba(255, 255, 255, 0.3);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
 .headline-sub {
@@ -149,6 +161,10 @@ header.fixed {
     -webkit-text-stroke: 1px #9F7FF3;
     text-shadow: 0 5px 25px rgba(159, 127, 243, 0.8);
     margin: 0;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    transition-delay: 0.2s;
 }
 
 .welcome-text {
@@ -158,6 +174,22 @@ header.fixed {
     line-height: 1.5;
     margin: 20px 0;
     max-width: 100%;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.welcome-text:nth-child(1) {
+    transition-delay: 0.3s;
+}
+
+.welcome-text:nth-child(2) {
+    transition-delay: 0.4s;
+}
+
+.visible {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* Карточки услуг */
@@ -174,12 +206,19 @@ header.fixed {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
     display: flex;
     flex-direction: column;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.service-card:hover {
+    transform: perspective(1000px) rotateX(2deg) rotateY(2deg);
+    box-shadow: 0 10px 40px rgba(159, 127, 243, 0.5);
 }
 
 .service-image {
     width: 100%;
     height: 200px;
     object-fit: cover;
+    max-width: 100%;
 }
 
 .service-content {
@@ -195,6 +234,9 @@ header.fixed {
     font-weight: 900;
     margin: 0 0 15px;
     text-transform: uppercase;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
 .service-details {
@@ -205,11 +247,62 @@ header.fixed {
     line-height: 1.5;
 }
 
+.service-details li {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
 .service-price,
 .service-location {
     font-size: 16px;
     font-weight: 700;
     margin: 5px 0;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.service-card.visible .service-content h2 {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.5s;
+}
+
+.service-card.visible .service-details li:nth-child(1) {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.6s;
+}
+
+.service-card.visible .service-details li:nth-child(2) {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.7s;
+}
+
+.service-card.visible .service-details li:nth-child(3) {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.8s;
+}
+
+.service-card.visible .service-details li:nth-child(4) {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.9s;
+}
+
+.service-card.visible .service-price {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 1.0s;
+}
+
+.service-card.visible .service-location {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 1.1s;
 }
 
 .service-btn {
@@ -222,13 +315,79 @@ header.fixed {
     font-weight: 900;
     text-transform: uppercase;
     border-radius: 5px;
-    transition: opacity 0.3s;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s;
     margin-top: auto;
     text-align: center;
+    position: relative;
+    overflow: hidden;
 }
 
 .service-btn:hover {
-    opacity: 0.8;
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(159, 127, 243, 0.8);
+    opacity: 1;
+}
+
+.service-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(159, 127, 243, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease, height 0.6s ease;
+    z-index: 0;
+}
+
+.service-btn:hover::after {
+    width: 300px;
+    height: 300px;
+}
+
+.service-btn span {
+    position: relative;
+    z-index: 1;
+}
+
+/* Discount Badge Styling */
+.discount-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #9F7FF3, #FF4444);
+    color: #FFF;
+    font-size: 14px;
+    font-weight: 900;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    border-radius: 20px;
+    margin-left: 10px;
+    box-shadow: 0 2px 10px rgba(159, 127, 243, 0.5);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.discount-badge:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(159, 127, 243, 0.8);
+}
+
+.discount-badge::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(30deg);
+    transition: all 0.5s ease;
+}
+
+.discount-badge:hover::before {
+    left: 150%;
 }
 
 /* Стили для футера */
@@ -241,6 +400,9 @@ footer {
     color: #FFF;
     text-align: center;
     margin-top: auto;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
 }
 
 .footer-content {
@@ -269,190 +431,15 @@ footer {
     font-size: 14px;
     font-weight: 900;
     text-transform: uppercase;
-    transition: opacity 0.3s;
+    transition: transform 0.3s ease, color 0.3s ease;
 }
 
 .footer-links a:hover {
-    opacity: 0.8;
+    transform: translateY(-2px);
+    color: #9F7FF3;
 }
 
-/* Адаптивность для мобильных устройств */
-@media (max-width: 768px) {
-    header {
-        padding: 20px;
-        background: rgba(32, 0, 83, 0.97) !important;
-    }
-
-    header.fixed {
-        padding: 10px;
-    }
-
-    .nav-list {
-        display: none;
-        flex-direction: column;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100vh;
-        background-color: rgba(0, 0, 0, 0.95);
-        padding: 35px 0 !important;
-        opacity: 0;
-        transform: translateY(-100%);
-        transition: transform 0.5s ease-in-out, opacity 0.3s ease-in-out;
-        z-index: 2000;
-        justify-content: flex-start;
-        align-items: center;
-    }
-
-    .nav-list.active {
-        display: flex;
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    .nav-list li {
-        margin: 20px 0;
-        text-align: center;
-        opacity: 0;
-        transform: translateY(20px);
-        transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
-    }
-
-    .nav-list.active li {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    .nav-list.active li:nth-child(1) {
-        transition-delay: 0s;
-    }
-
-    .nav-list.active li:nth-child(2) {
-        transition-delay: 0.1s;
-    }
-
-    .nav-list.active li:nth-child(3) {
-        transition-delay: 0.2s;
-    }
-
-    .nav-list.active li:nth-child(4) {
-        transition-delay: 0.3s;
-    }
-
-    .nav-list.active li:nth-child(5) {
-        transition-delay: 0.4s;
-    }
-
-    .nav-list.active li:nth-child(6) {
-        transition-delay: 0.5s;
-    }
-
-    .nav-list.active li:nth-child(7) {
-        transition-delay: 0.6s;
-    }
-
-    .nav-list.active li:nth-child(8) {
-        transition-delay: 0.7s;
-    }
-
-    .burger-menu {
-        display: flex;
-        z-index: 2100;
-    }
-
-    .services-section {
-        padding: 20px;
-        padding-top: 70px;
-    }
-
-    .services-intro {
-        text-align: center;
-    }
-
-    .headline-main {
-        font-size: 36px;
-        line-height: 1.1;
-    }
-
-    .headline-sub {
-        font-size: 32px;
-        line-height: 1.1;
-        -webkit-text-stroke: 0.5px #9F7FF3;
-    }
-
-    .welcome-text {
-        font-size: 14px;
-        margin: 15px 0;
-    }
-
-    .services-cards {
-        grid-template-columns: 1fr;
-    }
-
-    .service-card {
-        border-radius: 15px;
-    }
-
-    .service-image {
-        height: 150px;
-    }
-
-    .service-content h2 {
-        font-size: 20px;
-    }
-
-    .service-details {
-        font-size: 14px;
-    }
-
-    .service-price,
-    .service-location {
-        font-size: 14px;
-    }
-
-    .service-btn {
-        padding: 10px 20px;
-        font-size: 14px;
-    }
-
-    footer {
-        padding: 20px;
-    }
-
-    .footer-links {
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    .footer-links a {
-        font-size: 12px;
-    }
-}
-
-/* Дополнительная оптимизация для очень маленьких экранов */
-@media (max-width: 480px) {
-    .headline-main {
-        font-size: 28px;
-    }
-
-    .headline-sub {
-        font-size: 24px;
-    }
-
-    .welcome-text {
-        font-size: 12px;
-    }
-
-    .service-content h2 {
-        font-size: 18px;
-    }
-
-    .service-details {
-        font-size: 13px;
-    }
-}
-
+/* Стили для логина */
 .login-nav {
     background-color: rgb(67, 1, 121);
     border-radius: 15px;
@@ -462,8 +449,9 @@ footer {
     display: flex;
     gap: 20px;
     color: pink;
-    padding: 10px;
-    margin-left: 15px;
+    padding: 10px 20px;
+    margin-left: auto;
+    white-space: nowrap;
 }
 
 .login-nav li a {
@@ -472,26 +460,39 @@ footer {
     font-weight: 900;
     text-transform: uppercase;
     text-decoration: none;
-    transition: opacity 0.3s;
+    transition: transform 0.3s ease, color 0.3s ease;
 }
 
-/* Стили для иконки корзины справа */
+.login-nav li a:hover {
+    transform: translateY(-2px);
+    color: #9F7FF3;
+}
+
+/* Стили для иконки корзины */
 .cart-icon {
     position: relative;
     color: #FFF;
     font-size: 30px;
-    /* Увеличенный значок */
     cursor: pointer;
     margin-left: 25rem;
     padding: 10px 20px;
     background: rgba(159, 127, 243, 0.8);
-    /* Фон кнопки */
     border-radius: 10px;
     transition: opacity 0.3s;
 }
 
 .cart-icon:hover {
     opacity: 0.8;
+}
+
+header.fixed .cart-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    top: auto;
+    left: auto;
+    margin-left: 0;
+    z-index: 1000;
 }
 
 .cart-count {
@@ -502,7 +503,6 @@ footer {
     color: #FFF;
     border-radius: 50%;
     width: 25px;
-    /* Увеличенный размер счетчика */
     height: 25px;
     font-size: 14px;
     display: flex;
@@ -523,6 +523,9 @@ footer {
     z-index: 2000;
     justify-content: center;
     align-items: center;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
 }
 
 .cart-modal.active {
@@ -535,7 +538,6 @@ footer {
     padding: 30px;
     width: 90%;
     max-width: 600px;
-    /* Увеличенная ширина */
     color: #FFF;
     position: relative;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
@@ -550,7 +552,6 @@ footer {
 
 .cart-items {
     max-height: 400px;
-    /* Увеличенная высота для списка */
     overflow-y: auto;
     margin-bottom: 20px;
     padding: 10px;
@@ -626,63 +627,10 @@ footer {
     color: #000;
 }
 
-/* Адаптивность */
-@media (max-width: 768px) {
-    .cart-icon {
-        margin-right: 10px;
-        padding: 10px;
-        font-size: 24px;
-        margin-left: 15rem;
-    }
-
-    .cart-count {
-        width: 20px;
-        height: 20px;
-        font-size: 12px;
-    }
-
-    .cart-content {
-        width: 95%;
-        padding: 20px;
-    }
-
-    .cart-items {
-        max-height: 300px;
-    }
-}
-
-.login-nav {
-    background-color: rgb(67, 1, 121);
-    border-radius: 15px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    gap: 20px;
-    color: pink;
-    padding: 10px 20px;
-    /* Add horizontal padding */
-    margin-left: auto;
-    /* Push to the right */
-    margin-left: 20px;
-    white-space: nowrap;
-    /* Prevent wrapping */
-}
-
-.login-nav li a {
-    color: #FFF;
-    font-size: 14px;
-    font-weight: 900;
-    text-transform: uppercase;
-    text-decoration: none;
-    transition: opacity 0.3s;
-}
-
 /* Стили для всплывающего уведомления */
 .crypto-popup {
     position: fixed;
     bottom: -100px;
-    /* Изначально скрыто ниже экрана */
     right: 20px;
     width: 300px;
     background: rgba(159, 127, 243, 0.95);
@@ -691,11 +639,13 @@ footer {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     z-index: 1000;
     transition: bottom 0.5s ease-in-out;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
 }
 
 .crypto-popup.active {
     bottom: 20px;
-    /* Появляется внизу справа */
 }
 
 .crypto-popup-content {
@@ -753,8 +703,277 @@ footer {
     opacity: 0.8;
 }
 
+/* Стили для модальных окон (Success и Already Owned) */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+.modal-content {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    padding: 30px;
+    width: 90%;
+    max-width: 400px;
+    color: #FFF;
+    position: relative;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+.modal-content.success {
+    border: 2px solid #9F7FF3;
+}
+
+.modal-content.warning {
+    border: 2px solid #FF4444;
+}
+
+.modal-content h3 {
+    margin: 0 0 15px;
+    font-size: 24px;
+    text-transform: uppercase;
+}
+
+.modal-content p {
+    margin: 0 0 20px;
+    font-size: 16px;
+}
+
+.modal-content .close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    color: #FFF;
+    font-size: 24px;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+.modal-content .close:hover {
+    opacity: 0.8;
+}
+
 /* Адаптивность для мобильных устройств */
 @media (max-width: 768px) {
+    header {
+        padding: 20px;
+        background: rgba(32, 0, 83, 0.97) !important;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    header.fixed {
+        padding: 10px;
+    }
+
+    .nav-list {
+        display: none;
+        flex-direction: column;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.95);
+        padding: 35px 0 !important;
+        opacity: 0;
+        transform: translateY(-100%);
+        transition: transform 0.5s ease-in-out, opacity 0.3s ease-in-out;
+        z-index: 2000;
+        justify-content: flex-start;
+        align-items: center;
+        overflow-y: auto;
+    }
+
+    .nav-list.active {
+        display: flex;
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .nav-list li {
+        margin: 10px 0; /* Уменьшено с 20px для компактности */
+        text-align: center;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+    }
+
+    .nav-list.active li {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .nav-list.active li:nth-child(1) { transition-delay: 0s; }
+    .nav-list.active li:nth-child(2) { transition-delay: 0.1s; }
+    .nav-list.active li:nth-child(3) { transition-delay: 0.2s; }
+    .nav-list.active li:nth-child(4) { transition-delay: 0.3s; }
+    .nav-list.active li:nth-child(5) { transition-delay: 0.4s; }
+    .nav-list.active li:nth-child(6) { transition-delay: 0.5s; }
+    .nav-list.active li:nth-child(7) { transition-delay: 0.6s; }
+    .nav-list.active li:nth-child(8) { transition-delay: 0.7s; }
+
+    .burger-menu {
+        display: flex;
+        z-index: 2100;
+    }
+
+    .services-section {
+        padding: 20px;
+        padding-top: 70px;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    .services-intro {
+        text-align: center;
+    }
+
+    .headline-main {
+        font-size: 36px;
+        line-height: 1.1;
+    }
+
+    .headline-sub {
+        font-size: 32px;
+        line-height: 1.1;
+        -webkit-text-stroke: 0.5px #9F7FF3;
+    }
+
+    .welcome-text {
+        font-size: 14px;
+        margin: 15px 0;
+    }
+
+    .services-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .service-card {
+        border-radius: 15px;
+    }
+
+    .service-image {
+        height: 150px;
+        max-width: 100%;
+    }
+
+    .service-content h2 {
+        font-size: 20px;
+    }
+
+    .service-details {
+        font-size: 14px;
+    }
+
+    .service-price,
+    .service-location {
+        font-size: 14px;
+    }
+
+    .service-btn {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+
+    .discount-badge {
+        font-size: 12px;
+        padding: 4px 8px;
+        margin-left: 8px;
+    }
+
+    footer {
+        padding: 20px;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    .footer-links {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .footer-links a {
+        font-size: 12px;
+    }
+
+    .cart-icon {
+        margin-right: 10px;
+        padding: 10px;
+        font-size: 24px;
+        margin-left: 15rem;
+    }
+
+    header.fixed .cart-icon {
+        font-size: 36px;
+        padding: 15px;
+        border-radius: 15px;
+    }
+
+    .cart-count {
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+    }
+
+    .cart-modal.active {
+        display: flex;
+        align-items: flex-end;
+    }
+
+    .cart-content {
+        width: 100%;
+        max-width: none;
+        padding: 15px;
+        border-radius: 20px 20px 0 0;
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+
+    .cart-content h2 {
+        font-size: 20px;
+    }
+
+    .cart-items {
+        max-height: 300px;
+    }
+
+    .cart-item {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .remove-item {
+        padding: 5px 10px;
+        font-size: 12px;
+    }
+
+    .cart-total {
+        font-size: 16px;
+        padding: 10px 0;
+    }
+
+    .checkout-btn,
+    .close-cart {
+        padding: 12px;
+        font-size: 16px;
+    }
+
     .crypto-popup {
         width: 90%;
         max-width: 280px;
@@ -776,185 +995,48 @@ footer {
         width: 25px;
         height: 25px;
     }
-}
 
-/* Плавные ховер-анимации для кнопок */
-.service-btn {
-    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s;
-    position: relative;
-    overflow: hidden;
-}
+    .modal-content {
+        width: 95%;
+        padding: 20px;
+    }
 
-.service-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 15px rgba(159, 127, 243, 0.8);
-    opacity: 1;
-}
+    .modal-content h3 {
+        font-size: 20px;
+    }
 
-.service-btn::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    background: rgba(159, 127, 243, 0.3);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    transition: width 0.6s ease, height 0.6s ease;
-    z-index: 0;
-}
-
-.service-btn:hover::after {
-    width: 300px;
-    height: 300px;
-}
-
-.service-btn span {
-    position: relative;
-    z-index: 1;
-}
-
-/* Ховер для ссылок */
-.nav-list li a,
-.footer-links a,
-.login-nav li a {
-    transition: transform 0.3s ease, color 0.3s ease;
-}
-
-.nav-list li a:hover,
-.footer-links a:hover,
-.login-nav li a:hover {
-    transform: translateY(-2px);
-    color: #9F7FF3;
-}
-
-/* Анимация появления */
-.headline-main,
-.headline-sub,
-.welcome-text,
-.service-content h2,
-.service-details li,
-.service-price,
-.service-location {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-}
-
-.service-card.visible .service-content h2,
-.service-card.visible .service-details li,
-.service-card.visible .service-price,
-.service-card.visible .service-location {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.headline-sub {
-    transition-delay: 0.2s;
-}
-
-.welcome-text:nth-child(1) {
-    transition-delay: 0.3s;
-}
-
-.welcome-text:nth-child(2) {
-    transition-delay: 0.4s;
-}
-
-.service-card.visible .service-content h2 {
-    transition-delay: 0.5s;
-}
-
-.service-card.visible .service-details li:nth-child(1) {
-    transition-delay: 0.6s;
-}
-
-.service-card.visible .service-details li:nth-child(2) {
-    transition-delay: 0.7s;
-}
-
-.service-card.visible .service-details li:nth-child(3) {
-    transition-delay: 0.8s;
-}
-
-.service-card.visible .service-details li:nth-child(4) {
-    transition-delay: 0.9s;
-}
-
-.service-card.visible .service-price {
-    transition-delay: 1.0s;
-}
-
-.service-card.visible .service-location {
-    transition-delay: 1.1s;
-}
-
-/* Интерактивность карточек */
-.service-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.service-card:hover {
-    transform: perspective(1000px) rotateX(2deg) rotateY(2deg);
-    box-shadow: 0 10px 40px rgba(159, 127, 243, 0.5);
-}
-
-/* Discount Badge Styling */
-.discount-badge {
-    display: inline-block;
-    background: linear-gradient(135deg, #9F7FF3, #FF4444); /* Gradient matching theme */
-    color: #FFF;
-    font-size: 14px;
-    font-weight: 900;
-    text-transform: uppercase;
-    padding: 5px 10px;
-    border-radius: 20px; /* Rounded pill shape */
-    margin-left: 10px;
-    box-shadow: 0 2px 10px rgba(159, 127, 243, 0.5); /* Subtle glow */
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-/* Hover Effect for Discount Badge */
-.discount-badge:hover {
-    transform: scale(1.1); /* Slight scale-up on hover */
-    box-shadow: 0 4px 15px rgba(159, 127, 243, 0.8); /* Enhanced glow */
-}
-
-/* Optional Shine Animation */
-.discount-badge::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: rgba(255, 255, 255, 0.3);
-    transform: rotate(30deg);
-    transition: all 0.5s ease;
-}
-
-.discount-badge:hover::before {
-    left: 150%; /* Shine moves across on hover */
-}
-
-/* Adjust for Mobile */
-@media (max-width: 768px) {
-    .discount-badge {
-        font-size: 12px;
-        padding: 4px 8px;
-        margin-left: 8px;
+    .modal-content p {
+        font-size: 14px;
     }
 }
 
+/* Дополнительная оптимизация для очень маленьких экранов */
 @media (max-width: 480px) {
+    .headline-main {
+        font-size: 28px;
+    }
+
+    .headline-sub {
+        font-size: 24px;
+    }
+
+    .welcome-text {
+        font-size: 12px;
+    }
+
+    .service-content h2 {
+        font-size: 18px;
+    }
+
+    .service-details {
+        font-size: 13px;
+    }
+
+    .service-price,
+    .service-location {
+        font-size: 13px;
+    }
+
     .discount-badge {
         font-size: 10px;
         padding: 3px 6px;
