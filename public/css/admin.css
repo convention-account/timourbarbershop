@@ -1,0 +1,1003 @@
+/* Определение шрифта */
+@font-face {
+    font-family: Nexa;
+    src: url('../../font/Nexa-Heavy.ttf');
+}
+
+/* Базовые стили для body */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #1a0033, #000033);
+    position: relative;
+    overflow-x: hidden;
+    font-family: 'Nexa', sans-serif;
+    transition: opacity 0.3s ease;
+}
+
+body.menu-open {
+    overflow: hidden;
+}
+
+body.menu-open>*:not(header) {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Стили для хедера */
+header {
+    position: relative;
+    z-index: 100;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 20px 40px;
+    max-width: 1200px;
+    margin: 0;
+    transition: all 0.3s ease;
+}
+
+header.fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    max-width: none;
+    padding: 10px 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.logo-icon {
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    margin-left: 20px;
+}
+
+.nav-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 20px;
+}
+
+.nav-list li a {
+    color: #FFF;
+    font-size: 14px;
+    font-weight: 900;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: opacity 0.3s;
+}
+
+.nav-list li a:hover {
+    opacity: 0.8;
+}
+
+.burger-menu {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.burger-menu span {
+    width: 30px;
+    height: 3px;
+    background-color: #FFF;
+    margin: 5px 0;
+    transition: all 0.3s ease;
+}
+
+.burger-menu.toggle span:nth-child(1) {
+    transform: rotate(45deg) translate(7px, 7px);
+}
+
+.burger-menu.toggle span:nth-child(2) {
+    opacity: 0;
+}
+
+.burger-menu.toggle span:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -7px);
+}
+
+/* Стили для основного контента (Contact) */
+.contact-section {
+    position: relative;
+    z-index: 2;
+    padding: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.contact-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.contact-intro {
+    text-align: center;
+}
+
+.headline {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.headline-emoji {
+    font-size: 40px;
+    margin-right: 10px;
+}
+
+.headline-main {
+    color: #FFF;
+    font-size: 48px;
+    font-weight: 900;
+    text-transform: uppercase;
+    line-height: 1.2;
+    text-shadow: 0 5px 20px rgba(255, 255, 255, 0.5);
+    display: inline;
+}
+
+.headline-sub {
+    color: #9F7FF3;
+    font-size: 48px;
+    font-weight: 900;
+    text-transform: uppercase;
+    line-height: 1.2;
+    -webkit-text-stroke: 1px #9F7FF3;
+    text-shadow: 0 5px 25px rgba(159, 127, 243, 0.8);
+    display: inline;
+    margin-left: 10px;
+}
+
+/* Контактная информация */
+.contact-info {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    padding: 20px;
+    color: #FFF;
+}
+
+.contact-text {
+    font-size: 19px;
+    font-weight: 900;
+    line-height: 1.5;
+    margin: 10px 0;
+}
+
+.social-links {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.social-link {
+    color: #9F7FF3;
+    font-size: 16px;
+    font-weight: 900;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: opacity 0.3s;
+}
+
+.social-link:hover {
+    opacity: 0.8;
+}
+
+/* Форма обратной связи */
+.contact-form {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    padding: 20px;
+    color: #FFF;
+}
+
+.form-title {
+    font-size: 24px;
+    font-weight: 900;
+    text-transform: uppercase;
+    margin: 0 0 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    font-family: 'Nexa', sans-serif;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 5px;
+    color: #FFF;
+    outline: none;
+    transition: background 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.form-btn {
+    display: inline-block;
+    background: #FFF;
+    color: #000;
+    padding: 12px 25px;
+    font-size: 16px;
+    font-weight: 900;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+.form-btn:hover {
+    opacity: 0.8;
+}
+
+/* Карта */
+.contact-map {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Стили для футера */
+footer {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding: 40px;
+    background: rgba(0, 0, 33, 0.8);
+    color: #FFF;
+    text-align: center;
+    margin-top: auto;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-content p {
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0 0 20px;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.footer-links a {
+    color: #FFF;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 900;
+    text-transform: uppercase;
+    transition: opacity 0.3s;
+}
+
+.footer-links a:hover {
+    opacity: 0.8;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    header {
+        padding: 20px;
+        background: rgba(32, 0, 83, 0.97) !important;
+    }
+
+    header.fixed {
+        padding: 10px;
+    }
+
+    .nav-list {
+        display: none;
+        flex-direction: column;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.95);
+        padding: 35px 0 !important;
+        opacity: 0;
+        transform: translateY(-100%);
+        transition: transform 0.5s ease-in-out, opacity 0.3s ease-in-out;
+        z-index: 2000;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    .nav-list.active {
+        display: flex;
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .nav-list li {
+        margin: 20px 0;
+        text-align: center;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+    }
+
+    .nav-list.active li {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .nav-list.active li:nth-child(1) {
+        transition-delay: 0s;
+    }
+
+    .nav-list.active li:nth-child(2) {
+        transition-delay: 0.1s;
+    }
+
+    .nav-list.active li:nth-child(3) {
+        transition-delay: 0.2s;
+    }
+
+    .nav-list.active li:nth-child(4) {
+        transition-delay: 0.3s;
+    }
+
+    .nav-list.active li:nth-child(5) {
+        transition-delay: 0.4s;
+    }
+
+    .nav-list.active li:nth-child(6) {
+        transition-delay: 0.5s;
+    }
+
+    .nav-list.active li:nth-child(7) {
+        transition-delay: 0.6s;
+    }
+
+    .nav-list.active li:nth-child(8) {
+        transition-delay: 0.7s;
+    }
+
+    .burger-menu {
+        display: flex;
+        z-index: 2100;
+    }
+
+    .contact-section {
+        padding: 20px;
+        padding-top: 70px;
+    }
+
+    .contact-intro {
+        text-align: center;
+    }
+
+    .headline-emoji {
+        font-size: 30px;
+    }
+
+    .headline-main {
+        font-size: 28px;
+    }
+
+    .headline-sub {
+        font-size: 28px;
+    }
+
+    .contact-text {
+        font-size: 14px;
+        margin: 8px 0;
+    }
+
+    .social-link {
+        font-size: 14px;
+    }
+
+    .form-title {
+        font-size: 20px;
+    }
+
+    .form-group label {
+        font-size: 14px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .form-btn {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+
+    .contact-map iframe {
+        height: 200px;
+    }
+
+    footer {
+        padding: 20px;
+    }
+
+    .footer-links {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .footer-links a {
+        font-size: 12px;
+    }
+}
+
+/* Дополнительная оптимизация для очень маленьких экранов */
+@media (max-width: 480px) {
+    .headline-emoji {
+        font-size: 25px;
+    }
+
+    .headline-main {
+        font-size: 24px;
+    }
+
+    .headline-sub {
+        font-size: 24px;
+    }
+
+    .contact-text {
+        font-size: 12px;
+    }
+
+    .social-link {
+        font-size: 12px;
+    }
+
+    .form-title {
+        font-size: 18px;
+    }
+}
+
+.login-nav {
+    background-color: rgb(67, 1, 121);
+    border-radius: 15px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    color: pink;
+    display: flex;
+    gap: 20px;
+    padding: 10px;
+    margin-left: 15px;
+}
+
+.login-nav li a {
+    color: #FFF;
+    font-size: 14px;
+    font-weight: 900;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: opacity 0.3s;
+}
+
+/* Стили для иконки корзины справа */
+.cart-icon {
+    position: relative;
+    color: #FFF;
+    font-size: 30px;
+    /* Увеличенный значок */
+    cursor: pointer;
+    margin-left: 25rem;
+    padding: 10px 20px;
+    background: rgba(159, 127, 243, 0.8);
+    /* Фон кнопки */
+    border-radius: 10px;
+    transition: opacity 0.3s;
+}
+
+.cart-icon:hover {
+    opacity: 0.8;
+}
+
+.cart-count {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: #ff4444;
+    color: #FFF;
+    border-radius: 50%;
+    width: 25px;
+    /* Увеличенный размер счетчика */
+    height: 25px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+}
+
+/* Стили для модального окна корзины */
+.cart-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+}
+
+.cart-modal.active {
+    display: flex;
+}
+
+.cart-content {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    padding: 30px;
+    width: 90%;
+    max-width: 600px;
+    /* Увеличенная ширина */
+    color: #FFF;
+    position: relative;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.cart-content h2 {
+    margin: 0 0 20px;
+    font-size: 28px;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.cart-items {
+    max-height: 400px;
+    /* Увеличенная высота для списка */
+    overflow-y: auto;
+    margin-bottom: 20px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 16px;
+}
+
+.cart-item-title {
+    flex: 1;
+}
+
+.cart-item-price {
+    margin: 0 20px;
+}
+
+.remove-item {
+    background: #ff4444;
+    color: #FFF;
+    border: none;
+    padding: 5px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.cart-total {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 0;
+    font-size: 20px;
+    font-weight: 900;
+    background: rgba(159, 127, 243, 0.2);
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.checkout-btn,
+.close-cart {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: 900;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+.checkout-btn {
+    background: #9F7FF3;
+    color: #FFF;
+}
+
+.checkout-btn:hover,
+.close-cart:hover {
+    opacity: 0.8;
+}
+
+.close-cart {
+    background: #FFF;
+    color: #000;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .cart-icon {
+        margin-right: 10px;
+        padding: 10px;
+        font-size: 24px;
+        margin-left: 15rem;
+    }
+
+    .cart-count {
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+    }
+
+    .cart-content {
+        width: 95%;
+        padding: 20px;
+    }
+
+    .cart-items {
+        max-height: 300px;
+    }
+}
+
+.login-nav {
+    background-color: rgb(67, 1, 121);
+    border-radius: 15px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 20px;
+    color: pink;
+    padding: 10px 20px;
+    /* Add horizontal padding */
+    margin-left: auto;
+    /* Push to the right */
+    margin-left: 20px;
+    white-space: nowrap;
+    /* Prevent wrapping */
+}
+
+.login-nav li a {
+    color: #FFF;
+    font-size: 14px;
+    font-weight: 900;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: opacity 0.3s;
+}
+
+.checkout-group {
+    margin-bottom: 30px;
+}
+
+.form-subtitle {
+    font-size: 20px;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #FFF;
+    margin: 20px 0 15px;
+}
+
+.form-group label input[type="radio"] {
+    margin-right: 10px;
+}
+
+.card-details {
+    margin-top: 15px;
+}
+
+.cart-total:not(:last-child) {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+/* Стили для всплывающего уведомления */
+.crypto-popup {
+    position: fixed;
+    bottom: -100px;
+    /* Изначально скрыто ниже экрана */
+    right: 20px;
+    width: 300px;
+    background: rgba(159, 127, 243, 0.95);
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    transition: bottom 0.5s ease-in-out;
+}
+
+.crypto-popup.active {
+    bottom: 20px;
+    /* Появляется внизу справа */
+}
+
+.crypto-popup-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.crypto-popup-content p {
+    margin: 0;
+    color: #FFF;
+    font-size: 16px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.crypto-popup-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.crypto-more-btn {
+    background: #FFF;
+    color: #000;
+    padding: 8px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 900;
+    text-transform: uppercase;
+    transition: opacity 0.3s;
+}
+
+.crypto-more-btn:hover {
+    opacity: 0.8;
+}
+
+.crypto-close-btn {
+    background: none;
+    border: none;
+    color: #FFF;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s;
+}
+
+.crypto-close-btn:hover {
+    opacity: 0.8;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    .crypto-popup {
+        width: 90%;
+        max-width: 280px;
+        right: 10px;
+        padding: 10px;
+    }
+
+    .crypto-popup-content p {
+        font-size: 14px;
+    }
+
+    .crypto-more-btn {
+        padding: 6px 15px;
+        font-size: 12px;
+    }
+
+    .crypto-close-btn {
+        font-size: 20px;
+        width: 25px;
+        height: 25px;
+    }
+}
+
+/* css/contact.css */
+.shipping-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.shipping-option {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.3s;
+    height: 50px;
+    transition: background 0.3s, transform 0.3s ease;
+}
+
+.shipping-option:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateX(10px);
+}
+
+.shipping-option input[type="radio"] {
+    margin-right: 10px;
+}
+
+.shipping-icon {
+    width: 140px;
+    height: 102px;
+    margin-right: 10px;
+    object-fit: contain;
+}
+
+.shipping-option span {
+    color: #FFF;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+/* Общие стили для кнопок */
+.about-btn,
+.blog-btn,
+.contact-btn,
+.crypto-more-btn {
+    display: inline-block;
+    background: #FFF;
+    color: #000;
+    padding: 15px 30px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 900;
+    text-transform: uppercase;
+    border-radius: 5px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Ховер-эффект: масштабирование и свечение */
+.about-btn:hover,
+.blog-btn:hover,
+.contact-btn:hover,
+.crypto-more-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(159, 127, 243, 0.8);
+    opacity: 1;
+}
+
+/* Добавляем псевдоэлемент для эффекта волны */
+.about-btn::after,
+.blog-btn::after,
+.contact-btn::after,
+.crypto-more-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(159, 127, 243, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease, height 0.6s ease;
+    z-index: 0;
+}
+
+.about-btn:hover::after,
+.blog-btn:hover::after,
+.contact-btn:hover::after,
+.crypto-more-btn:hover::after {
+    width: 300px;
+    height: 300px;
+}
+
+/* Текст кнопки поверх эффекта */
+.about-btn span,
+.blog-btn span,
+.contact-btn span,
+.crypto-more-btn span {
+    position: relative;
+    z-index: 1;
+}
+
+/* Плавные ховер-анимации для кнопки */
+.form-btn {
+    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.form-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(159, 127, 243, 0.8);
+    opacity: 1;
+}
+
+.form-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(159, 127, 243, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease, height 0.6s ease;
+    z-index: 0;
+}
+
+.form-btn:hover::after {
+    width: 300px;
+    height: 300px;
+}
+
+.form-btn span {
+    position: relative;
+    z-index: 1;
+}
+
+/* Ховер для ссылок */
+.nav-list li a,
+.footer-links a,
+.login-nav li a,
+.social-link {
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.nav-list li a:hover,
+.footer-links a:hover,
+.login-nav li a:hover,
+.social-link:hover {
+    transform: translateY(-2px);
+    color: #9F7FF3;
+}

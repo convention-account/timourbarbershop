@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel - TimourBarber</title>
     <link rel="icon" type="image/x-icon" href="../media/logo.ico">
-    <link rel="stylesheet" type="text/css" href="/css/contact.css">
+    <link rel="stylesheet" type="text/css" href="/css/admin.css">
     <link rel="stylesheet" href="/css/mobile-adaptation.css">
     <style>
         /* Styles for the main container */
@@ -110,27 +111,32 @@
 
         .order-card .status.placed {
             background: rgba(128, 128, 128, 0.2);
-            color: #808080; /* Gray for "placed" */
+            color: #808080;
+            /* Gray for "placed" */
         }
 
         .order-card .status.preparing {
             background: rgba(255, 165, 0, 0.2);
-            color: #FFA500; /* Orange for "preparing" */
+            color: #FFA500;
+            /* Orange for "preparing" */
         }
 
         .order-card .status.ready-to-ship {
             background: rgba(255, 215, 0, 0.2);
-            color: #FFD700; /* Yellow for "ready to ship" */
+            color: #FFD700;
+            /* Yellow for "ready to ship" */
         }
 
         .order-card .status.delivered {
             background: rgba(0, 206, 209, 0.2);
-            color: #00CED1; /* Turquoise for "delivered" */
+            color: #00CED1;
+            /* Turquoise for "delivered" */
         }
 
         .order-card .status.cancelled {
             background: rgba(255, 68, 68, 0.2);
-            color: #FF4444; /* Red for "cancelled" */
+            color: #FF4444;
+            /* Red for "cancelled" */
         }
 
         /* Styles for select and button */
@@ -139,6 +145,24 @@
             align-items: center;
             gap: 10px;
             margin-top: 10px;
+        }
+
+        .order-card .status.awaiting_payment {
+            background: rgba(128, 128, 128, 0.2);
+            color: #808080;
+            /* Gray */
+        }
+
+        .order-card .status.awaiting_visitor {
+            background: rgba(255, 165, 0, 0.2);
+            color: #FFA500;
+            /* Orange */
+        }
+
+        .order-card .status.completed {
+            background: rgba(0, 206, 209, 0.2);
+            color: #00CED1;
+            /* Turquoise */
         }
 
         .status-select {
@@ -265,6 +289,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="background-overlay"></div>
     <header>
@@ -299,36 +324,60 @@
             <h1 class="headline">Admin Panel</h1>
             <div class="contact-form checkout-form">
                 <h2 class="form-title">All Orders</h2>
-                <% if (orders.length === 0) { %>
+                <% if (orders.length===0) { %>
                     <p>No orders.</p>
-                <% } else { %>
-                    <div class="orders-container">
-                        <% orders.forEach(order => { %>
-                            <div class="order-card">
-                                <h3>Order #<%= order.order_number %> (User: <%= order.username %>)</h3>
-                                <p><strong>Items:</strong></p>
-                                <div class="items">
-                                    <% order.items.forEach(item => { %>
-                                        <p class="item"><%= item.title %> - <%= item.price %> USDT</p>
-                                    <% }); %>
+                    <% } else { %>
+                        <div class="orders-container">
+                            <% orders.forEach(order=> { %>
+                                <div class="order-card">
+                                    <h3>Order #<%= order.order_number %> (User: <%= order.username %>)</h3>
+                                    <p><strong>Items:</strong></p>
+                                    <div class="items">
+                                        <% order.items.forEach(item=> { %>
+                                            <p class="item">
+                                                <%= item.title %> - <%= item.price %> USDT
+                                            </p>
+                                            <% }); %>
+                                    </div>
+                                    <p><strong>Total:</strong>
+                                        <%= order.total_usdt.toFixed(2) %> USDT
+                                    </p>
+                                    <p><strong>Shipping Address:</strong>
+                                        <%= order.shipping_address %>
+                                    </p>
+                                    <p><strong>Status:</strong> <span
+                                            class="status <%= order.status.replace(/\s+/g, '-') %>">
+                                            <%= order.status %>
+                                        </span></p>
+                                    <div class="status-controls">
+                                        <select class="status-select" data-order-number="<%= order.order_number %>">
+                                            <% if (order.order_number.startsWith('VCH-')) { %>
+                                                <option value="awaiting_payment" <%=order.status==='awaiting_payment'
+                                                    ? 'selected' : '' %>>Awaiting Payment</option>
+                                                <option value="awaiting_visitor" <%=order.status==='awaiting_visitor'
+                                                    ? 'selected' : '' %>>Awaiting Visitor</option>
+                                                <option value="completed" <%=order.status==='completed' ? 'selected'
+                                                    : '' %>>Completed</option>
+                                                <% } else { %>
+                                                    <option value="placed" <%=order.status==='placed' ? 'selected' : ''
+                                                        %>>Placed</option>
+                                                    <option value="preparing" <%=order.status==='preparing' ? 'selected'
+                                                        : '' %>>Preparing</option>
+                                                    <option value="ready to ship" <%=order.status==='ready to ship'
+                                                        ? 'selected' : '' %>>Ready to Ship</option>
+                                                    <option value="delivered" <%=order.status==='delivered' ? 'selected'
+                                                        : '' %>>Delivered</option>
+                                                    <option value="cancelled" <%=order.status==='cancelled' ? 'selected'
+                                                        : '' %>>Cancelled</option>
+                                                    <% } %>
+                                        </select>
+                                        <button class="update-status-btn"
+                                            onclick="updateStatus('<%= order.order_number %>')">Update</button>
+                                    </div>
                                 </div>
-                                <p><strong>Total:</strong> <%= order.total_usdt.toFixed(2) %> USDT</p>
-                                <p><strong>Shipping Address:</strong> <%= order.shipping_address %></p>
-                                <p><strong>Status:</strong> <span class="status <%= order.status.replace(/\s+/g, '-') %>"><%= order.status %></span></p>
-                                <div class="status-controls">
-                                    <select class="status-select" data-order-number="<%= order.order_number %>">
-                                        <option value="placed" <%= order.status === 'placed' ? 'selected' : '' %>>Placed</option>
-                                        <option value="preparing" <%= order.status === 'preparing' ? 'selected' : '' %>>Preparing</option>
-                                        <option value="ready to ship" <%= order.status === 'ready to ship' ? 'selected' : '' %>>Ready to Ship</option>
-                                        <option value="delivered" <%= order.status === 'delivered' ? 'selected' : '' %>>Delivered</option>
-                                        <option value="cancelled" <%= order.status === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
-                                    </select>
-                                    <button class="update-status-btn" onclick="updateStatus('<%= order.order_number %>')">Update</button>
-                                </div>
-                            </div>
-                        <% }); %>
-                    </div>
-                <% } %>
+                                <% }); %>
+                        </div>
+                        <% } %>
             </div>
         </div>
     </main>
@@ -377,4 +426,5 @@
         }
     </script>
 </body>
+
 </html>

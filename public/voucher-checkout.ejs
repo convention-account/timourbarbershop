@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voucher Checkout - TimourBarber</title>
+    <link rel="icon" type="image/x-icon" href="../media/logo.ico">
+    <link rel="stylesheet" type="text/css" href="/css/contact.css">
+    <link rel="stylesheet" href="/css/mobile-adaptation.css">
+</head>
+
+<body>
+    <div class="background-overlay"></div>
+    <header>
+        <div class="logo">
+            <img src="../media/icon.png" alt="Logo" class="logo-icon">
+        </div>
+        <nav class="navbar">
+            <div class="burger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-list">
+                <li><a href="/">Home</a></li>
+                <li><a href="/academy">Academy</a></li>
+                <li><a href="/webshop">Store</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/services">Services</a></li>
+                <li><a href="/contact">Contact</a></li>
+                <li><a href="/job">Job</a></li>
+                <li><a href="/coin">Coin</a></li>
+            </ul>
+        </nav>
+        <div class="login-nav">
+            <% if (user) { %>
+                <li>Welcome, <%= user %> | <a href="/profile">Personal Cabinet</a> | <a href="/logout">Logout</a></li>
+                <% } else { %>
+                    <li><a href="/login">Login</a></li>
+                    <% } %>
+        </div>
+        <div class="cart-icon">
+            🛒
+            <span class="cart-count">0</span>
+        </div>
+    </header>
+
+    <main class="contact-section checkout-section">
+        <div class="contact-wrapper checkout-wrapper">
+            <div class="contact-intro">
+                <h1 class="headline">
+                    <span class="headline-emoji">💳</span>
+                    <span class="headline-main">Voucher Checkout</span>
+                    <span class="headline-sub">Complete Your Purchase</span>
+                </h1>
+            </div>
+
+            <div class="contact-form checkout-form">
+                <h2 class="form-title">Voucher Checkout Details</h2>
+                <form id="voucher-checkout-form">
+                    <div class="checkout-group">
+                        <h3 class="form-subtitle">Billing Information</h3>
+                        <div class="form-group">
+                            <label for="full-name">Full Name</label>
+                            <input type="text" id="full-name" name="full_name" placeholder="Your Full Name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" placeholder="Your Email" required>
+                        </div>
+                    </div>
+
+                    <div class="checkout-group">
+                        <h3 class="form-subtitle">Payment Method</h3>
+                        <div class="form-group">
+                            <label>
+                                <input type="radio" name="payment_method" value="usdt_trc20" checked>
+                                USDT (TRC20)
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="voucher-cart-summary"></div>
+
+                    <button type="submit" class="form-btn checkout-btn">Place Order</button>
+                </form>
+                <button class="close-cart" onclick="window.location.href='/services'">Back to Services</button>
+            </div>
+        </div>
+    </main>
+
+    <div class="custom-alert" id="custom-alert" style="display: none;">
+        <div class="custom-alert-content">
+            <p id="custom-alert-message"></p>
+            <button class="custom-alert-close">OK</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p>© 2025 Timour Barber. All rights reserved.</p>
+            <ul class="footer-links">
+                <li><a href="/cookie-policy">Privacy Policy</a></li>
+                <li><a href="/terms-of-service">Terms of Service</a></li>
+                <li><a href="/contact">Contact Us</a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <script>
+        function getCookie(name) {
+            const nameEQ = name + "=";
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                let cookie = cookies[i].trim();
+                if (cookie.indexOf(nameEQ) === 0) {
+                    return decodeURIComponent(cookie.substring(nameEQ.length));
+                }
+            }
+            return null;
+        }
+
+        let cart;
+        try {
+            const rawCart = getCookie('voucherCart') || '[]';
+            cart = JSON.parse(rawCart);
+        } catch (error) {
+            console.error('Error parsing voucher cart:', error.message);
+            cart = [];
+        }
+
+        const cartSummary = document.getElementById('voucher-cart-summary');
+        if (cartSummary) {
+            if (cart.length > 0) {
+                let totalUSDT = cart.reduce((sum, item) => sum + parseFloat(item.price), 0);
+                cartSummary.innerHTML = `
+                    <h3>Your Vouchers:</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        ${cart.map(item => `<li>${item.title} - ${item.price} USDT</li>`).join('')}
+                    </ul>
+                    <p><strong>Total:</strong> ${totalUSDT.toFixed(2)} USDT</p>
+                `;
+            } else {
+                cartSummary.innerHTML = '<p>Your voucher cart is empty. Please add vouchers before checking out.</p>';
+                document.querySelector('.checkout-btn').disabled = true;
+            }
+        }
+
+        const checkoutForm = document.getElementById('voucher-checkout-form');
+        if (checkoutForm) {
+            checkoutForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const submitButton = checkoutForm.querySelector('button[type="submit"]');
+                submitButton.disabled = true;
+                submitButton.textContent = 'Processing...';
+
+                const formData = new FormData(checkoutForm);
+                const data = Object.fromEntries(formData);
+
+                try {
+                    const response = await fetch('/voucher-checkout', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+
+                    const result = await response.json();
+                    if (response.ok) {
+                        document.cookie = 'voucherCart=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                        window.location.href = result.redirect;
+                    } else {
+                        alert(result.error || 'An error occurred during checkout');
+                        submitButton.disabled = false;
+                        submitButton.textContent = 'Place Order';
+                    }
+                } catch (error) {
+                    console.error('Error processing voucher checkout:', error);
+                    alert('Error processing checkout: ' + error.message);
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Place Order';
+                }
+            });
+        }
+    </script>
+    <script src="/js/cart.js"></script>
+</body>
+
+</html>

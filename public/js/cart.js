@@ -1,10 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Проверяем, что мы не на странице checkout
-    if (window.location.pathname === '/checkout') {
-        console.log('On checkout page, skipping full cart initialization.');
+    const isCheckoutPage = window.location.pathname === '/checkout';
+    const isVoucherCheckoutPage = window.location.pathname === '/voucher-checkout';
+
+    if (isCheckoutPage || isVoucherCheckoutPage) {
+        console.log(`On ${isCheckoutPage ? 'checkout' : 'voucher checkout'} page, skipping full cart initialization.`);
         const cartCount = document.querySelector('.cart-count');
         if (cartCount) {
-            const cart = getCookie('cart');
+            const cart = getCookie(isCheckoutPage ? 'cart' : 'voucherCart');
             cartCount.textContent = cart.length;
         }
         return;
@@ -21,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function setCookie(name, value, days) {
         if (!Array.isArray(value)) {
-            console.error('Cart must be an array:', value);
+            console.error(`${name} must be an array:`, value);
             value = [];
         }
         const expires = new Date();
@@ -39,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 try {
                     return JSON.parse(decodeURIComponent(cookie.substring(nameEQ.length)));
                 } catch (error) {
-                    console.error('Error parsing cookie:', error.message);
+                    console.error(`Error parsing ${name} cookie:`, error.message);
                     return [];
                 }
             }
@@ -48,11 +50,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     let cart = getCookie('cart');
+    let voucherCart = getCookie('voucherCart');
+    const isServicesPage = window.location.pathname === '/services';
 
     if (!cartIcon || !cartModal || !closeCart || !cartItemsContainer || !cartCount || !totalPriceElement || !checkoutBtn) {
         console.warn('Cart elements not found on this page. Skipping cart initialization.');
         if (cartIcon && cartCount) {
-            cartCount.textContent = cart.length;
+            cartCount.textContent = (isServicesPage ? voucherCart : cart).length;
         }
         return;
     }
@@ -69,13 +73,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function updateCart() {
+        const currentCart = isServicesPage ? voucherCart : cart;
         cartItemsContainer.innerHTML = '';
         let totalUSDT = 0;
 
-        if (cart.length === 0) {
+        if (currentCart.length === 0) {
             cartItemsContainer.innerHTML = '<p>Your cart is empty</p>';
         } else {
-            cart.forEach((item, index) => {
+            currentCart.forEach((item, index) => {
                 totalUSDT += parseFloat(item.price);
                 const cartItem = document.createElement('div');
                 cartItem.classList.add('cart-item');
@@ -88,38 +93,22 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        cartCount.textContent = cart.length;
-        totalPriceElement.textContent = `${totalUSDT} USDT`;
+        cartCount.textContent = currentCart.length;
+        totalPriceElement.textContent = `${totalUSDT.toFixed(2)} USDT`;
+        checkoutBtn.href = isServicesPage ? '/voucher-checkout' : '/checkout';
 
-        const totalEUR = totalUSDT * 0.9;
-        const minimumOrderEUR = 50;
-
-        const existingMessage = cartItemsContainer.querySelector('.min-order-message');
-        if (existingMessage) existingMessage.remove();
-
-        if (totalEUR < minimumOrderEUR && cart.length > 0) {
-            const message = document.createElement('p');
-            message.classList.add('min-order-message');
-            message.style.color = '#ff4444';
-            message.style.textAlign = 'center';
-            message.textContent = `Minimum order sum is ${minimumOrderEUR} EUR. Add more items.`;
-            cartItemsContainer.appendChild(message);
-            checkoutBtn.disabled = true;
-            checkoutBtn.style.opacity = '0.5';
-            checkoutBtn.style.cursor = 'not-allowed';
-        } else {
-            checkoutBtn.disabled = false;
-            checkoutBtn.style.opacity = '1';
-            checkoutBtn.style.cursor = 'pointer';
-        }
-
-        setCookie('cart', cart, 7);
+        setCookie(isServicesPage ? 'voucherCart' : 'cart', currentCart, 7);
 
         document.querySelectorAll('.remove-item').forEach(button => {
             button.addEventListener('click', (e) => {
                 const index = parseInt(e.target.dataset.index);
-                cart.splice(index, 1);
-                setCookie('cart', cart, 7);
+                if (isServicesPage) {
+                    voucherCart.splice(index, 1);
+                    setCookie('voucherCart', voucherCart, 7);
+                } else {
+                    cart.splice(index, 1);
+                    setCookie('cart', cart, 7);
+                }
                 updateCart();
             });
         });
@@ -127,21 +116,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     checkoutBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        const totalUSDT = parseFloat(totalPriceElement.textContent.match(/\d+(\.\d+)?/)[0]);
-        const totalEUR = totalUSDT * 0.9;
-        const minimumOrderEUR = 50;
-
-        if (cart.length === 0) {
+        const currentCart = isServicesPage ? voucherCart : cart;
+        if (currentCart.length === 0) {
             showAlert('Your cart is empty!');
             return;
         }
-
-        if (totalEUR < minimumOrderEUR) {
-            showAlert(`Minimum order sum is ${minimumOrderEUR} EUR. Add more items.`);
-            return;
-        }
-
-        window.location.href = '/checkout';
+        window.location.href = isServicesPage ? '/voucher-checkout' : '/checkout';
     });
 
     function showAlert(message) {
@@ -157,6 +137,23 @@ document.addEventListener('DOMContentLoaded', () => {
             }, { once: true });
         }
     }
+
+    // Add to cart logic for vouchers
+    document.querySelectorAll('.service-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            const title = button.closest('.service-content').querySelector('h2').textContent;
+            const priceText = button.closest('.service-content').querySelector('.service-price').textContent.match(/(\d+\.?\d*)/)[0];
+            const voucher = {
+                title: title, // Используем только заголовок, например "Voucher for Haircut & Beard Trim (Crypto)"
+                price: parseFloat(priceText),
+                id: Date.now()
+            };
+            voucherCart.push(voucher);
+            setCookie('voucherCart', voucherCart, 7);
+            updateCart();
+        });
+    });
 
     updateCart();
 });

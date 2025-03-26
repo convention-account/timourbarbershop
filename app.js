@@ -618,18 +618,17 @@ app.get('/admin', (req, res) => {
 
 // Обновление статуса заказа в админ-панели
 app.post('/admin/update-status', (req, res) => {
-    console.log('Received request at /admin/update-status:', req.body);
-
-    // Разрешаем доступ для 'admin' и 'Andrii Slavutskyi'
     if (req.session.user !== 'admin' && req.session.user !== 'Andrii Slavutskyi') {
-        console.log('Unauthorized access attempt by user:', req.session.user);
         return res.status(403).json({ success: false, error: 'Unauthorized access' });
     }
-    console.log('User authorized to update status:', req.session.user);
 
     const { orderNumber, status } = req.body;
+    const productStatuses = ['placed', 'preparing', 'ready to ship', 'delivered', 'cancelled'];
+    const voucherStatuses = ['awaiting_payment', 'awaiting_visitor', 'completed'];
 
-    const validStatuses = ['placed', 'preparing', 'ready to ship', 'delivered', 'cancelled'];
+    const isVoucherOrder = orderNumber.startsWith('VCH-');
+    const validStatuses = isVoucherOrder ? voucherStatuses : productStatuses;
+
     if (!validStatuses.includes(status)) {
         return res.status(400).json({ success: false, error: 'Invalid status' });
     }
@@ -638,63 +637,54 @@ app.post('/admin/update-status', (req, res) => {
         return res.status(400).json({ success: false, error: 'orderNumber and status are required' });
     }
 
-    db.get(`
-        SELECT o.*, u.username 
-        FROM orders o 
-        JOIN users u ON o.user_id = u.id 
-        WHERE o.order_number = ?
-    `, [orderNumber], (err, order) => {
-        if (err || !order) {
-            console.error('Error fetching order:', err?.message || 'Order not found');
-            return res.status(500).json({ success: false, error: 'Order not found' });
-        }
-
-        db.run('UPDATE orders SET status = ? WHERE order_number = ?', [status, orderNumber], (updateErr) => {
-            if (updateErr) {
-                console.error('Error updating status:', updateErr.message);
-                return res.status(500).json({ success: false, error: 'Unable to update status' });
+    db.get(
+        `SELECT o.*, u.username FROM orders o JOIN users u ON o.user_id = u.id WHERE o.order_number = ?`,
+        [orderNumber],
+        (err, order) => {
+            if (err || !order) {
+                return res.status(500).json({ success: false, error: 'Order not found' });
             }
 
-            const emailMatch = order.shipping_address.match(/Email: ([^\s]+)/);
-            const userEmail = emailMatch ? emailMatch[1] : null;
-
-            let itemsList = 'Unable to display items due to data error';
-            try {
-                const items = JSON.parse(order.items);
-                if (Array.isArray(items)) {
-                    itemsList = items.map(item => `${item.title} - ${item.price} USDT`).join('<br>');
+            db.run('UPDATE orders SET status = ? WHERE order_number = ?', [status, orderNumber], (updateErr) => {
+                if (updateErr) {
+                    return res.status(500).json({ success: false, error: 'Unable to update status' });
                 }
-            } catch (parseError) {
-                console.error(`Error parsing items for order #${orderNumber}:`, parseError.message);
-            }
 
-            if (userEmail) {
-                transporter.sendMail({
-                    from: 'timourbarber@gmail.com',
-                    to: userEmail,
-                    subject: `Order Status Update #${orderNumber}`,
-                    html: `
-                        <h1>Order Status Update</h1>
-                        <p>Your order #${orderNumber} has been updated.</p>
-                        <p><strong>New Status:</strong> ${status}</p>
-                        <p><strong>Items:</strong> ${itemsList}</p>
-                        <p><strong>Total:</strong> ${order.total_usdt.toFixed(2)} USDT</p>
-                        <p><strong>Shipping Address:</strong> ${order.shipping_address}</p>
-                    `
-                }, (error, info) => {
-                    if (error) {
-                        console.error('Error sending email to user:', error);
-                    } else {
-                        console.log('Status notification sent to user:', info.response);
+                const emailMatch = order.shipping_address.match(/Email: ([^\s]+)/);
+                const userEmail = emailMatch ? emailMatch[1] : null;
+
+                let itemsList = 'Unable to display items due to data error';
+                try {
+                    const items = JSON.parse(order.items);
+                    if (Array.isArray(items)) {
+                        itemsList = items.map(item => `${item.title} - ${item.price} USDT`).join('<br>');
                     }
-                });
-            } else {
-                console.warn(`Unable to extract email from shipping_address for order #${orderNumber}`);
-            }
+                } catch (parseError) {
+                    console.error(`Error parsing items for order #${orderNumber}:`, parseError.message);
+                }
 
-            res.json({ success: true });
-        });
-    });
+                if (userEmail) {
+                    transporter.sendMail({
+                        from: 'timourbarber@gmail.com',
+                        to: userEmail,
+                        subject: `Order Status Update #${orderNumber}`,
+                        html: `
+                            <h1>Order Status Update</h1>
+                            <p>Your order #${orderNumber} has been updated.</p>
+                            <p><strong>New Status:</strong> ${status}</p>
+                            <p><strong>Items:</strong> ${itemsList}</p>
+                            <p><strong>Total:</strong> ${order.total_usdt.toFixed(2)} USDT</p>
+                            ${isVoucherOrder ? '' : `<p><strong>Shipping Address:</strong> ${order.shipping_address}</p>`}
+                        `
+                    }, (error, info) => {
+                        if (error) console.error('Error sending email:', error);
+                    });
+                }
+
+                res.json({ success: true });
+            });
+        }
+    );
 });
 
 // Дополнительные маршруты
@@ -936,6 +926,102 @@ app.post('/buy-voucher', (req, res) => {
             req.session.purchaseSuccess = true;
             res.redirect('/');
         });
+    });
+});
+
+// Voucher Checkout Route
+app.get('/voucher-checkout', (req, res) => {
+    if (!req.session.user) {
+        return res.redirect('/login');
+    }
+    res.render('voucher-checkout', {
+        user: req.session.user || null,
+        error: null
+    });
+});
+
+app.post('/voucher-checkout', async (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).json({ error: 'Please log in' });
+    }
+
+    const { full_name, email, payment_method } = req.body;
+    if (!full_name || !email || !payment_method) {
+        return res.status(400).json({ error: 'All fields are required' });
+    }
+
+    let voucherCart;
+    try {
+        const rawCart = req.cookies.voucherCart || '[]';
+        voucherCart = JSON.parse(decodeURIComponent(rawCart));
+    } catch (error) {
+        console.error('Error parsing voucher cart:', error.message);
+        return res.status(400).json({ error: 'Invalid voucher cart data' });
+    }
+
+    if (!Array.isArray(voucherCart) || !voucherCart.length) {
+        return res.status(400).json({ error: 'Voucher cart is empty' });
+    }
+
+    const totalUSDT = voucherCart.reduce((sum, item) => sum + parseFloat(item.price), 0);
+    const billingAddress = `${full_name}, Email: ${email}`;
+    const orderNumber = `VCH-${uuidv4().slice(0, 8).toUpperCase()}`;
+
+    db.get('SELECT id FROM users WHERE username = ?', [req.session.user], (err, user) => {
+        if (err || !user) {
+            return res.status(500).json({ error: 'User not found' });
+        }
+
+        const itemsJson = JSON.stringify(voucherCart);
+        db.run(
+            `INSERT INTO orders (user_id, order_number, items, total_usdt, shipping_address, payment_method, status)
+             VALUES (?, ?, ?, ?, ?, ?, 'awaiting_payment')`,
+            [user.id, orderNumber, itemsJson, totalUSDT, billingAddress, payment_method],
+            function (err) {
+                if (err) {
+                    console.error('Error creating voucher order:', err.message);
+                    return res.status(500).json({ error: 'Unable to create order' });
+                }
+
+                transporter.sendMail({
+                    from: 'timourbarber@gmail.com',
+                    to: email,
+                    subject: `Voucher Order #${orderNumber}`,
+                    html: `
+                        <h1>Thank you for your voucher order!</h1>
+                        <p>Order #${orderNumber} is awaiting payment.</p>
+                        <p><strong>Vouchers:</strong></p>
+                        <ul>${voucherCart.map(item => `<li>${item.title} - ${item.price} USDT</li>`).join('')}</ul>
+                        <p><strong>Total:</strong> ${totalUSDT.toFixed(2)} USDT</p>
+                        <h3>Payment Instructions</h3>
+                        <p>Please send the payment in USDT (TRC20) to:</p>
+                        <p><strong>Wallet Address:</strong> TSLutTokZzNEnz1fb8NBDWrgE2GEYF2xet</p>
+                        <p><strong>Amount:</strong> ${totalUSDT.toFixed(2)} USDT</p>
+                        <p style="color: red; font-weight: bold;">Include your order number (${orderNumber}) in the transaction comment.</p>
+                    `
+                }, (error, info) => {
+                    if (error) console.error('Error sending voucher email:', error);
+                });
+
+                transporter.sendMail({
+                    from: 'timourbarber@gmail.com',
+                    to: 'timourbarber@gmail.com',
+                    subject: `New Voucher Order #${orderNumber}`,
+                    html: `
+                        <h1>New Voucher Order</h1>
+                        <p>Order #${orderNumber}</p>
+                        <p><strong>User:</strong> ${req.session.user}</p>
+                        <p><strong>Vouchers:</strong></p>
+                        <ul>${voucherCart.map(item => `<li>${item.title} - ${item.price} USDT</li>`).join('')}</ul>
+                        <p><strong>Total:</strong> ${totalUSDT.toFixed(2)} USDT</p>
+                    `
+                }, (error, info) => {
+                    if (error) console.error('Error sending admin voucher email:', error);
+                });
+
+                res.status(200).json({ redirect: `/order-success?order=${orderNumber}` });
+            }
+        );
     });
 });
 
