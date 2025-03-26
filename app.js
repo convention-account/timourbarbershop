@@ -10,13 +10,15 @@ const { v4: uuidv4 } = require('uuid');
 const nodemailer = require('nodemailer');
 const mysql = require('mysql2');
 
-// Создайте подключение к базе данных
+require('dotenv').config();
+
 const connection = mysql.createConnection({
-    host: 'timour-barber.com',  // Хост базы данных (можно изменить на IP, если база удаленная)
-    user: 'phpmyadminuser',  // Имя пользователя, которое вы создали для MySQL
-    password: 'PRehp2u6Yry',  // Пароль пользователя MySQL
-    database: 'users'  // Имя базы данных
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
 });
+
 
 // Проверка соединения
 connection.connect((err) => {
