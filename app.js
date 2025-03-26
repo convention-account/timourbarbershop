@@ -885,6 +885,24 @@ app.get('/product/:productId', (req, res) => {
             description: 'A complete beard grooming set, including a beard brush, comb, and a convenient storage bag. Ideal for keeping your beard neat and well-maintained.',
             images: ['/img/image12.jpg'],
             features: ['Professional tool', 'Payment in USDT or cash']
+        },
+        'derma-roller-system': {
+            id: 'derma-roller-system',
+            title: '1pc Derma Roller System',
+            price: 14,
+            priceEUR: 12.98,
+            description: 'Derma Roller System boosts collagen, improves skin texture, and enhances skincare absorption.',
+            images: ['/img/image24.png'],
+            features: ['Professional tool', 'Payment in USDT or cash']
+        },
+        'matte-pomade-125ml': {
+            id: 'matte-pomade-125ml',
+            title: 'Matte pomade 125ML',
+            price: 20,
+            priceEUR: 18.56,
+            description: 'Matte Pomade provides strong, flexible hold with a natural, shine-free finish. 125ML.',
+            images: ['/img/image25.png'],
+            features: ['Professional tool', 'Payment in USDT or cash']
         }
     };
 
