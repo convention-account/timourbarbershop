@@ -673,10 +673,13 @@ app.post('/admin/update-status', (req, res) => {
                         html: `
                             <h1>Order Status Update</h1>
                             <p>Your order #${orderNumber} has been updated.</p>
-                            <p><strong>New Status:</strong> ${status}</p>
+                            <p><strong>New Status:</strong> <strong style="color: white; background-color: black; border-radius: 5px;">${status}</strong></p>
                             <p><strong>Items:</strong> ${itemsList}</p>
                             <p><strong>Total:</strong> ${order.total_usdt.toFixed(2)} USDT</p>
                             ${isVoucherOrder ? '' : `<p><strong>Shipping Address:</strong> ${order.shipping_address}</p>`}
+                            <p><img src="https://timour-barber.com/media/icon.png" alt="TimourBarber" style="max-width: 250px;"></p>
+                            <p><strong><a href="https://timour-barber.com/">Our website</a></strong></p>
+                            <p><strong>TimourBarber 2025&copy;</strong></p>
                         `
                     }, (error, info) => {
                         if (error) console.error('Error sending email:', error);
@@ -1018,6 +1021,9 @@ app.post('/voucher-checkout', async (req, res) => {
                         <p><strong>Wallet Address:</strong> TSLutTokZzNEnz1fb8NBDWrgE2GEYF2xet</p>
                         <p><strong>Amount:</strong> ${totalUSDT.toFixed(2)} USDT</p>
                         <p style="color: red; font-weight: bold;">Include your order number (${orderNumber}) in the transaction comment.</p>
+                        <p><img src="https://timour-barber.com/media/icon.png" alt="TimourBarber" style="max-width: 250px;"></p>
+                        <p><strong><a href="https://timour-barber.com/">Our website</a></strong></p>
+                        <p><strong>TimourBarber 2025&copy;</strong></p>
                     `
                 }, (error, info) => {
                     if (error) console.error('Error sending voucher email:', error);

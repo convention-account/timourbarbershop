@@ -1502,3 +1502,150 @@ header.fixed .cart-icon {
         max-width: 1100px;
     }
 }
+
+/* Стили для авторизации и регистрации */
+.auth-section {
+    position: relative;
+    z-index: 2;
+    padding: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: calc(100vh - 200px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.auth-wrapper {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    padding: 40px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 5px 30px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+}
+
+.auth-headline {
+    margin: 0 0 30px;
+    text-align: center;
+}
+
+.auth-headline .headline-main {
+    color: #FFF;
+    font-size: 48px;
+    font-weight: 900;
+    text-transform: uppercase;
+    text-shadow: 0 5px 20px rgba(255, 255, 255, 0.3);
+}
+
+.auth-headline .headline-sub {
+    color: #9F7FF3;
+    font-size: 32px;
+    font-weight: 500;
+    text-transform: uppercase;
+    -webkit-text-stroke: 1px #9F7FF3;
+    text-shadow: 0 5px 20px rgba(159, 127, 243, 0.8);
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.auth-input {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    padding: 15px;
+    border-radius: 5px;
+    color: #FFF;
+    font-size: 16px;
+    font-family: 'Nexa', sans-serif;
+    font-weight: 500;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.auth-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.auth-input:focus {
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 10px rgba(159, 127, 243, 0.5);
+}
+
+.auth-btn {
+    background: #FFF;
+    color: #000;
+    padding: 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 900;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+}
+
+.auth-btn:hover {
+    opacity: 0.8;
+}
+
+.auth-text {
+    color: #FFF;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.auth-text a {
+    color: #9F7FF3;
+    text-decoration: none;
+    font-weight: 900;
+    transition: opacity 0.3s;
+}
+
+.auth-text a:hover {
+    opacity: 0.8;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .auth-section {
+        padding: 20px;
+    }
+
+    .auth-wrapper {
+        padding: 20px;
+    }
+
+    .auth-headline .headline-main {
+        font-size: 36px;
+    }
+
+    .auth-headline .headline-sub {
+        font-size: 24px;
+    }
+
+    .auth-input {
+        padding: 12px;
+        font-size: 14px;
+    }
+
+    .auth-btn {
+        padding: 12px;
+        font-size: 14px;
+    }
+}
+
+/* Стили для всплывающего сообщения об ошибке */
+.flash-message {
+    padding: 10px;
+    margin: 10px 0;
+    background-color: #f8d7da;
+    color: #721c24;
+    border-radius: 5px;
+    text-align: center;
+}
