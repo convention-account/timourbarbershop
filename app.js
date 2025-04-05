@@ -205,32 +205,81 @@ app.post('/login', (req, res) => {
 
 // Страница профиля
 app.get('/profile', (req, res) => {
+    console.log('Handling GET /profile request');
+
+    // Проверяем, авторизован ли пользователь
     if (!req.session.user) {
+        console.log('User not logged in, redirecting to /login');
         return res.redirect('/login');
     }
+    console.log('User is logged in:', req.session.user);
+
     db.get('SELECT id, voucher FROM users WHERE username = ?', [req.session.user], (err, user) => {
         if (err || !user) {
-            console.error(err?.message || 'User not found');
+            console.error('User lookup error:', err?.message || 'User not found');
             return res.redirect('/');
         }
+        console.log('User found:', user);
+
         db.all('SELECT * FROM orders WHERE user_id = ?', [user.id], (err, orders) => {
             if (err) {
                 console.error('Error fetching orders:', err.message);
                 return res.redirect('/');
             }
+            console.log('Orders fetched from database:', orders);
+
             const processedOrders = orders.map(order => {
                 try {
-                    return { ...order, items: JSON.parse(order.items) };
+                    const parsedItems = JSON.parse(order.items);
+                    console.log(`Parsed items for order #${order.order_number}:`, parsedItems);
+                    return { ...order, items: parsedItems };
                 } catch (parseError) {
                     console.error(`Error parsing items for order #${order.order_number}:`, parseError.message);
                     return { ...order, items: [] };
                 }
             });
-            res.render('profile', {
-                user: req.session.user,
-                hasVoucher: user.voucher === 1,
-                orders: processedOrders || []
-            });
+            console.log('Processed orders:', processedOrders);
+
+            // Находим активный ваучер
+            db.get(
+                `SELECT order_number, items FROM orders 
+                 WHERE user_id = ? AND order_number LIKE 'VCH-%' 
+                 AND status NOT IN ('completed', 'cancelled')`,
+                [user.id],
+                (err, activeVoucher) => {
+                    if (err) {
+                        console.error('Error fetching active voucher:', err.message);
+                    }
+                    let voucherDetails = null;
+                    if (activeVoucher) {
+                        try {
+                            const items = JSON.parse(activeVoucher.items);
+                            voucherDetails = {
+                                orderNumber: activeVoucher.order_number,
+                                title: items[0].title // Предполагаем, что ваучер — это один элемент
+                            };
+                            console.log('Active voucher found:', voucherDetails);
+                        } catch (parseError) {
+                            console.error('Error parsing voucher items:', parseError.message);
+                        }
+                    } else {
+                        console.log('No active vouchers found for user');
+                    }
+
+                    console.log('Rendering profile page with data:', {
+                        user: req.session.user,
+                        hasVoucher: !!activeVoucher,
+                        voucherDetails: voucherDetails,
+                        orders: processedOrders
+                    });
+                    res.render('profile', {
+                        user: req.session.user,
+                        hasVoucher: !!activeVoucher,
+                        voucherDetails: voucherDetails,
+                        orders: processedOrders || []
+                    });
+                }
+            );
         });
     });
 });
@@ -355,9 +404,22 @@ app.post('/checkout', async (req, res) => {
     }
     console.log('Cart items are valid');
 
-    // Вычисляем итоговую сумму
+    // Проверка минимальной суммы для Store (50 евро ~ 54 USDT на апрель 2025)
     const shippingCosts = { dhl: 5, fedex: 7, ups: 6 };
-    const totalUSDT = cart.reduce((sum, item) => sum + parseFloat(item.price), 0) + (shippingCosts[shipping_method] || 0);
+    const totalUSDTWithoutShipping = cart.reduce((sum, item) => sum + parseFloat(item.price), 0);
+    const totalUSDT = totalUSDTWithoutShipping + (shippingCosts[shipping_method] || 0);
+
+    console.log('Total USDT without shipping:', totalUSDTWithoutShipping);
+    console.log('Shipping method:', shipping_method, 'Shipping cost:', shippingCosts[shipping_method]);
+    console.log('Total USDT with shipping:', totalUSDT);
+
+    if (totalUSDTWithoutShipping < 54) { // 50 евро в USDT
+        console.log('Order total is below minimum (50 EUR ~ 54 USDT)');
+        return res.status(400).json({ error: 'Minimum order amount is 50 EUR (~54 USDT) excluding shipping.' });
+    }
+    console.log('Order total meets minimum requirement');
+
+    // Вычисляем итоговую сумму (уже сделано выше, оставляем для совместимости)
     console.log('Calculated totalUSDT:', totalUSDT);
 
     // Формируем адрес доставки
@@ -472,7 +534,7 @@ app.post('/checkout', async (req, res) => {
                         <p>Once the payment is received, we will update your order status and proceed with shipping.</p>
                         <p><img src="https://timour-barber.com/media/icon.png" alt="TimourBarber" style="max-width: 250px;"></p>
                         <p><strong><a href="https://timour-barber.com/">Our website</a></strong></p>
-                        <p><strong>TimourBarber 2025&copy;</strong></p>
+                        <p><strong>TimourBarber 2025©</strong></p>
                     `
                 }, (error, info) => {
                     if (error) {
@@ -505,7 +567,7 @@ app.post('/checkout', async (req, res) => {
                         <p style="color: red; font-weight: bold;">Important: In the transaction comment, the user must include the order number: ${orderNumber}.</p>
                         <p><img src="https://timour-barber.com/media/icon.png" alt="TimourBarber" style="max-width: 250px;"></p>
                         <p><strong><a href="https://timour-barber.com/">Our website</a></strong></p>
-                        <p><strong>TimourBarber 2025&copy;</strong></p>
+                        <p><strong>TimourBarber 2025©</strong></p>
                     `
                 }, (error, info) => {
                     if (error) {
@@ -964,91 +1026,209 @@ app.get('/voucher-checkout', (req, res) => {
 });
 
 app.post('/voucher-checkout', async (req, res) => {
+    console.log('Handling POST /voucher-checkout request');
+
+    // Проверяем, авторизован ли пользователь
     if (!req.session.user) {
+        console.log('User not logged in, returning 401');
         return res.status(401).json({ error: 'Please log in' });
     }
+    console.log('User is logged in:', req.session.user);
 
+    // Логируем полученные данные из формы
+    console.log('Received POST request at /voucher-checkout:', req.body);
+    console.log('Raw voucherCart cookie:', req.cookies.voucherCart);
+    console.log('Type of voucherCart cookie:', typeof req.cookies.voucherCart);
+
+    // Проверяем, что все обязательные поля присутствуют
     const { full_name, email, payment_method } = req.body;
     if (!full_name || !email || !payment_method) {
+        console.log('Missing required fields:', { full_name, email, payment_method });
         return res.status(400).json({ error: 'All fields are required' });
     }
+    console.log('All required fields are present');
 
+    // Обрабатываем корзину ваучеров
     let voucherCart;
     try {
         const rawCart = req.cookies.voucherCart || '[]';
-        voucherCart = JSON.parse(decodeURIComponent(rawCart));
+        console.log('Attempting to parse voucherCart:', rawCart);
+
+        if (!rawCart || typeof rawCart !== 'string') {
+            console.log('VoucherCart cookie is missing or not a string, setting to empty array');
+            voucherCart = [];
+        } else if (rawCart.trim() === '') {
+            console.log('VoucherCart cookie is an empty string, setting to empty array');
+            voucherCart = [];
+        } else {
+            let decodedCart;
+            try {
+                decodedCart = decodeURIComponent(rawCart);
+                console.log('Decoded voucherCart:', decodedCart);
+            } catch (decodeError) {
+                console.error('Error decoding voucherCart cookie:', decodeError.message);
+                return res.status(400).json({ error: 'Invalid voucher cart data (decoding failed)' });
+            }
+
+            if (decodedCart === 'undefined' || decodedCart === 'null' || decodedCart === '') {
+                console.log('VoucherCart cookie contains invalid value (undefined/null/empty), setting to empty array');
+                voucherCart = [];
+            } else {
+                try {
+                    voucherCart = JSON.parse(decodedCart);
+                    console.log('Parsed voucherCart:', voucherCart);
+                } catch (parseError) {
+                    console.error('Error parsing voucherCart JSON:', parseError.message);
+                    console.error('Problematic voucherCart data (decoded):', decodedCart);
+                    return res.status(400).json({ error: 'Invalid voucher cart data (parsing failed)' });
+                }
+            }
+        }
     } catch (error) {
-        console.error('Error parsing voucher cart:', error.message);
-        return res.status(400).json({ error: 'Invalid voucher cart data' });
+        console.error('Unexpected error in voucherCart processing:', error.message);
+        return res.status(500).json({ error: 'Unexpected error processing voucher cart' });
     }
 
+    // Проверяем, что корзина не пуста
     if (!Array.isArray(voucherCart) || !voucherCart.length) {
+        console.log('VoucherCart is empty or not an array after parsing');
         return res.status(400).json({ error: 'Voucher cart is empty' });
     }
+    console.log('VoucherCart is valid and not empty:', voucherCart);
 
-    const totalUSDT = voucherCart.reduce((sum, item) => sum + parseFloat(item.price), 0);
-    const billingAddress = `${full_name}, Email: ${email}`;
-    const orderNumber = `VCH-${uuidv4().slice(0, 8).toUpperCase()}`;
+    // Проверяем элементы корзины
+    const isValidCart = voucherCart.every(item => item && typeof item === 'object' && 'title' in item && 'price' in item);
+    if (!isValidCart) {
+        console.error('Invalid voucherCart data:', voucherCart);
+        return res.status(400).json({ error: 'Invalid voucher cart items' });
+    }
+    console.log('VoucherCart items are valid');
 
-    db.get('SELECT id FROM users WHERE username = ?', [req.session.user], (err, user) => {
-        if (err || !user) {
-            return res.status(500).json({ error: 'User not found' });
-        }
-
-        const itemsJson = JSON.stringify(voucherCart);
-        db.run(
-            `INSERT INTO orders (user_id, order_number, items, total_usdt, shipping_address, payment_method, status)
-             VALUES (?, ?, ?, ?, ?, ?, 'awaiting_payment')`,
-            [user.id, orderNumber, itemsJson, totalUSDT, billingAddress, payment_method],
-            function (err) {
-                if (err) {
-                    console.error('Error creating voucher order:', err.message);
-                    return res.status(500).json({ error: 'Unable to create order' });
-                }
-
-                transporter.sendMail({
-                    from: 'timourbarber@gmail.com',
-                    to: email,
-                    subject: `Voucher Order #${orderNumber}`,
-                    html: `
-                        <h1>Thank you for your voucher order!</h1>
-                        <p>Order #${orderNumber} is awaiting payment.</p>
-                        <p><strong>Vouchers:</strong></p>
-                        <ul>${voucherCart.map(item => `<li>${item.title} - ${item.price} USDT</li>`).join('')}</ul>
-                        <p><strong>Total:</strong> ${totalUSDT.toFixed(2)} USDT</p>
-                        <h3>Payment Instructions</h3>
-                        <p>Please send the payment in USDT (TRC20) to:</p>
-                        <p><strong>Wallet Address:</strong> TSLutTokZzNEnz1fb8NBDWrgE2GEYF2xet</p>
-                        <p><strong>Amount:</strong> ${totalUSDT.toFixed(2)} USDT</p>
-                        <p style="color: red; font-weight: bold;">Include your order number (${orderNumber}) in the transaction comment.</p>
-                        <p><img src="https://timour-barber.com/media/icon.png" alt="TimourBarber" style="max-width: 250px;"></p>
-                        <p><strong><a href="https://timour-barber.com/">Our website</a></strong></p>
-                        <p><strong>TimourBarber 2025&copy;</strong></p>
-                    `
-                }, (error, info) => {
-                    if (error) console.error('Error sending voucher email:', error);
-                });
-
-                transporter.sendMail({
-                    from: 'timourbarber@gmail.com',
-                    to: 'timourbarber@gmail.com',
-                    subject: `New Voucher Order #${orderNumber}`,
-                    html: `
-                        <h1>New Voucher Order</h1>
-                        <p>Order #${orderNumber}</p>
-                        <p><strong>User:</strong> ${req.session.user}</p>
-                        <p><strong>Vouchers:</strong></p>
-                        <ul>${voucherCart.map(item => `<li>${item.title} - ${item.price} USDT</li>`).join('')}</ul>
-                        <p><strong>Total:</strong> ${totalUSDT.toFixed(2)} USDT</p>
-                    `
-                }, (error, info) => {
-                    if (error) console.error('Error sending admin voucher email:', error);
-                });
-
-                res.status(200).json({ redirect: `/order-success?order=${orderNumber}` });
+    // Проверка на наличие активного ваучера
+    db.get(
+        `SELECT o.order_number FROM orders o 
+         JOIN users u ON o.user_id = u.id 
+         WHERE u.username = ? AND o.order_number LIKE 'VCH-%' 
+         AND o.status NOT IN ('completed', 'cancelled')`,
+        [req.session.user],
+        (err, activeVoucher) => {
+            if (err) {
+                console.error('Error checking active voucher:', err.message);
+                return res.status(500).json({ error: 'Server error checking voucher status' });
             }
-        );
-    });
+            if (activeVoucher) {
+                console.log('Active voucher found:', activeVoucher.order_number);
+                console.log('Blocking purchase due to existing active voucher');
+                return res.status(400).json({ error: 'You already have an active voucher. Only one voucher is allowed at a time.' });
+            }
+            console.log('No active vouchers found, proceeding with purchase');
+
+            const totalUSDT = voucherCart.reduce((sum, item) => sum + parseFloat(item.price), 0);
+            const billingAddress = `${full_name}, Email: ${email}`;
+            const orderNumber = `VCH-${uuidv4().slice(0, 8).toUpperCase()}`;
+
+            console.log('Calculated totalUSDT:', totalUSDT);
+            console.log('Billing address:', billingAddress);
+            console.log('Generated voucher order number:', orderNumber);
+
+            db.get('SELECT id FROM users WHERE username = ?', [req.session.user], (err, user) => {
+                if (err || !user) {
+                    console.error('User lookup error:', err?.message || 'User not found');
+                    return res.status(500).json({ error: 'User not found' });
+                }
+                console.log('User found:', user);
+
+                const itemsJson = JSON.stringify(voucherCart);
+                console.log('Serialized voucherCart to JSON:', itemsJson);
+
+                console.log('Preparing to insert voucher order into database with the following data:', {
+                    user_id: user.id,
+                    order_number: orderNumber,
+                    items: itemsJson,
+                    total_usdt: totalUSDT,
+                    shipping_address: billingAddress,
+                    payment_method: payment_method,
+                    status: 'awaiting_payment'
+                });
+
+                db.run(
+                    `INSERT INTO orders (user_id, order_number, items, total_usdt, shipping_address, payment_method, status)
+                     VALUES (?, ?, ?, ?, ?, ?, 'awaiting_payment')`,
+                    [user.id, orderNumber, itemsJson, totalUSDT, billingAddress, payment_method],
+                    function (err) {
+                        if (err) {
+                            console.error('Error creating voucher order:', err.message);
+                            return res.status(500).json({ error: 'Unable to create order' });
+                        }
+                        console.log(`Voucher order created: #${orderNumber}, ID: ${this.lastID}`);
+
+                        // Проверяем, что заказ действительно сохранён
+                        db.get('SELECT * FROM orders WHERE order_number = ?', [orderNumber], (err, order) => {
+                            if (err || !order) {
+                                console.error('Voucher order not found in database after insert:', err?.message || 'Order not found');
+                            } else {
+                                console.log('Voucher order successfully saved in database:', order);
+                            }
+                        });
+
+                        // Отправляем письмо пользователю
+                        console.log('Sending email to user:', email);
+                        transporter.sendMail({
+                            from: 'timourbarber@gmail.com',
+                            to: email,
+                            subject: `Voucher Order #${orderNumber}`,
+                            html: `
+                                <h1>Thank you for your voucher order!</h1>
+                                <p>Order #${orderNumber} is awaiting payment.</p>
+                                <p><strong>Vouchers:</strong></p>
+                                <ul>${voucherCart.map(item => `<li>${item.title} - ${item.price} USDT</li>`).join('')}</ul>
+                                <p><strong>Total:</strong> ${totalUSDT.toFixed(2)} USDT</p>
+                                <h3>Payment Instructions</h3>
+                                <p>Please send the payment in USDT (TRC20) to:</p>
+                                <p><strong>Wallet Address:</strong> TSLutTokZzNEnz1fb8NBDWrgE2GEYF2xet</p>
+                                <p><strong>Amount:</strong> ${totalUSDT.toFixed(2)} USDT</p>
+                                <p style="color: red; font-weight: bold;">Include your order number (${orderNumber}) in the transaction comment.</p>
+                                <p><img src="https://timour-barber.com/media/icon.png" alt="TimourBarber" style="max-width: 250px;"></p>
+                                <p><strong><a href="https://timour-barber.com/">Our website</a></strong></p>
+                                <p><strong>TimourBarber 2025©</strong></p>
+                            `
+                        }, (error, info) => {
+                            if (error) {
+                                console.error('Error sending voucher email:', error);
+                            } else {
+                                console.log('Email sent to user:', info.response);
+                            }
+                        });
+
+                        // Отправляем письмо администратору
+                        console.log('Sending email to admin: timourbarber@gmail.com');
+                        transporter.sendMail({
+                            from: 'timourbarber@gmail.com',
+                            to: 'timourbarber@gmail.com',
+                            subject: `New Voucher Order #${orderNumber}`,
+                            html: `
+                                <h1>New Voucher Order</h1>
+                                <p>Order #${orderNumber}</p>
+                                <p><strong>User:</strong> ${req.session.user}</p>
+                                <p><strong>Vouchers:</strong></p>
+                                <ul>${voucherCart.map(item => `<li>${item.title} - ${item.price} USDT</li>`).join('')}</ul>
+                                <p><strong>Total:</strong> ${totalUSDT.toFixed(2)} USDT</p>
+                            `
+                        }, (error, info) => {
+                            if (error) {
+                                console.error('Error sending admin voucher email:', error);
+                            } else {
+                                console.log('Email sent to admin:', info.response);
+                            }
+                        });
+
+                        console.log('Sending success response with redirect:', `/order-success?order=${orderNumber}`);
+                        res.status(200).json({ redirect: `/order-success?order=${orderNumber}` });
+                    }
+                );
+            });
+        }
+    );
 });
 
 // Запуск сервера

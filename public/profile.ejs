@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <link rel="icon" type="image/x-icon" href="../media/logo.ico">
     <title>Hello, <%= user %>! Personal Cabinet</title>
@@ -91,22 +92,26 @@
 
         .order-card .status.preparing {
             background: rgba(255, 165, 0, 0.2);
-            color: #FFA500; /* Оранжевый для "preparing" */
+            color: #FFA500;
+            /* Оранжевый для "preparing" */
         }
 
         .order-card .status.shipped {
             background: rgba(0, 255, 0, 0.2);
-            color: #00FF00; /* Зеленый для "shipped" */
+            color: #00FF00;
+            /* Зеленый для "shipped" */
         }
 
         .order-card .status.delivered {
             background: rgba(0, 206, 209, 0.2);
-            color: #00CED1; /* Бирюзовый для "delivered" */
+            color: #00CED1;
+            /* Бирюзовый для "delivered" */
         }
 
         .order-card .status.cancelled {
             background: rgba(255, 68, 68, 0.2);
-            color: #FF4444; /* Красный для "cancelled" */
+            color: #FF4444;
+            /* Красный для "cancelled" */
         }
 
         /* Адаптивность */
@@ -178,6 +183,7 @@
         }
     </style>
 </head>
+
 <body>
     <header>
         <div class="logo">
@@ -205,9 +211,9 @@
         <div class="login-nav">
             <% if (user) { %>
                 <li>Welcome, <%= user %> | <a href="/profile">Personal Cabinet</a> | <a href="/logout">Logout</a></li>
-            <% } else { %>
-                <li><a href="/login">Login</a></li>
-            <% } %>
+                <% } else { %>
+                    <li><a href="/login">Login</a></li>
+                    <% } %>
         </div>
         <div class="cart-icon">
             🛒
@@ -215,34 +221,54 @@
         </div>
     </header>
 
+    <h1>Welcome, <%= user %>
+    </h1>
+
     <div class="profile-info">
-        <h2><%= user %></h2>
-        <img src="/img/default-avatar.png" alt="Avatar" width="100">
-        <p><%= hasVoucher ? 'You have a voucher' : 'No vouchers' %></p>
+        <h2>
+            <%= user %>
+        </h2>
+        <img src="img/default-avatar.png" alt="Avatar" width="100">
+        <% if (hasVoucher && voucherDetails) { %>
+            <div class="voucher-container">
+                <img src="media/vaucher_photo.jpg" alt="Voucher" class="voucher-image">
+                <div class="voucher-text">
+                    <p>(Crypto) (Order #<%= voucherDetails.orderNumber %>)</p>
+                </div>
+            </div>
+            <% } else { %>
+                <p>No active vouchers</p>
+                <% } %>
     </div>
 
     <main>
-        <h1>Welcome, <%= user %></h1>
         <h2>Your Orders</h2>
-        <% if (orders.length === 0) { %>
+        <% if (orders.length===0) { %>
             <p>No orders yet.</p>
-        <% } else { %>
-            <div class="orders-container">
-                <% orders.forEach(order => { %>
-                    <div class="order-card">
-                        <h3>Order #<%= order.order_number %></h3>
-                        <p><strong>Status:</strong> <span class="status <%= order.status %>"><%= order.status %></span></p>
-                        <p><strong>Total:</strong> <%= order.total_usdt.toFixed(2) %> USDT</p>
-                        <p><strong>Items:</strong></p>
-                        <div class="items">
-                            <% order.items.forEach(item => { %>
-                                <p class="item"><%= item.title %> - <%= item.price %> USDT</p>
-                            <% }); %>
+            <% } else { %>
+                <div class="orders-container">
+                    <% orders.forEach(order=> { %>
+                        <div class="order-card">
+                            <h3>Order #<%= order.order_number %>
+                            </h3>
+                            <p><strong>Status:</strong> <span class="status <%= order.status %>">
+                                    <%= order.status %>
+                                </span></p>
+                            <p><strong>Total:</strong>
+                                <%= order.total_usdt.toFixed(2) %> USDT
+                            </p>
+                            <p><strong>Items:</strong></p>
+                            <div class="items">
+                                <% order.items.forEach(item=> { %>
+                                    <p class="item">
+                                        <%= item.title %> - <%= item.price %> USDT
+                                    </p>
+                                    <% }); %>
+                            </div>
                         </div>
-                    </div>
-                <% }); %>
-            </div>
-        <% } %>
+                        <% }); %>
+                </div>
+                <% } %>
     </main>
 
     <div class="crypto-popup">
@@ -269,4 +295,72 @@
     <script src="js/script.js"></script>
     <script src="/js/cart.js"></script>
 </body>
+<style>
+    /* Стили для ваучера */
+    .voucher-container {
+        width: 100%;
+        max-width: 400px;
+        /* Размер, как на скрине */
+        margin: 20px auto;
+        /* Центрируем с отступами */
+        text-align: center;
+        /* Центрируем содержимое */
+    }
+
+    .voucher-image {
+        width: 100%;
+        height: auto;
+        display: block;
+        aspect-ratio: 4 / 1;
+        /* Прямоугольное соотношение сторон, как на скрине */
+        object-fit: cover;
+        /* Обрезает изображение, сохраняя пропорции */
+    }
+
+    .voucher-text {
+        margin-top: 15px;
+        /* Отступ сверху, чтобы текст был под изображением */
+        color: #FFF;
+        font-size: 16px;
+        /* Уменьшаем размер текста, как на скрине */
+        font-weight: 900;
+        text-align: center;
+        text-transform: uppercase;
+        /* Убираем тень текста */
+    }
+
+    /* Адаптивность */
+    @media (max-width: 768px) {
+        .profile-info img.avatar-image {
+            width: 80px;
+            height: 80px;
+        }
+
+        .voucher-container {
+            max-width: 300px;
+            margin: 15px auto;
+        }
+
+        .voucher-text {
+            font-size: 14px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .profile-info img.avatar-image {
+            width: 60px;
+            height: 60px;
+        }
+
+        .voucher-container {
+            max-width: 250px;
+            margin: 10px auto;
+        }
+
+        .voucher-text {
+            font-size: 12px;
+        }
+    }
+</style>
+
 </html>
