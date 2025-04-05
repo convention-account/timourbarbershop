@@ -20,7 +20,6 @@ const connection = mysql.createConnection({
     database: process.env.DB_NAME
 });
 
-
 // Проверка соединения
 connection.connect((err) => {
     if (err) {
@@ -102,6 +101,7 @@ const db = new sqlite3.Database(path.join(dbDir, 'users.db'), (err) => {
     db.run(`CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT UNIQUE,
+        email TEXT UNIQUE,
         password TEXT,
         voucher INTEGER DEFAULT 0,
         authToken TEXT
@@ -162,15 +162,19 @@ app.get('/register', (req, res) => {
 
 // Обработка регистрации
 app.post('/register', async (req, res) => {
-    const { username, password } = req.body;
+    const { username, email, password, confirm_password } = req.body;
+    if (password !== confirm_password) {
+        return res.render('register', { error: 'Passwords do not match', user: null });
+    }
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
-        db.run('INSERT INTO users (username, password, voucher) VALUES (?, ?, 0)', [username, hashedPassword], function (err) {
-            if (err) {
-                return res.render('register', { error: 'This username is already taken', user: null });
-            }
-            res.redirect('/login');
-        });
+        db.run('INSERT INTO users (username, email, password, voucher) VALUES (?, ?, ?, 0)', 
+            [username, email, hashedPassword], function (err) {
+                if (err) {
+                    return res.render('register', { error: 'This email is already registered', user: null });
+                }
+                res.redirect('/login');
+            });
     } catch (error) {
         console.error('Registration error:', error.message);
         res.render('register', { error: 'Registration error', user: null });
@@ -206,15 +210,13 @@ app.post('/login', (req, res) => {
 // Страница профиля
 app.get('/profile', (req, res) => {
     console.log('Handling GET /profile request');
-
-    // Проверяем, авторизован ли пользователь
     if (!req.session.user) {
         console.log('User not logged in, redirecting to /login');
         return res.redirect('/login');
     }
     console.log('User is logged in:', req.session.user);
 
-    db.get('SELECT id, voucher FROM users WHERE username = ?', [req.session.user], (err, user) => {
+    db.get('SELECT id, voucher FROM users WHERE email = ?', [req.session.user], (err, user) => {
         if (err || !user) {
             console.error('User lookup error:', err?.message || 'User not found');
             return res.redirect('/');
@@ -240,7 +242,6 @@ app.get('/profile', (req, res) => {
             });
             console.log('Processed orders:', processedOrders);
 
-            // Находим активный ваучер
             db.get(
                 `SELECT order_number, items FROM orders 
                  WHERE user_id = ? AND order_number LIKE 'VCH-%' 
@@ -256,7 +257,7 @@ app.get('/profile', (req, res) => {
                             const items = JSON.parse(activeVoucher.items);
                             voucherDetails = {
                                 orderNumber: activeVoucher.order_number,
-                                title: items[0].title // Предполагаем, что ваучер — это один элемент
+                                title: items[0].title
                             };
                             console.log('Active voucher found:', voucherDetails);
                         } catch (parseError) {
@@ -354,7 +355,7 @@ app.get('/cryptoeasier', (req, res) => {
 // Выход из системы
 app.get('/logout', (req, res) => {
     if (req.session.user) {
-        db.run('UPDATE users SET authToken = NULL WHERE username = ?', [req.session.user], (err) => {
+        db.run('UPDATE users SET authToken = NULL WHERE email = ?', [req.session.user], (err) => {
             if (err) console.error('Error clearing token:', err.message);
         });
     }
