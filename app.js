@@ -184,7 +184,7 @@ app.post('/register', async (req, res) => {
 // Обработка входа
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
-    db.get('SELECT * FROM users WHERE username = ?', [username], async (err, user) => {
+    db.get('SELECT * FROM users WHERE email = ?', [email], async (err, user) => {
         if (err || !user) {
             return res.render('login', { error: 'Invalid login credentials', user: null });
         }
