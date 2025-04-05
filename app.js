@@ -9,6 +9,7 @@ const crypto = require('crypto');
 const { v4: uuidv4 } = require('uuid');
 const nodemailer = require('nodemailer');
 const mysql = require('mysql2');
+const admins = ['admin', 'Andrii Slavutskyi'];
 
 require('dotenv').config();
 
@@ -30,7 +31,6 @@ connection.connect((err) => {
 });
 
 module.exports = connection;  // Экспортируем подключение для использования в других частях проекта
-
 
 const app = express();
 const port = 3001;
@@ -280,6 +280,68 @@ app.get('/profile', (req, res) => {
                     });
                 }
             );
+        });
+    });
+});
+
+app.post('/admin/delete-order', (req, res) => {
+    if (!req.session.user || !admins.includes(req.session.user)) {
+        return res.status(403).json({ success: false, error: 'Unauthorized access' });
+    }
+
+    const { orderNumber, password } = req.body;
+
+    if (!orderNumber || !password) {
+        return res.status(400).json({ success: false, error: 'Order number and password are required' });
+    }
+
+    // Проверяем пароль администратора
+    db.get('SELECT password FROM users WHERE username = ?', [req.session.user], async (err, user) => {
+        if (err || !user) {
+            return res.status(500).json({ success: false, error: 'User not found' });
+        }
+
+        const isValid = await bcrypt.compare(password, user.password);
+        if (!isValid) {
+            return res.status(401).json({ success: false, error: 'Incorrect password' });
+        }
+
+        // Проверяем существование заказа
+        db.get('SELECT * FROM orders WHERE order_number = ?', [orderNumber], (err, order) => {
+            if (err || !order) {
+                return res.status(404).json({ success: false, error: 'Order not found' });
+            }
+
+            // Удаляем заказ
+            db.run('DELETE FROM orders WHERE order_number = ?', [orderNumber], (deleteErr) => {
+                if (deleteErr) {
+                    return res.status(500).json({ success: false, error: 'Unable to delete order' });
+                }
+
+                // Отправляем уведомление пользователю, если есть email
+                const emailMatch = order.shipping_address.match(/Email: ([^\s]+)/);
+                const userEmail = emailMatch ? emailMatch[1] : null;
+
+                if (userEmail) {
+                    transporter.sendMail({
+                        from: 'timourbarber@gmail.com',
+                        to: userEmail,
+                        subject: `Order #${orderNumber} Deleted`,
+                        html: `
+                            <h1>Order Deleted</h1>
+                            <p>Your order #${orderNumber} has been deleted by an administrator.</p>
+                            <p>If you believe this is an error, please contact us.</p>
+                            <p><img src="https://timour-barber.com/media/icon.png" alt="TimourBarber" style="max-width: 250px;"></p>
+                            <p><strong><a href="https://timour-barber.com/">Our website</a></strong></p>
+                            <p><strong>TimourBarber 2025©</strong></p>
+                        `
+                    }, (error, info) => {
+                        if (error) console.error('Error sending deletion email:', error);
+                    });
+                }
+
+                res.json({ success: true });
+            });
         });
     });
 });
@@ -656,7 +718,7 @@ app.get('/order-success', (req, res) => {
 // Админ-панель
 app.get('/admin', (req, res) => {
     console.log('Received request at /admin, session:', req.session);
-    if (req.session.user !== 'admin', req.session.user !== 'Andrii Slavutskyi') {
+    if (!req.session.user || !admins.includes(req.session.user)) {
         console.log('User is not an admin, redirecting to /login');
         return res.redirect('/login');
     }
@@ -682,7 +744,7 @@ app.get('/admin', (req, res) => {
 
 // Обновление статуса заказа в админ-панели
 app.post('/admin/update-status', (req, res) => {
-    if (req.session.user !== 'admin' && req.session.user !== 'Andrii Slavutskyi') {
+    if (!req.session.user || !admins.includes(req.session.user)) {
         return res.status(403).json({ success: false, error: 'Unauthorized access' });
     }
 

@@ -313,7 +313,6 @@
                 <li><a href="/contact">Contact</a></li>
                 <li><a href="/job">Job</a></li>
                 <li><a href="/coin">Coin</a></li>
-                <li><a href="/logout">Logout</a></li>
             </ul>
         </nav>
         <div class="login-nav">
@@ -375,6 +374,8 @@
                                         </select>
                                         <button class="update-status-btn"
                                             onclick="updateStatus('<%= order.order_number %>')">Update</button>
+                                        <button class="delete-order-btn"
+                                            onclick="openDeleteModal('<%= order.order_number %>')">Delete</button>
                                     </div>
                                 </div>
                                 <% }); %>
@@ -383,6 +384,19 @@
             </div>
         </div>
     </main>
+
+    <!-- Модальное окно для подтверждения удаления -->
+    <div id="delete-modal" class="modal">
+        <div class="modal-content">
+            <h2>Confirm Order Deletion</h2>
+            <p>Please enter your password to delete order #<span id="delete-order-number"></span></p>
+            <input type="password" id="delete-password" placeholder="Your Password" class="modal-input">
+            <div class="modal-actions">
+                <button class="modal-btn confirm-delete-btn" onclick="confirmDelete()">Confirm</button>
+                <button class="modal-btn close-modal-btn" onclick="closeDeleteModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
 
     <footer>
         <div class="footer-content">
@@ -395,38 +409,8 @@
         </div>
     </footer>
 
-    <script>
-        async function updateStatus(orderNumber) {
-            const select = document.querySelector(`select[data-order-number="${orderNumber}"]`);
-            const newStatus = select.value;
-
-            try {
-                const response = await fetch('/admin/update-status', {
-                    method: 'POST', // Set the POST method
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ orderNumber, status: newStatus })
-                });
-
-                // Check if the request was successful
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-
-                const result = await response.json();
-                if (result.success) {
-                    const statusSpan = select.parentElement.previousElementSibling.querySelector('.status');
-                    statusSpan.textContent = newStatus;
-                    statusSpan.className = `status ${newStatus.replace(/\s+/g, '-')}`;
-                    alert('Status successfully updated');
-                } else {
-                    alert('Failed to update status: ' + result.error);
-                }
-            } catch (error) {
-                console.error('Error updating status:', error);
-                alert('Error updating status: ' + error.message);
-            }
-        }
-    </script>
+    <script src="js/script.js"></script>
+    <script src="js/admin.js"></script>
 </body>
 
 </html>
