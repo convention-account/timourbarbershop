@@ -1082,3 +1082,8 @@ header.fixed .cart-icon {
         font-size: 18px;
     }
 }
+
+.contact-text a {
+    color: white !important;
+    text-decoration: none !important;
+}

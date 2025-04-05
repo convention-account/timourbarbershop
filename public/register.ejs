@@ -38,9 +38,12 @@
         <div class="login-nav">
             <% if (user) { %>
                 <li>Welcome, <%= user %> | <a href="/profile">Personal Cabinet</a> | <a href="/logout">Logout</a></li>
-                <% } else { %>
-                    <li><a href="/login">Login</a></li>
+                <% if (admins.includes(user)) { %>
+                    <li><a href="/admin">Admin</a></li>
                     <% } %>
+                        <% } else { %>
+                            <li><a href="/login">Login</a></li>
+                            <% } %>
         </div>
 
         <div class="cart-icon">

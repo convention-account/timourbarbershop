@@ -8,28 +8,30 @@ const fs = require('fs');
 const crypto = require('crypto');
 const { v4: uuidv4 } = require('uuid');
 const nodemailer = require('nodemailer');
-const mysql = require('mysql2');
 const admins = ['admin', 'Andrii Slavutskyi'];
 
 require('dotenv').config();
 
-const connection = mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
-});
+// MySQL временно не используется, удалено для работы с SQLite
+// const mysql = require('mysql2');
+// const connection = mysql.createConnection({...});
 
-// Проверка соединения
-connection.connect((err) => {
-    if (err) {
-        console.error('Ошибка подключения: ' + err.stack);
-        return;
-    }
-    console.log('Подключено к базе данных с ID ' + connection.threadId);
-});
+// const connection = mysql.createConnection({
+//     host: process.env.DB_HOST,
+//     user: process.env.DB_USER,
+//     password: process.env.DB_PASSWORD,
+//     database: process.env.DB_NAME
+// });
 
-module.exports = connection;  // Экспортируем подключение для использования в других частях проекта
+// connection.connect((err) => {
+//     if (err) {
+//         console.error('Ошибка подключения: ' + err.stack);
+//         return;
+//     }
+//     console.log('Подключено к базе данных с ID ' + connection.threadId);
+// });
+
+// module.exports = connection;  // Экспортируем подключение для использования в других частях проекта
 
 const app = express();
 const port = 3001;
@@ -66,6 +68,12 @@ const transporter = nodemailer.createTransport({
         // user: 'andreyme0411@gmail.com',
         // pass: 'ronapadzvqoqrbdq'
     }
+});
+
+// Middleware для передачи admins в шаблоны
+app.use((req, res, next) => {
+    res.locals.admins = admins; // Делаем admins доступным во всех шаблонах
+    next();
 });
 
 // Middleware для проверки авторизации через hash в URL
@@ -184,13 +192,29 @@ app.post('/register', async (req, res) => {
 // Обработка входа
 app.post('/login', (req, res) => {
     const { email, password } = req.body;
+
+    console.log('Login attempt with:', { email, password });
+
+    if (!email || !password) {
+        console.log('Missing email or password in request');
+        return res.render('login', { error: 'Please provide both email and password', user: null });
+    }
+
     db.get('SELECT * FROM users WHERE email = ?', [email], async (err, user) => {
-        if (err || !user) {
+        if (err) {
+            console.error('Database error:', err.message);
+            return res.render('login', { error: 'Database error', user: null });
+        }
+        if (!user) {
+            console.log('No user found with email:', email);
             return res.render('login', { error: 'Invalid email or password', user: null });
         }
+        console.log('User found:', user);
+
         const isValid = await bcrypt.compare(password, user.password);
         if (isValid) {
-            req.session.user = email;
+            console.log('Password is valid, logging in user:', user.username); // Изменено на username
+            req.session.user = user.username; // Сохраняем username вместо email
             const authToken = crypto.randomBytes(16).toString('hex');
             db.run('UPDATE users SET authToken = ? WHERE email = ?', [authToken, email], (updateErr) => {
                 if (updateErr) console.error('Error saving token:', updateErr.message);
@@ -202,6 +226,7 @@ app.post('/login', (req, res) => {
             });
             res.redirect('/');
         } else {
+            console.log('Invalid password for email:', email);
             res.render('login', { error: 'Invalid email or password', user: null });
         }
     });

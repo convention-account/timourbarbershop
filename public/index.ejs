@@ -35,19 +35,17 @@
                 <li><a href="job">Job</a></li>
                 <li><a href="coin">Coin</a></li>
             </ul>
-
-            <% if (user==='admin') { %>
-                <div class="login-nav">
-                    <li><a href="/admin">Admin</a></li>
-                </div>
-                <% } %>
         </nav>
+        
         <div class="login-nav">
             <% if (user) { %>
                 <li>Welcome, <%= user %> | <a href="/profile">Personal Cabinet</a> | <a href="/logout">Logout</a></li>
-                <% } else { %>
-                    <li><a href="/login">Login</a></li>
+                <% if (admins.includes(user)) { %>
+                    <li><a href="/admin">Admin</a></li>
                     <% } %>
+                        <% } else { %>
+                            <li><a href="/login">Login</a></li>
+                            <% } %>
         </div>
 
         <div class="cart-icon">
