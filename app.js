@@ -183,16 +183,16 @@ app.post('/register', async (req, res) => {
 
 // Обработка входа
 app.post('/login', (req, res) => {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
     db.get('SELECT * FROM users WHERE email = ?', [email], async (err, user) => {
         if (err || !user) {
-            return res.render('login', { error: 'Invalid login credentials', user: null });
+            return res.render('login', { error: 'Invalid email or password', user: null });
         }
         const isValid = await bcrypt.compare(password, user.password);
         if (isValid) {
-            req.session.user = username;
+            req.session.user = email;
             const authToken = crypto.randomBytes(16).toString('hex');
-            db.run('UPDATE users SET authToken = ? WHERE username = ?', [authToken, username], (updateErr) => {
+            db.run('UPDATE users SET authToken = ? WHERE email = ?', [authToken, email], (updateErr) => {
                 if (updateErr) console.error('Error saving token:', updateErr.message);
             });
             res.cookie('authToken', authToken, {
@@ -202,7 +202,7 @@ app.post('/login', (req, res) => {
             });
             res.redirect('/');
         } else {
-            res.render('login', { error: 'Invalid login credentials', user: null });
+            res.render('login', { error: 'Invalid email or password', user: null });
         }
     });
 });
