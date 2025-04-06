@@ -26,7 +26,7 @@ body.menu-open {
     overflow: hidden;
 }
 
-body.menu-open > *:not(header) {
+body.menu-open>*:not(header) {
     opacity: 0;
     pointer-events: none;
 }
@@ -778,7 +778,10 @@ header.fixed .cart-icon {
 }
 
 /* Общие стили для кнопок */
-.about-btn, .blog-btn, .contact-btn, .crypto-more-btn {
+.about-btn,
+.blog-btn,
+.contact-btn,
+.crypto-more-btn {
     display: inline-block;
     background: #FFF;
     color: #000;
@@ -793,13 +796,19 @@ header.fixed .cart-icon {
     overflow: hidden;
 }
 
-.about-btn:hover, .blog-btn:hover, .contact-btn:hover, .crypto-more-btn:hover {
+.about-btn:hover,
+.blog-btn:hover,
+.contact-btn:hover,
+.crypto-more-btn:hover {
     transform: scale(1.05);
     box-shadow: 0 0 15px rgba(159, 127, 243, 0.8);
     opacity: 1;
 }
 
-.about-btn::after, .blog-btn::after, .contact-btn::after, .crypto-more-btn::after {
+.about-btn::after,
+.blog-btn::after,
+.contact-btn::after,
+.crypto-more-btn::after {
     content: '';
     position: absolute;
     top: 50%;
@@ -813,48 +822,73 @@ header.fixed .cart-icon {
     z-index: 0;
 }
 
-.about-btn:hover::after, .blog-btn:hover::after, .contact-btn:hover::after, .crypto-more-btn:hover::after {
+.about-btn:hover::after,
+.blog-btn:hover::after,
+.contact-btn:hover::after,
+.crypto-more-btn:hover::after {
     width: 300px;
     height: 300px;
 }
 
-.about-btn span, .blog-btn span, .contact-btn span, .crypto-more-btn span {
+.about-btn span,
+.blog-btn span,
+.contact-btn span,
+.crypto-more-btn span {
     position: relative;
     z-index: 1;
 }
 
 /* Эффект наклона для карточек */
-.course-section, .info-card, .offer-card {
+.course-section,
+.info-card,
+.offer-card {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.course-section:hover, .info-card:hover, .offer-card:hover {
+.course-section:hover,
+.info-card:hover,
+.offer-card:hover {
     transform: perspective(1000px) rotateX(2deg) rotateY(2deg);
     box-shadow: 0 10px 40px rgba(159, 127, 243, 0.5);
 }
 
 /* Анимация кнопок воспроизведения */
-.play-button-second, .play-button-third {
+.play-button-second,
+.play-button-third {
     transition: transform 0.3s ease, background 0.3s ease;
 }
 
-.play-button-second:hover, .play-button-third:hover {
+.play-button-second:hover,
+.play-button-third:hover {
     transform: scale(1.1);
     background: rgba(255, 105, 180, 0.9);
 }
 
 @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
 
-.play-button-second, .play-button-third {
+.play-button-second,
+.play-button-third {
     animation: pulse 2s infinite;
 }
 
 /* Анимация появления */
-.headline-main, .headline-sub, .welcome-text, .blog-text, .additional-info {
+.headline-main,
+.headline-sub,
+.welcome-text,
+.blog-text,
+.additional-info {
     opacity: 1 !important;
     transform: translateY(0);
     transition: opacity 0.5s ease, transform 0.5s ease;
@@ -866,12 +900,14 @@ header.fixed .cart-icon {
     transform: translateY(0);
 }
 
-.headline-sub, .headline-sub-second {
+.headline-sub,
+.headline-sub-second {
     transition-delay: 0.2s;
 }
 
 /* Адаптивность для больших экранов (1920px и выше) */
 @media (min-width: 1920px) {
+
     .content-wrapper,
     .second-content,
     .third-content,
@@ -937,6 +973,7 @@ header.fixed .cart-icon {
 
 /* Адаптивность для средних экранов (768px–1200px) */
 @media (min-width: 769px) and (max-width: 1200px) {
+
     .content-wrapper,
     .second-content,
     .third-content,
@@ -1046,6 +1083,14 @@ header.fixed .cart-icon {
         justify-content: flex-start;
         align-items: center;
         overflow-y: auto;
+        overscroll-behavior-y: contain;
+
+        height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+        padding-top: env(safe-area-inset-top);
+        /* Отступ сверху для Dynamic Island */
+        padding-bottom: env(safe-area-inset-bottom);
+        /* Отступ снизу */
+        -webkit-overflow-scrolling: touch;
     }
 
     .nav-list.active {
@@ -1067,14 +1112,37 @@ header.fixed .cart-icon {
         transform: translateY(0);
     }
 
-    .nav-list.active li:nth-child(1) { transition-delay: 0s; }
-    .nav-list.active li:nth-child(2) { transition-delay: 0.1s; }
-    .nav-list.active li:nth-child(3) { transition-delay: 0.2s; }
-    .nav-list.active li:nth-child(4) { transition-delay: 0.3s; }
-    .nav-list.active li:nth-child(5) { transition-delay: 0.4s; }
-    .nav-list.active li:nth-child(6) { transition-delay: 0.5s; }
-    .nav-list.active li:nth-child(7) { transition-delay: 0.6s; }
-    .nav-list.active li:nth-child(8) { transition-delay: 0.7s; }
+    .nav-list.active li:nth-child(1) {
+        transition-delay: 0s;
+    }
+
+    .nav-list.active li:nth-child(2) {
+        transition-delay: 0.1s;
+    }
+
+    .nav-list.active li:nth-child(3) {
+        transition-delay: 0.2s;
+    }
+
+    .nav-list.active li:nth-child(4) {
+        transition-delay: 0.3s;
+    }
+
+    .nav-list.active li:nth-child(5) {
+        transition-delay: 0.4s;
+    }
+
+    .nav-list.active li:nth-child(6) {
+        transition-delay: 0.5s;
+    }
+
+    .nav-list.active li:nth-child(7) {
+        transition-delay: 0.6s;
+    }
+
+    .nav-list.active li:nth-child(8) {
+        transition-delay: 0.7s;
+    }
 
     .nav-list.active li a {
         display: block;
@@ -1451,6 +1519,7 @@ header.fixed .cart-icon {
 
 /* Поддержка ультрашироких экранов (2560px и выше) */
 @media (min-width: 2560px) {
+
     .content-wrapper,
     .second-content,
     .third-content,
@@ -1689,14 +1758,20 @@ header.fixed .cart-icon {
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 /* Убираем text-shadow для iOS (Safari) */
 @media screen and (-webkit-min-device-pixel-ratio: 0) {
     /* Уточняем, что это для iOS */
     @supports (-webkit-touch-callout: none) {
+
         .headline-main,
         .headline-sub,
         .headline-main-second,
