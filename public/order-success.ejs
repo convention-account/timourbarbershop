@@ -8,6 +8,7 @@
     <link rel="stylesheet" type="text/css" href="/css/webshop.css">
     <link rel="stylesheet" type="text/css" href="/css/mobile-adaptation.css">
     <style>
+        /* Оставляем стили без изменений */
         .payment-instructions {
             background-color: #f9f9f9;
             padding: 20px;
@@ -37,7 +38,6 @@
             font-weight: bold;
         }
 
-        /* Стили для основного контейнера */
         main {
             max-width: 1200px;
             margin: 0 auto;
@@ -47,7 +47,6 @@
             align-items: center;
         }
 
-        /* Контейнер для карточек заказов */
         .orders-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -59,7 +58,6 @@
             color: white;
         }
 
-        /* Стили для карточки заказа */
         .order-card {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 15px;
@@ -116,37 +114,31 @@
         .order-card .status.placed {
             background: rgba(255, 165, 0, 0.2);
             color: #FFA500;
-            /* Оранжевый для "placed" */
         }
 
         .order-card .status.awaiting_payment {
             background: rgba(255, 215, 0, 0.2);
             color: #FFD700;
-            /* Жёлтый для "awaiting_payment" */
         }
 
         .order-card .status.preparing {
             background: rgba(255, 165, 0, 0.2);
             color: #FFA500;
-            /* Оранжевый для "preparing" */
         }
 
         .order-card .status.shipped {
             background: rgba(0, 255, 0, 0.2);
             color: #00FF00;
-            /* Зеленый для "shipped" */
         }
 
         .order-card .status.delivered {
             background: rgba(0, 206, 209, 0.2);
             color: #00CED1;
-            /* Бирюзовый для "delivered" */
         }
 
         .order-card .status.cancelled {
             background: rgba(255, 68, 68, 0.2);
             color: #FF4444;
-            /* Красный для "cancelled" */
         }
 
         .back-btn {
@@ -165,7 +157,6 @@
             margin-top: auto;
         }
 
-        /* Адаптивность */
         @media (max-width: 768px) {
             main {
                 padding: 15px;
@@ -241,17 +232,10 @@
 
 <body>
     <header>
-        <div class="logo">
-            <a href="/">
-                <img src="../media/icon.png" alt="Logo" class="logo-icon">
-            </a>
-        </div>
+        <!-- Оставляем header без изменений -->
+        <div class="logo"><a href="/"><img src="../media/icon.png" alt="Logo" class="logo-icon"></a></div>
         <nav class="navbar">
-            <div class="burger-menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
+            <div class="burger-menu"><span></span><span></span><span></span></div>
             <ul class="nav-list">
                 <li><a href="/">Home</a></li>
                 <li><a href="academy">Academy</a></li>
@@ -273,10 +257,7 @@
                             <li><a href="/login">Login</a></li>
                             <% } %>
         </div>
-        <div class="cart-icon">
-            🛒
-            <span class="cart-count">0</span>
-        </div>
+        <div class="cart-icon">🛒<span class="cart-count">0</span></div>
     </header>
     <main>
         <h1>Order Successful!</h1>
@@ -296,6 +277,9 @@
                 <p><strong>Payment Method:</strong>
                     <%= order.payment_method %>
                 </p>
+                <p><strong>Transaction ID:</strong>
+                    <%= order.transaction_id %>
+                </p>
                 <p><strong>Items:</strong></p>
                 <div class="items">
                     <% order.items.forEach(item=> { %>
@@ -306,24 +290,13 @@
                 </div>
             </div>
         </div>
-
-        <% if (order.payment_method==='usdt_trc20' && order.status==='awaiting_payment' ) { %>
-            <div class="payment-instructions">
-                <h3>Payment Instructions</h3>
-                <p>Your order is awaiting payment. Please send the payment in USDT (TRC20) to the following wallet
-                    address:</p>
-                <p><strong>Wallet Address:</strong> <code>TXb1e2f3g4h5j6k7m8n9p0q1r2s3t4u5v6w7x8y9z</code></p>
-                <p><strong>Amount to Pay:</strong>
-                    <%= order.total_usdt %> USDT
-                </p>
-                <p class="important">Important: In the transaction comment, you MUST include your order number:
-                    <code><%= order.order_number %></code>. This is necessary to match your payment to your order.
-                </p>
-                <p>Once the payment is received, we will update your order status and proceed with shipping.</p>
-            </div>
-            <% } %>
-
-                <a href="/webshop" class="back-btn">Back to Store</a>
+        <div class="payment-instructions">
+            <h3>Order Confirmation</h3>
+            <p>Your order has been successfully placed with Transaction ID: <code><%= order.transaction_id %></code>.
+            </p>
+            <p>We will verify your payment and update the order status soon. Thank you for shopping with us!</p>
+        </div>
+        <a href="/webshop" class="back-btn">Back to Store</a>
     </main>
     <footer>
         <div class="footer-content">
@@ -335,8 +308,13 @@
             </ul>
         </div>
     </footer>
-
     <script src="./js/script.js"></script>
 </body>
+<style>
+    .back-btn {
+        color: white;
+        text-decoration: none;
+    }
+</style>
 
 </html>

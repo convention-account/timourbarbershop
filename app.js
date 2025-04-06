@@ -126,12 +126,18 @@ const db = new sqlite3.Database(path.join(dbDir, 'users.db'), (err) => {
         total_usdt REAL,
         shipping_address TEXT,
         payment_method TEXT,
+        transaction_id TEXT,
         status TEXT DEFAULT 'pending',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES users(id)
     )`, (err) => {
         if (err) console.error('Error creating orders table:', err.message);
     });
+
+    // МИГРАЦИЯ ДБ
+    // db.run(`ALTER TABLE orders ADD COLUMN transaction_id TEXT`, (err) => {
+    //     if (err) console.error('Error adding transaction_id column:', err.message);
+    // });
 
     // Создание учетной записи администратора, если она еще не существует
     db.get('SELECT * FROM users WHERE username = ?', ['admin'], (err, row) => {
@@ -416,163 +422,75 @@ app.get('/checkout', (req, res) => {
 app.post('/checkout', async (req, res) => {
     console.log('Handling POST /checkout request');
 
-    // Проверяем, авторизован ли пользователь
     if (!req.session.user) {
         console.log('User not logged in, returning 401');
         return res.status(401).json({ error: 'Please log in' });
     }
     console.log('User is logged in:', req.session.user);
 
-    // Логируем полученные данные из формы
     console.log('Received POST request at /checkout:', req.body);
     console.log('Raw cart cookie:', req.cookies.cart);
-    console.log('Type of cart cookie:', typeof req.cookies.cart);
 
-    // Проверяем, что все обязательные поля присутствуют
-    const { full_name, email, address, city, country, postal_code, payment_method, shipping_method } = req.body;
-    if (!full_name || !email || !address || !city || !country || !postal_code || !payment_method || !shipping_method) {
-        console.log('Missing required fields:', { full_name, email, address, city, country, postal_code, payment_method, shipping_method });
-        return res.status(400).json({ error: 'All fields are required' });
+    const { full_name, email, address, city, country, postal_code, payment_method, shipping_method, transaction_id } = req.body;
+    if (!full_name || !email || !address || !city || !country || !postal_code || !payment_method || !shipping_method || !transaction_id) {
+        console.log('Missing required fields:', { full_name, email, address, city, country, postal_code, payment_method, shipping_method, transaction_id });
+        return res.status(400).json({ error: 'All fields, including Transaction ID, are required' });
     }
     console.log('All required fields are present');
 
-    // Обрабатываем корзину
     let cart;
     try {
         const rawCart = req.cookies.cart;
-        console.log('Attempting to parse cart:', rawCart);
-
-        if (!rawCart || typeof rawCart !== 'string') {
-            console.log('Cart cookie is missing or not a string, setting to empty array');
-            cart = [];
-        } else if (rawCart.trim() === '') {
-            console.log('Cart cookie is an empty string, setting to empty array');
-            cart = [];
-        } else {
-            let decodedCart;
-            try {
-                decodedCart = decodeURIComponent(rawCart);
-                console.log('Decoded cart:', decodedCart);
-            } catch (decodeError) {
-                console.error('Error decoding cart cookie:', decodeError.message);
-                return res.status(400).json({ error: 'Invalid cart data (decoding failed)' });
-            }
-
-            if (decodedCart === 'undefined' || decodedCart === 'null' || decodedCart === '') {
-                console.log('Cart cookie contains invalid value (undefined/null/empty), setting to empty array');
-                cart = [];
-            } else {
-                try {
-                    cart = JSON.parse(decodedCart);
-                    console.log('Parsed cart:', cart);
-                } catch (parseError) {
-                    console.error('Error parsing cart JSON:', parseError.message);
-                    console.error('Problematic cart data (decoded):', decodedCart);
-                    return res.status(400).json({ error: 'Invalid cart data (parsing failed)' });
-                }
-            }
-        }
+        cart = rawCart && typeof rawCart === 'string' && rawCart.trim() !== '' ? JSON.parse(decodeURIComponent(rawCart)) : [];
     } catch (error) {
-        console.error('Unexpected error in cart processing:', error.message);
-        return res.status(500).json({ error: 'Unexpected error processing cart' });
+        console.error('Error parsing cart:', error.message);
+        return res.status(400).json({ error: 'Invalid cart data' });
     }
 
-    // Проверяем, что корзина не пуста
     if (!Array.isArray(cart) || !cart.length) {
-        console.log('Cart is empty or not an array after parsing');
+        console.log('Cart is empty or not an array');
         return res.status(400).json({ error: 'Cart is empty' });
     }
-    console.log('Cart is valid and not empty:', cart);
+    console.log('Cart is valid:', cart);
 
-    // Проверяем элементы корзины
     const isValidCart = cart.every(item => item && typeof item === 'object' && 'title' in item && 'price' in item);
     if (!isValidCart) {
         console.error('Invalid cart data:', cart);
         return res.status(400).json({ error: 'Invalid cart items' });
     }
-    console.log('Cart items are valid');
 
-    // Проверка минимальной суммы для Store (50 евро ~ 54 USDT на апрель 2025)
     const shippingCosts = { dhl: 5, fedex: 7, ups: 6 };
     const totalUSDTWithoutShipping = cart.reduce((sum, item) => sum + parseFloat(item.price), 0);
     const totalUSDT = totalUSDTWithoutShipping + (shippingCosts[shipping_method] || 0);
 
-    console.log('Total USDT without shipping:', totalUSDTWithoutShipping);
-    console.log('Shipping method:', shipping_method, 'Shipping cost:', shippingCosts[shipping_method]);
-    console.log('Total USDT with shipping:', totalUSDT);
-
-    if (totalUSDTWithoutShipping < 54) { // 50 евро в USDT
+    if (totalUSDTWithoutShipping < 54) {
         console.log('Order total is below minimum (50 EUR ~ 54 USDT)');
         return res.status(400).json({ error: 'Minimum order amount is 50 EUR (~54 USDT) excluding shipping.' });
     }
-    console.log('Order total meets minimum requirement');
 
-    // Вычисляем итоговую сумму (уже сделано выше, оставляем для совместимости)
-    console.log('Calculated totalUSDT:', totalUSDT);
-
-    // Формируем адрес доставки
     const shippingAddress = `${full_name}, ${address}, ${city}, ${country}, ${postal_code}, Email: ${email}`;
-    console.log('Shipping address:', shippingAddress);
-
-    // Генерируем номер заказа
     const orderNumber = `ORD-${uuidv4().slice(0, 8).toUpperCase()}`;
-    console.log('Generated order number:', orderNumber);
 
-    // Определяем метод доставки
     let shippingMethodName, shippingIcon;
     switch (shipping_method) {
-        case 'dhl':
-            shippingMethodName = 'LPExpress';
-            shippingIcon = '/media/lp-express-s.png';
-            break;
-        case 'fedex':
-            shippingMethodName = 'DPD';
-            shippingIcon = '/media/dpd.png';
-            break;
-        case 'ups':
-            shippingMethodName = 'Omniva';
-            shippingIcon = '/media/omniva_horizontal_orange-1024x410-1.webp';
-            break;
-        default:
-            shippingMethodName = 'Unknown';
-            shippingIcon = '';
+        case 'dhl': shippingMethodName = 'LPExpress'; shippingIcon = '/media/lp-express-s.png'; break;
+        case 'fedex': shippingMethodName = 'DPD'; shippingIcon = '/media/dpd.png'; break;
+        case 'ups': shippingMethodName = 'Omniva'; shippingIcon = '/media/omniva_horizontal_orange-1024x410-1.webp'; break;
+        default: shippingMethodName = 'Unknown'; shippingIcon = '';
     }
-    console.log('Shipping method details:', { shippingMethodName, shippingIcon });
 
-    // Получаем ID пользователя
     db.get('SELECT id FROM users WHERE username = ?', [req.session.user], (err, user) => {
         if (err || !user) {
             console.error('User lookup error:', err?.message || 'User not found');
             return res.status(500).json({ error: 'User not found' });
         }
-        console.log('User found:', user);
 
-        // Сериализуем корзину в JSON
-        let itemsJson;
-        try {
-            itemsJson = JSON.stringify(cart);
-            console.log('Serialized cart to JSON:', itemsJson);
-        } catch (stringifyError) {
-            console.error('Error converting cart to JSON:', stringifyError.message);
-            return res.status(500).json({ error: 'Unable to process cart data' });
-        }
+        const itemsJson = JSON.stringify(cart);
 
-        // Логируем все данные перед вставкой в базу
-        console.log('Preparing to insert order into database with the following data:', {
-            user_id: user.id,
-            order_number: orderNumber,
-            items: itemsJson,
-            total_usdt: totalUSDT,
-            shipping_address: shippingAddress,
-            payment_method: payment_method,
-            status: 'placed'
-        });
-
-        // Вставляем заказ в базу данных
         db.run(
-            `INSERT INTO orders (user_id, order_number, items, total_usdt, shipping_address, payment_method, status)
-             VALUES (?, ?, ?, ?, ?, ?, 'placed')`,
-            [user.id, orderNumber, itemsJson, totalUSDT, shippingAddress, payment_method],
+            `INSERT INTO orders (user_id, order_number, items, total_usdt, shipping_address, payment_method, transaction_id, status)
+             VALUES (?, ?, ?, ?, ?, ?, ?, 'awaiting_payment')`,
+            [user.id, orderNumber, itemsJson, totalUSDT, shippingAddress, payment_method, transaction_id],
             function (err) {
                 if (err) {
                     console.error('Error creating order:', err.message);
@@ -580,60 +498,31 @@ app.post('/checkout', async (req, res) => {
                 }
                 console.log(`Order created: #${orderNumber}, ID: ${this.lastID}`);
 
-                // Проверяем, что заказ действительно сохранён
-                db.get('SELECT * FROM orders WHERE order_number = ?', [orderNumber], (err, order) => {
-                    if (err || !order) {
-                        console.error('Order not found in database after insert:', err?.message || 'Order not found');
-                    } else {
-                        console.log('Order successfully saved in database:', order);
-                    }
-                });
-
-                // Обновляем статус заказа
-                console.log('Updating order status to awaiting_payment...');
-                db.run('UPDATE orders SET status = ? WHERE order_number = ?', ['awaiting_payment', orderNumber], (updateErr) => {
-                    if (updateErr) {
-                        console.error('Error updating order status:', updateErr.message);
-                    } else {
-                        console.log('Order status updated to awaiting_payment');
-                    }
-                });
-
                 // Отправляем письмо пользователю
-                console.log('Sending email to user:', email);
                 transporter.sendMail({
                     from: 'timourbarber@gmail.com',
                     to: email,
-                    subject: `Receipt for Order #${orderNumber}`,
+                    subject: `Order #${orderNumber} Received`,
                     html: `
-                        <h1>Thank you for your order!</h1>
-                        <p>Order #${orderNumber} is awaiting payment.</p>
+                        <h1>Order Received</h1>
+                        <p>Your order #${orderNumber} has been successfully placed.</p>
                         <p><strong>Items:</strong></p>
                         <ul>${cart.map(item => `<li>${item.title} - ${item.price} USDT</li>`).join('')}</ul>
                         <p><strong>Shipping Method:</strong> ${shippingMethodName}</p>
-                        <p><img src="https://timour-barber.com${shippingIcon}" alt="${shippingMethodName}" style="max-width: 150px;"></p>
                         <p><strong>Total:</strong> ${totalUSDT.toFixed(2)} USDT</p>
                         <p><strong>Shipping Address:</strong> ${shippingAddress}</p>
-                        <h3>Payment Instructions</h3>
-                        <p>Please send the payment in USDT TRC (Tron) (TRC20) to the following wallet address:</p>
-                        <p><strong>Wallet Address:</strong> TSLutTokZzNEnz1fb8NBDWrgE2GEYF2xet</p>
-                        <p><strong>Amount to Pay:</strong> ${totalUSDT.toFixed(2)} USDT</p>
-                        <p style="color: red; font-weight: bold;">Important: In the transaction comment, you MUST include your order number: ${orderNumber}. This is necessary to match your payment to your order.</p>
-                        <p>Once the payment is received, we will update your order status and proceed with shipping.</p>
+                        <p><strong>Transaction ID:</strong> ${transaction_id}</p>
+                        <p>We will verify your payment and update the order status soon.</p>
                         <p><img src="https://timour-barber.com/media/icon.png" alt="TimourBarber" style="max-width: 250px;"></p>
                         <p><strong><a href="https://timour-barber.com/">Our website</a></strong></p>
                         <p><strong>TimourBarber 2025©</strong></p>
                     `
                 }, (error, info) => {
-                    if (error) {
-                        console.error('Error sending email to user:', error);
-                    } else {
-                        console.log('Email sent to user:', info.response);
-                    }
+                    if (error) console.error('Error sending email to user:', error);
+                    else console.log('Email sent to user:', info.response);
                 });
 
                 // Отправляем письмо администратору
-                console.log('Sending email to admin: timourbarber@gmail.com');
                 transporter.sendMail({
                     from: 'timourbarber@gmail.com',
                     to: 'timourbarber@gmail.com',
@@ -645,28 +534,17 @@ app.post('/checkout', async (req, res) => {
                         <p><strong>Items:</strong></p>
                         <ul>${cart.map(item => `<li>${item.title} - ${item.price} USDT</li>`).join('')}</ul>
                         <p><strong>Shipping Method:</strong> ${shippingMethodName}</p>
-                        <p><img src="https://timour-barber.com${shippingIcon}" alt="${shippingMethodName}" style="max-width: 150px;"></p>
                         <p><strong>Total:</strong> ${totalUSDT.toFixed(2)} USDT</p>
                         <p><strong>Shipping Address:</strong> ${shippingAddress}</p>
-                        <h3>Payment Instructions (Sent to User)</h3>
-                        <p>Please send the payment in USDT (TRC20) to the following wallet address:</p>
-                        <p><strong>Wallet Address:</strong> TXb1e2f3g4h5j6k7m8n9p0q1r2s3t4u5v6w7x8y9z</p>
-                        <p><strong>Amount to Pay:</strong> ${totalUSDT.toFixed(2)} USDT</p>
-                        <p style="color: red; font-weight: bold;">Important: In the transaction comment, the user must include the order number: ${orderNumber}.</p>
+                        <p><strong>Transaction ID:</strong> ${transaction_id}</p>
+                        <p>Please verify the payment.</p>
                         <p><img src="https://timour-barber.com/media/icon.png" alt="TimourBarber" style="max-width: 250px;"></p>
-                        <p><strong><a href="https://timour-barber.com/">Our website</a></strong></p>
-                        <p><strong>TimourBarber 2025©</strong></p>
                     `
                 }, (error, info) => {
-                    if (error) {
-                        console.error('Error sending email to admin:', error);
-                    } else {
-                        console.log('Email sent to admin:', info.response);
-                    }
+                    if (error) console.error('Error sending email to admin:', error);
+                    else console.log('Email sent to admin:', info.response);
                 });
 
-                // Отправляем успешный ответ
-                console.log('Sending success response with redirect:', `/order-success?order=${orderNumber}`);
                 res.status(200).json({ redirect: `/order-success?order=${orderNumber}` });
             }
         );
@@ -709,10 +587,7 @@ app.get('/order-confirmation', (req, res) => {
 // Страница успешного заказа (если используется)
 app.get('/order-success', (req, res) => {
     const orderNumber = req.query.order;
-    const hash = req.query.hash || '';
-    if (!orderNumber) {
-        return res.redirect('/webshop');
-    }
+    if (!orderNumber) return res.redirect('/webshop');
 
     db.get('SELECT * FROM orders WHERE order_number = ?', [orderNumber], (err, order) => {
         if (err || !order) {
@@ -734,9 +609,9 @@ app.get('/order-success', (req, res) => {
                 items: items,
                 shipping_address: order.shipping_address,
                 payment_method: order.payment_method,
+                transaction_id: order.transaction_id, // Добавляем Transaction ID
                 status: order.status
-            },
-            hash: hash
+            }
         });
     });
 });

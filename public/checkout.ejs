@@ -8,22 +8,71 @@
     <link rel="icon" type="image/x-icon" href="../media/logo.ico">
     <link rel="stylesheet" type="text/css" href="/css/contact.css">
     <link rel="stylesheet" href="/css/mobile-adaptation.css">
+    <style>
+        /* Добавляем стили для секции Shipping Method */
+        .shipping-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .shipping-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+        }
+
+        .shipping-option input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        .shipping-option img.shipping-icon {
+            max-width: 100px;
+            height: auto;
+        }
+
+        .shipping-option span {
+            color: #fff;
+            font-size: 16px;
+        }
+
+        /* Стили для поля Transaction ID */
+        .form-group code {
+            color: #FFD700;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        /* Убираем эффект поворота для формы чекаута */
+        .checkout-form:hover {
+            transform: none !important;
+            /* Убираем поворот */
+            box-shadow: 0 10px 40px rgba(159, 127, 243, 0.5);
+            /* Оставляем тень, если нужно */
+        }
+
+        @media screen and (max-width: 756px) {
+            .crypto-qr {
+                width: 100% !important;
+            }
+        }
+    </style>
 </head>
 
 <body>
     <div class="background-overlay"></div>
     <header>
         <div class="logo">
-            <a href="/">
-                <img src="../media/icon.png" alt="Logo" class="logo-icon">
-            </a>
+            <a href="/"><img src="../media/icon.png" alt="Logo" class="logo-icon"></a>
         </div>
         <nav class="navbar">
-            <div class="burger-menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
+            <div class="burger-menu"><span></span><span></span><span></span></div>
             <ul class="nav-list">
                 <li><a href="/">Home</a></li>
                 <li><a href="/academy">Academy</a></li>
@@ -45,10 +94,7 @@
                             <li><a href="/login">Login</a></li>
                             <% } %>
         </div>
-        <div class="cart-icon">
-            🛒
-            <span class="cart-count">0</span>
-        </div>
+        <div class="cart-icon">🛒<span class="cart-count">0</span></div>
     </header>
 
     <main class="contact-section checkout-section">
@@ -99,30 +145,18 @@
                                 <input type="radio" name="payment_method" value="usdt_trc20" checked>
                                 USDT (TRC20)
                             </label>
-                            <label inert style="color: rgb(70, 69, 69);">
-                                <input type="radio" name="payment_method" value="card">
-                                Credit/Debit Card (NOT AVAILABLE AT THE MOMENT)
-                            </label>
-                        </div>
-                        <div class="card-details" style="display: none;">
+                            <p>Please send payment to: <code>TSLutTokZzNEnz1fb8NBDWrgE2GEYF2xet</code><img
+                                    src="media/crypto_qr_rb.png" class="crypto-qr" style="width: 20%;"></p>
                             <div class="form-group">
-                                <label for="card-number">Card Number</label>
-                                <input type="text" id="card-number" name="card_number"
-                                    placeholder="1234 5678 9012 3456">
-                            </div>
-                            <div class="form-group">
-                                <label for="card-expiry">Expiry Date</label>
-                                <input type="text" id="card-expiry" name="card_expiry" placeholder="MM/YY">
-                            </div>
-                            <div class="form-group">
-                                <label for="card-cvc">CVC</label>
-                                <input type="text" id="card-cvc" name="card_cvc" placeholder="123">
+                                <label for="transaction-id">Transaction ID</label>
+                                <input type="text" id="transaction-id" name="transaction_id"
+                                    placeholder="Enter your USDT TRC20 Transaction ID" required>
                             </div>
                         </div>
                     </div>
 
                     <div class="checkout-group">
-                        <h3 class="form-subtitle">Shipping Method</h3>
+                        <h3 class="form-subtitle"><br>Shipping Method</h3>
                         <div class="shipping-methods">
                             <label class="shipping-option">
                                 <input type="radio" name="shipping_method" value="dhl" checked>
@@ -171,7 +205,6 @@
     </footer>
 
     <script>
-        // Отображение корзины на странице чекаута
         function getCookie(name) {
             const nameEQ = name + "=";
             const cookies = document.cookie.split(';');
@@ -196,7 +229,6 @@
 
         const cartSummary = document.getElementById('cart-summary');
         if (cartSummary) {
-            console.log('Cart summary element found');
             if (cart.length > 0) {
                 let totalUSDT = cart.reduce((sum, item) => sum + parseFloat(item.price), 0);
                 cartSummary.innerHTML = `
@@ -208,88 +240,45 @@
                 `;
             } else {
                 cartSummary.innerHTML = '<p>Your cart is empty. Please add items before checking out.</p>';
-                const checkoutBtn = document.querySelector('.checkout-btn');
-                if (checkoutBtn) {
-                    checkoutBtn.disabled = true;
-                    console.log('Checkout button disabled due to empty cart');
-                }
+                document.querySelector('.checkout-btn').disabled = true;
             }
-        } else {
-            console.error('Cart summary element not found');
         }
 
         const checkoutForm = document.getElementById('checkout-form');
         if (checkoutForm) {
-            console.log('Checkout form found, attaching event listener');
             checkoutForm.addEventListener('submit', async (e) => {
-                console.log('Form submit event triggered');
-                e.preventDefault(); // Предотвращаем стандартную отправку формы
-
+                e.preventDefault();
                 const submitButton = checkoutForm.querySelector('button[type="submit"]');
-                if (submitButton) {
-                    submitButton.disabled = true;
-                    submitButton.textContent = 'Processing...';
-                }
+                submitButton.disabled = true;
+                submitButton.textContent = 'Processing...';
 
                 const formData = new FormData(checkoutForm);
                 const data = Object.fromEntries(formData);
                 console.log('Form data being sent:', data);
 
                 try {
-                    console.log('Sending fetch request to /checkout');
                     const response = await fetch('/checkout', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(data)
                     });
 
-                    console.log('Server response status:', response.status);
-                    console.log('Server response ok:', response.ok);
-                    console.log('Server response headers:', response.headers);
-
-                    const text = await response.text();
-                    console.log('Raw server response:', text);
-
-                    let result;
-                    try {
-                        result = JSON.parse(text);
-                        console.log('Parsed server response:', result);
-                    } catch (jsonError) {
-                        console.error('Error parsing server response as JSON:', jsonError.message);
-                        console.error('Raw response causing the error:', text);
-                        throw new Error('Server returned invalid JSON');
-                    }
-
+                    const result = await response.json();
                     if (response.ok) {
-                        console.log('Response is OK, redirecting to:', result.redirect);
-                        if (!result.redirect) {
-                            console.error('Redirect URL is missing in response:', result);
-                            throw new Error('Redirect URL not provided by server');
-                        }
-                        console.log('Clearing cart cookie');
                         document.cookie = 'cart=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-                        console.log('Performing redirect to:', result.redirect);
                         window.location.href = result.redirect;
-                        console.log('Redirect command executed');
                     } else {
-                        console.log('Response not OK, showing error:', result.error);
                         alert(result.error || 'An error occurred during checkout');
-                        if (submitButton) {
-                            submitButton.disabled = false;
-                            submitButton.textContent = 'Place Order';
-                        }
+                        submitButton.disabled = false;
+                        submitButton.textContent = 'Place Order';
                     }
                 } catch (error) {
                     console.error('Error processing checkout:', error);
                     alert('Error processing checkout: ' + error.message);
-                    if (submitButton) {
-                        submitButton.disabled = false;
-                        submitButton.textContent = 'Place Order';
-                    }
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Place Order';
                 }
             });
-        } else {
-            console.error('Checkout form not found');
         }
     </script>
     <script src="/js/cart.js"></script>
