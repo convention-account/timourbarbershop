@@ -106,7 +106,7 @@
             <!-- Форма подачи заявки -->
             <div class="job-apply" id="apply">
                 <h2 class="apply-title">Apply for a Position</h2>
-                <form action="#" method="POST">
+                <form id="job-apply-form" method="POST" enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="name">Full Name</label>
                         <input type="text" id="name" name="name" placeholder="Your Full Name" required>
@@ -133,6 +133,7 @@
                     </div>
                     <button type="submit" class="form-btn">Submit Application</button>
                 </form>
+                <div id="notification" style="display: none; margin-top: 20px; padding: 10px; border-radius: 5px;"></div>
             </div>
         </div>
     </main>
@@ -167,6 +168,7 @@
 
     <script src="js/script.js"></script>
     <script src="/js/cart.js"></script>
+    <script src="/js/job.js"></script>
     <script src="/js/animations/job-anim.js"></script>
 
     <div class="loading-overlay">

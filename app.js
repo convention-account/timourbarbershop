@@ -9,6 +9,7 @@ const crypto = require('crypto');
 const { v4: uuidv4 } = require('uuid');
 const nodemailer = require('nodemailer');
 const admins = ['admin', 'Andrii Slavutskyi'];
+const multer = require('multer');
 
 require('dotenv').config();
 
@@ -68,6 +69,79 @@ const transporter = nodemailer.createTransport({
         // user: 'andreyme0411@gmail.com',
         // pass: 'ronapadzvqoqrbdq'
     }
+});
+
+// Настройка multer для сохранения файлов во временную папку
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        const uploadDir = path.join(__dirname, 'uploads');
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir);
+        }
+        cb(null, uploadDir);
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${Date.now()}-${file.originalname}`);
+    }
+});
+
+const upload = multer({
+    storage: storage,
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype === 'application/pdf') {
+            cb(null, true);
+        } else {
+            cb(new Error('Only PDF files are allowed'), false);
+        }
+    }
+});
+
+// Обработка формы подачи заявки на вакансию с файлом
+app.post('/job/apply', upload.single('cv'), (req, res) => {
+    const { name, email, phone, position } = req.body;
+    const cvFile = req.file;
+
+    if (!name || !email || !phone || !position) {
+        return res.status(400).json({ success: false, error: 'All fields are required' });
+    }
+
+    const mailOptions = {
+        from: 'timourbarber@gmail.com',
+        to: 'timourbarber@gmail.com, andreyme0411@gmail.com',
+        subject: `New Job Application: ${position}`,
+        html: `
+            <h1>New Job Application</h1>
+            <p><strong>Full Name:</strong> ${name}</p>
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Phone:</strong> ${phone}</p>
+            <p><strong>Position:</strong> ${position === 'barber-assistant' ? 'Reception' : 'Barber'}</p>
+            <p><strong>CV:</strong> ${cvFile ? 'Attached' : 'Not provided'}</p>
+            <p><img src="https://timour-barber.com/media/icon.png" alt="TimourBarber" style="max-width: 250px;"></p>
+            <p><strong><a href="https://timour-barber.com/">Our website</a></strong></p>
+            <p><strong>TimourBarber 2025©</strong></p>
+        `,
+        attachments: cvFile ? [{
+            filename: cvFile.originalname,
+            path: cvFile.path
+        }] : []
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.error('Error sending job application email:', error);
+            return res.status(500).json({ success: false, error: 'Failed to send application' });
+        }
+        console.log('Job application email sent:', info.response);
+
+        // Удаляем временный файл после отправки
+        if (cvFile) {
+            fs.unlink(cvFile.path, (err) => {
+                if (err) console.error('Error deleting temp file:', err);
+            });
+        }
+
+        res.json({ success: true, message: 'Application sent successfully' });
+    });
 });
 
 // Middleware для передачи admins в шаблоны
