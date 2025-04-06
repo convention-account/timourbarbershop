@@ -40,6 +40,7 @@ header {
     transition: all 0.3s ease;
     width: 100%;
     box-sizing: border-box;
+    margin-left: 0px;
 }
 
 header.fixed {

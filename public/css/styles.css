@@ -57,6 +57,7 @@ header {
     max-width: 100%;
     overflow-x: hidden;
     box-sizing: border-box;
+    margin-left: 0px;
 }
 
 header.fixed {
