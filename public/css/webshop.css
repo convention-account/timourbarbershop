@@ -1043,3 +1043,28 @@ header.fixed .cart-icon {
         height: 30px;
     }
 }
+
+.checkout-btn:disabled,
+.checkout-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #888; /* Серый фон для заблокированной кнопки */
+}
+
+.checkout-btn:disabled:hover,
+.checkout-btn.disabled:hover {
+    opacity: 0.5; /* Не меняем прозрачность при наведении */
+    background: #888; /* Сохраняем серый фон */
+}
+
+.min-order-message {
+    display: none; /* Скрыто по умолчанию */
+    color: #ff4444; /* Красный цвет для привлечения внимания */
+    font-size: 16px;
+    font-weight: 900;
+    text-align: center;
+    margin: 10px 0;
+    padding: 10px;
+    background: rgba(255, 75, 75, 0.2);
+    border-radius: 5px;
+}
