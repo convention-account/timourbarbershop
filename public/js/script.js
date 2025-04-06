@@ -122,32 +122,19 @@ function isInViewport(element) {
 
 // Анимация при загрузке и скролле
 document.addEventListener('DOMContentLoaded', () => {
-    const elements = document.querySelectorAll('.headline-main, .headline-sub, .welcome-text, .blog-text, .additional-info');
-
-    function checkVisibility() {
-        elements.forEach(el => {
-            if (isInViewport(el)) {
-                el.classList.add('visible');
-            }
-        });
-    }
-
-    // Проверка при загрузке
-    checkVisibility();
-    // Проверка при скролле
-    window.addEventListener('scroll', checkVisibility);
-});
-
-document.addEventListener('DOMContentLoaded', () => {
     const loadingOverlay = document.querySelector('.loading-overlay');
 
-    // Показать спиннер при клике на любую ссылку
+    // Показать спиннер при клике на ссылку
     document.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', (e) => {
             const href = link.getAttribute('href');
-            // Исключаем якорные ссылки и внешние ссылки
+            // Исключаем якорные ссылки, внешние ссылки и почтовые ссылки
             if (href && !href.startsWith('#') && !href.startsWith('http') && !href.startsWith('mailto')) {
+                e.preventDefault(); // Предотвращаем немедленный переход
                 loadingOverlay.classList.add('active');
+                setTimeout(() => {
+                    window.location.href = href; // Переход после активации спиннера
+                }, 150); // Задержка для плавности
             }
         });
     });
@@ -157,7 +144,14 @@ document.addEventListener('DOMContentLoaded', () => {
         loadingOverlay.classList.remove('active');
     });
 
-    // Для обработки асинхронных переходов (если используешь fetch или роутинг)
+    // Скрыть спиннер при возврате на страницу (включая bfcache)
+    window.addEventListener('pageshow', (event) => {
+        if (event.persisted) { // Проверяем, загружается ли страница из кэша
+            loadingOverlay.classList.remove('active');
+        }
+    });
+
+    // Показать спиннер перед уходом со страницы
     window.addEventListener('beforeunload', () => {
         loadingOverlay.classList.add('active');
     });
