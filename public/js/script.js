@@ -137,3 +137,28 @@ document.addEventListener('DOMContentLoaded', () => {
     // Проверка при скролле
     window.addEventListener('scroll', checkVisibility);
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const loadingOverlay = document.querySelector('.loading-overlay');
+
+    // Показать спиннер при клике на любую ссылку
+    document.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', (e) => {
+            const href = link.getAttribute('href');
+            // Исключаем якорные ссылки и внешние ссылки
+            if (href && !href.startsWith('#') && !href.startsWith('http') && !href.startsWith('mailto')) {
+                loadingOverlay.classList.add('active');
+            }
+        });
+    });
+
+    // Скрыть спиннер после полной загрузки страницы
+    window.addEventListener('load', () => {
+        loadingOverlay.classList.remove('active');
+    });
+
+    // Для обработки асинхронных переходов (если используешь fetch или роутинг)
+    window.addEventListener('beforeunload', () => {
+        loadingOverlay.classList.add('active');
+    });
+});
