@@ -135,9 +135,9 @@ const db = new sqlite3.Database(path.join(dbDir, 'users.db'), (err) => {
     });
 
     // МИГРАЦИЯ ДБ
-    // db.run(`ALTER TABLE orders ADD COLUMN transaction_id TEXT`, (err) => {
-    //     if (err) console.error('Error adding transaction_id column:', err.message);
-    // });
+    db.run(`ALTER TABLE orders ADD COLUMN transaction_id TEXT`, (err) => {
+        if (err) console.error('Error adding transaction_id column:', err.message);
+    });
 
     // Создание учетной записи администратора, если она еще не существует
     db.get('SELECT * FROM users WHERE username = ?', ['admin'], (err, row) => {
