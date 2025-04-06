@@ -1004,10 +1004,10 @@ app.post('/voucher-checkout', async (req, res) => {
     console.log('Type of voucherCart cookie:', typeof req.cookies.voucherCart);
 
     // Проверяем, что все обязательные поля присутствуют
-    const { full_name, email, payment_method } = req.body;
-    if (!full_name || !email || !payment_method) {
-        console.log('Missing required fields:', { full_name, email, payment_method });
-        return res.status(400).json({ error: 'All fields are required' });
+    const { full_name, email, payment_method, transaction_id } = req.body;
+    if (!full_name || !email || !payment_method || !transaction_id) {
+        console.log('Missing required fields:', { full_name, email, payment_method, transaction_id });
+        return res.status(400).json({ error: 'All fields, including Transaction ID, are required' });
     }
     console.log('All required fields are present');
 
@@ -1111,13 +1111,14 @@ app.post('/voucher-checkout', async (req, res) => {
                     total_usdt: totalUSDT,
                     shipping_address: billingAddress,
                     payment_method: payment_method,
+                    transaction_id: transaction_id,
                     status: 'awaiting_payment'
                 });
 
                 db.run(
-                    `INSERT INTO orders (user_id, order_number, items, total_usdt, shipping_address, payment_method, status)
-                     VALUES (?, ?, ?, ?, ?, ?, 'awaiting_payment')`,
-                    [user.id, orderNumber, itemsJson, totalUSDT, billingAddress, payment_method],
+                    `INSERT INTO orders (user_id, order_number, items, total_usdt, shipping_address, payment_method, transaction_id, status)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, 'awaiting_payment')`,
+                    [user.id, orderNumber, itemsJson, totalUSDT, billingAddress, payment_method, transaction_id],
                     function (err) {
                         if (err) {
                             console.error('Error creating voucher order:', err.message);
@@ -1150,6 +1151,7 @@ app.post('/voucher-checkout', async (req, res) => {
                                 <p>Please send the payment in USDT (TRC20) to:</p>
                                 <p><strong>Wallet Address:</strong> TSLutTokZzNEnz1fb8NBDWrgE2GEYF2xet</p>
                                 <p><strong>Amount:</strong> ${totalUSDT.toFixed(2)} USDT</p>
+                                <p><strong>Transaction ID:</strong> ${transaction_id}</p>
                                 <p style="color: red; font-weight: bold;">Include your order number (${orderNumber}) in the transaction comment.</p>
                                 <p><img src="https://timour-barber.com/media/icon.png" alt="TimourBarber" style="max-width: 250px;"></p>
                                 <p><strong><a href="https://timour-barber.com/">Our website</a></strong></p>
@@ -1176,6 +1178,7 @@ app.post('/voucher-checkout', async (req, res) => {
                                 <p><strong>Vouchers:</strong></p>
                                 <ul>${voucherCart.map(item => `<li>${item.title} - ${item.price} USDT</li>`).join('')}</ul>
                                 <p><strong>Total:</strong> ${totalUSDT.toFixed(2)} USDT</p>
+                                <p><strong>Transaction ID:</strong> ${transaction_id}</p>
                             `
                         }, (error, info) => {
                             if (error) {

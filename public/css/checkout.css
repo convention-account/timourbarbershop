@@ -1,0 +1,148 @@
+/* Стили для секции Shipping Method */
+.shipping-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.shipping-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.05);
+    cursor: pointer;
+}
+
+.shipping-option input[type="radio"] {
+    margin-right: 10px;
+}
+
+.shipping-option img.shipping-icon {
+    max-width: 100px;
+    height: auto;
+}
+
+.shipping-option span {
+    color: #fff;
+    font-size: 16px;
+}
+
+/* Стили для поля Transaction ID */
+.form-group code {
+    color: #FFD700;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 2px 5px;
+    border-radius: 3px;
+}
+
+/* Убираем эффект поворота для формы чекаута */
+.checkout-form:hover {
+    transform: none !important;
+    box-shadow: 0 10px 40px rgba(159, 127, 243, 0.5);
+}
+
+/* Новые стили для секции Payment Method */
+.payment-method-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.payment-method-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.payment-method-option label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.payment-details {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.payment-address {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.payment-address:hover {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.payment-address code {
+    color: #FFD700;
+    font-size: 14px;
+    margin: 0;
+}
+
+.copy-btn {
+    background: #9F7FF3;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: background 0.3s;
+}
+
+.copy-btn:hover {
+    background: #7F5FD3;
+}
+
+.crypto-qr {
+    width: 250px;
+    height: 190px;
+    border: 2px solid #FFD700;
+    border-radius: 5px;
+    padding: 5px;
+    background: #fff;
+}
+
+@media screen and (max-width: 756px) {
+    .crypto-qr {
+        width: 220px !important;
+        height: 180px !important;
+    }
+
+    .payment-details {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .payment-address {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .copy-btn {
+        position: fixed;
+        margin-top: 75px;
+    }
+}

@@ -8,6 +8,7 @@
     <link rel="icon" type="image/x-icon" href="../media/logo.ico">
     <link rel="stylesheet" type="text/css" href="/css/contact.css">
     <link rel="stylesheet" href="/css/mobile-adaptation.css">
+    <link rel="stylesheet" type="text/css" href="css/checkout.css">
 </head>
 
 <body>
@@ -79,14 +80,30 @@
                     <div class="checkout-group">
                         <h3 class="form-subtitle">Payment Method</h3>
                         <div class="form-group">
-                            <label>
-                                <input type="radio" name="payment_method" value="usdt_trc20" checked>
-                                USDT (TRC20)
-                            </label>
+                            <div class="payment-method-container">
+                                <div class="payment-method-option">
+                                    <label>
+                                        <input type="radio" name="payment_method" value="usdt_trc20" checked>
+                                        USDT (TRC20)
+                                    </label>
+                                </div>
+                                <div class="payment-details">
+                                    <img src="../media/crypto_qr_rb.png" class="crypto-qr" alt="QR Code for Payment">
+                                    <div class="payment-address" onclick="copyAddress()">
+                                        <code>TSLutTokZzNEnz1fb8NBDWrgE2GEYF2xet</code>
+                                        <button type="button" class="copy-btn">Copy</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="transaction-id">Transaction ID</label>
+                                <input type="text" id="transaction-id" name="transaction_id"
+                                    placeholder="Enter your USDT TRC20 Transaction ID" required>
+                            </div>
                         </div>
                     </div>
 
-                    <div id="voucher-cart-summary"></div>
+                    <br><div id="voucher-cart-summary"></div>
 
                     <button type="submit" class="form-btn checkout-btn">Place Order</button>
                 </form>
@@ -113,81 +130,7 @@
         </div>
     </footer>
 
-    <script>
-        function getCookie(name) {
-            const nameEQ = name + "=";
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                let cookie = cookies[i].trim();
-                if (cookie.indexOf(nameEQ) === 0) {
-                    return decodeURIComponent(cookie.substring(nameEQ.length));
-                }
-            }
-            return null;
-        }
-
-        let cart;
-        try {
-            const rawCart = getCookie('voucherCart') || '[]';
-            cart = JSON.parse(rawCart);
-        } catch (error) {
-            console.error('Error parsing voucher cart:', error.message);
-            cart = [];
-        }
-
-        const cartSummary = document.getElementById('voucher-cart-summary');
-        if (cartSummary) {
-            if (cart.length > 0) {
-                let totalUSDT = cart.reduce((sum, item) => sum + parseFloat(item.price), 0);
-                cartSummary.innerHTML = `
-                    <h3>Your Vouchers:</h3>
-                    <ul style="list-style: none; padding: 0;">
-                        ${cart.map(item => `<li>${item.title} - ${item.price} USDT</li>`).join('')}
-                    </ul>
-                    <p><strong>Total:</strong> ${totalUSDT.toFixed(2)} USDT</p>
-                `;
-            } else {
-                cartSummary.innerHTML = '<p>Your voucher cart is empty. Please add vouchers before checking out.</p>';
-                document.querySelector('.checkout-btn').disabled = true;
-            }
-        }
-
-        const checkoutForm = document.getElementById('voucher-checkout-form');
-        if (checkoutForm) {
-            checkoutForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const submitButton = checkoutForm.querySelector('button[type="submit"]');
-                submitButton.disabled = true;
-                submitButton.textContent = 'Processing...';
-
-                const formData = new FormData(checkoutForm);
-                const data = Object.fromEntries(formData);
-
-                try {
-                    const response = await fetch('/voucher-checkout', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(data)
-                    });
-
-                    const result = await response.json();
-                    if (response.ok) {
-                        document.cookie = 'voucherCart=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-                        window.location.href = result.redirect;
-                    } else {
-                        alert(result.error || 'An error occurred during checkout');
-                        submitButton.disabled = false;
-                        submitButton.textContent = 'Place Order';
-                    }
-                } catch (error) {
-                    console.error('Error processing voucher checkout:', error);
-                    alert('Error processing checkout: ' + error.message);
-                    submitButton.disabled = false;
-                    submitButton.textContent = 'Place Order';
-                }
-            });
-        }
-    </script>
+    <script src="js/checkout-voucher.js"></script>
     <script src="/js/cart.js"></script>
 </body>
 
