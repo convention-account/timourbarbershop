@@ -812,10 +812,17 @@ h1 {
 /* Адаптивность для мобильных устройств */
 @media (max-width: 768px) {
     .crypto-popup {
-        width: 90%;
-        max-width: 280px;
+        width: 40%;
+        max-width: 180px;
         right: 10px;
-        padding: 10px;
+        padding: 5px;
+        color: white;
+    }
+
+    .crypto-more-btn {
+        padding: 10px !important;
+        width: 50%;
+        text-align: center;
     }
 
     .crypto-popup-content p {
