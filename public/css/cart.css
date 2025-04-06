@@ -1,0 +1,64 @@
+/* Стили для иконки корзины */
+.cart-icon {
+    position: fixed;
+    /* Всегда фиксирована в углу */
+    bottom: 20px;
+    right: 20px;
+    color: #FFF;
+    font-size: 40px;
+    /* Изначально маленькая */
+    cursor: pointer;
+    padding: 5px 10px;
+    /* Меньший padding */
+    background: rgba(159, 127, 243, 0.8);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    /* Плавный переход для всех изменений */
+    z-index: 1000;
+    /* Поверх других элементов */
+}
+
+@media screen and (max-width: 758px) {
+    .cart-icon {
+        font-size: 30px !important;
+    }
+}
+
+.cart-icon:hover {
+    opacity: 0.8;
+}
+
+.cart-count {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #ff4444;
+    color: #FFF;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    transition: all 0.3s ease;
+}
+
+/* Увеличение при скролле */
+.cart-icon-scrolled {
+    font-size: 30px;
+    /* Увеличиваем размер */
+    padding: 10px 20px;
+    /* Увеличиваем padding */
+    transform: scale(1.2);
+    /* Дополнительное масштабирование */
+}
+
+.cart-icon-scrolled .cart-count {
+    top: -10px;
+    right: -10px;
+    width: 25px;
+    height: 25px;
+    font-size: 14px;
+}

@@ -6,6 +6,7 @@
     <title>Hello, <%= user %>! Personal Cabinet</title>
     <link rel="stylesheet" href="css/mobile-adaptation.css">
     <link rel="stylesheet" type="text/css" href="css/profile.css">
+    <link rel="stylesheet" type="text/css" href="css/cart.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         /* Стили для основного контейнера */
@@ -218,11 +219,12 @@
                             <li><a href="/login">Login</a></li>
                             <% } %>
         </div>
-        <div class="cart-icon">
-            🛒
-            <span class="cart-count">0</span>
-        </div>
     </header>
+
+    <div class="cart-icon">
+        🛒
+        <span class="cart-count">0</span>
+    </div>
 
     <h1>Welcome, <%= user %>
     </h1>

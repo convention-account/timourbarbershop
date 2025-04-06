@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="css/styles.css">
     <link rel="stylesheet" href="css/mobile-adaptation.css">
     <link rel="stylesheet" href="css/index-cart.css">
+    <link rel="stylesheet" href="css/cart.css">
 </head>
 
 <body>
@@ -36,7 +37,7 @@
                 <li><a href="coin">Coin</a></li>
             </ul>
         </nav>
-        
+
         <div class="login-nav">
             <% if (user) { %>
                 <li>Welcome, <%= user %> | <a href="/profile">Personal Cabinet</a> | <a href="/logout">Logout</a></li>
@@ -47,12 +48,13 @@
                             <li><a href="/login">Login</a></li>
                             <% } %>
         </div>
-
-        <div class="cart-icon">
-            🛒
-            <span class="cart-count">0</span>
-        </div>
     </header>
+
+    <div class="cart-icon">
+        🛒
+        <span class="cart-count">0</span>
+    </div>
+
     <!-- Модальное окно корзины -->
     <div class="cart-modal">
         <div class="cart-content">
@@ -66,6 +68,7 @@
             <button class="close-cart">Close</button>
         </div>
     </div>
+
     <main>
         <div class="content-wrapper">
             <div class="text-content">
@@ -87,6 +90,7 @@
             </div>
         </div>
     </main>
+
     <section class="second-section">
         <div class="second-overlay"></div>
         <div class="second-content">
@@ -108,6 +112,7 @@
             </div>
         </div>
     </section>
+
     <section class="third-section">
         <div class="third-overlay"></div>
         <div class="third-content">
