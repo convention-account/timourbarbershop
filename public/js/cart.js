@@ -76,9 +76,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentCart = isServicesPage ? voucherCart : cart;
         cartItemsContainer.innerHTML = '';
         let totalUSDT = 0;
-    
+
         console.log('Current cart:', currentCart);
-    
+
         if (currentCart.length === 0) {
             cartItemsContainer.innerHTML = '<p>Your cart is empty</p>';
         } else {
@@ -99,26 +99,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 cartItemsContainer.appendChild(cartItem);
             });
         }
-    
+
         cartCount.textContent = currentCart.length;
         totalPriceElement.textContent = `${totalUSDT.toFixed(2)} USDT`;
-    
+
         setCookie(isServicesPage ? 'voucherCart' : 'cart', currentCart, 7);
-    
+
         // Проверка минимальной суммы заказа (50 EUR ≈ 55 USDT)
         const minOrderAmount = 55; // 50 EUR ≈ 55 USDT
         const minOrderMessage = document.querySelector('.min-order-message');
         const cartTotalElement = document.querySelector('.cart-total');
-    
+
         console.log('Total USDT:', totalUSDT);
-    
+
         if (!minOrderMessage) {
             const messageElement = document.createElement('p');
             messageElement.classList.add('min-order-message');
             messageElement.textContent = 'Minimum order amount is 50 EUR (~55 USDT). Please add more items to your cart.';
             cartItemsContainer.parentNode.insertBefore(messageElement, cartTotalElement);
         }
-    
+
         // Управление состоянием кнопки
         if (!isServicesPage && totalUSDT < minOrderAmount) {
             checkoutBtn.setAttribute('disabled', 'true');
@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             console.log('Button enabled: Sum is 55 USDT or more');
         }
-    
+
         document.querySelectorAll('.remove-item').forEach(button => {
             button.addEventListener('click', (e) => {
                 const index = parseInt(e.target.dataset.index);
@@ -150,68 +150,39 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
-    
+
     // Обработчик клика для кнопки Checkout
-    checkoutBtn.removeEventListener('click', checkoutBtn._clickHandler); // Удаляем старый обработчик
-    checkoutBtn._clickHandler = () => {
-        // Проверяем, заблокирована ли кнопка
-        if (checkoutBtn.hasAttribute('disabled')) {
-            console.log('Click ignored: Button is disabled due to insufficient amount');
-            return; // Ничего не делаем, если кнопка заблокирована
-        }
-    
+    checkoutBtn.addEventListener('click', (e) => {
+        // Предотвращаем действие по умолчанию (переход по ссылке)
+        e.preventDefault();
+
         const currentCart = isServicesPage ? voucherCart : cart;
         const totalUSDT = currentCart.reduce((sum, item) => sum + parseFloat(item.price), 0);
         const minOrderAmount = 55; // 50 EUR ≈ 55 USDT
-    
+
         console.log('Checkout button clicked. Total USDT:', totalUSDT);
-    
+
+        // Проверка состояния кнопки
+        if (checkoutBtn.hasAttribute('disabled')) {
+            console.log('Click ignored: Button is disabled due to insufficient amount');
+            return; // Ничего не делаем, если кнопка отключена
+        }
+
         if (currentCart.length === 0) {
             showAlert('Your cart is empty!');
             return;
         }
-    
-        // Дополнительная проверка на случай, если что-то пошло не так
+
+        // Дополнительная проверка на случай несоответствий
         if (!isServicesPage && totalUSDT < minOrderAmount) {
             console.log('Click ignored: Sum is less than 55 USDT');
             showAlert('Minimum order amount is 50 EUR (~55 USDT). Please add more items.');
             return;
         }
-    
-        console.log('Proceeding to checkout');
-        window.location.href = isServicesPage ? '/voucher-checkout' : '/checkout';
-    };
-    checkoutBtn.addEventListener('click', checkoutBtn._clickHandler);
-
-    // Удаляем существующие обработчики, чтобы избежать дублирования
-    checkoutBtn.removeEventListener('click', checkoutBtn._clickHandler);
-    checkoutBtn._clickHandler = () => {
-        // Проверяем, заблокирована ли кнопка
-        if (checkoutBtn.hasAttribute('disabled')) {
-            console.log('Click ignored: Button is disabled');
-            return;
-        }
-
-        const currentCart = isServicesPage ? voucherCart : cart;
-        const totalUSDT = currentCart.reduce((sum, item) => sum + parseFloat(item.price), 0);
-        const minOrderAmount = 55; // 50 EUR ≈ 55 USDT
-
-        console.log('Checkout button clicked. Total USDT:', totalUSDT);
-
-        if (currentCart.length === 0) {
-            showAlert('Your cart is empty!');
-            return;
-        }
-
-        if (!isServicesPage && totalUSDT < minOrderAmount) {
-            console.log('Click ignored: Sum is less than 55 USDT');
-            return;
-        }
 
         console.log('Proceeding to checkout');
         window.location.href = isServicesPage ? '/voucher-checkout' : '/checkout';
-    };
-    checkoutBtn.addEventListener('click', checkoutBtn._clickHandler);
+    });
 
     function showAlert(message) {
         const customAlert = document.getElementById('custom-alert');
