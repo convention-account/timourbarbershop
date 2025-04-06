@@ -106,5 +106,21 @@
         <div class="spinner"></div>
     </div>
 </body>
+<style>
+    .checkout-btn:disabled,
+    .checkout-btn.disabled {
+        background: #888 !important;
+        /* Увеличиваем приоритет */
+        opacity: 0.5 !important;
+        cursor: not-allowed !important;
+        color: #FFF !important;
+    }
+
+    .checkout-btn:disabled:hover,
+    .checkout-btn.disabled:hover {
+        background: #888 !important;
+        opacity: 0.5 !important;
+    }
+</style>
 
 </html>

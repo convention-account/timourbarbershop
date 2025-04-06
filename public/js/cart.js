@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let totalUSDT = 0;
 
         if (currentCart.length === 0) {
-            cartItemsContainer.innerHTML = '<p>Ваша корзина пуста</p>';
+            cartItemsContainer.innerHTML = '<p>Your cart is empty</p>';
         } else {
             currentCart.forEach((item, index) => {
                 const itemPrice = parseFloat(item.price);
@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 cartItem.innerHTML = `
                     <span class="cart-item-title">${item.title}</span>
                     <span class="cart-item-price">${item.price} USDT</span>
-                    <button class="remove-item" data-index="${index}">Удалить</button>
+                    <button class="remove-item" data-index="${index}">Delete</button>
                 `;
                 cartItemsContainer.appendChild(cartItem);
             });
@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!minOrderMessage) {
             const messageElement = document.createElement('p');
             messageElement.classList.add('min-order-message');
-            messageElement.textContent = 'Минимальная сумма заказа — 50 EUR (~55 USDT). Добавьте ещё товаров.';
+            messageElement.textContent = 'Minimum sum of order — 50 EUR (~55 USDT). Add more items.';
             cartItemsContainer.parentNode.insertBefore(messageElement, cartTotalElement);
         }
 
@@ -121,12 +121,12 @@ document.addEventListener('DOMContentLoaded', () => {
             checkoutBtn.disabled = true;
             checkoutBtn.classList.add('disabled');
             document.querySelector('.min-order-message').style.display = 'none';
-            console.log('Кнопка отключена: Корзина пуста');
+            console.log('Button off: Cart is empty');
         } else if (!isServicesPage && totalUSDT < minOrderAmount) {
             checkoutBtn.disabled = true;
             checkoutBtn.classList.add('disabled');
             document.querySelector('.min-order-message').style.display = 'block';
-            console.log('Кнопка отключена: Сумма меньше 55 USDT');
+            console.log('Button off: Sum < 55 USDT');
         } else {
             checkoutBtn.disabled = false;
             checkoutBtn.classList.remove('disabled');
@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
         e.stopPropagation();
 
         if (checkoutBtn.disabled || checkoutBtn.classList.contains('disabled')) {
-            console.log('Клик проигнорирован: кнопка отключена');
+            console.log('Click ignored: button off');
             return;
         }
 
@@ -169,12 +169,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const minOrderAmount = 55;
 
         if (currentCart.length === 0) {
-            showAlert('Ваша корзина пуста!');
+            showAlert('Your cart is empty!');
             return;
         }
 
         if (!isServicesPage && totalUSDT < minOrderAmount) {
-            showAlert('Минимальная сумма заказа — 50 EUR (~55 USDT). Добавьте ещё товаров.');
+            showAlert('Minimum order sum — 50 EUR (~55 USDT). Add more items.');
             return;
         }
 

@@ -3,7 +3,6 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Services - TimourBarber</title>
     <link rel="icon" type="image/x-icon" href="media/logo.ico">
     <link rel="stylesheet" href="css/services.css">
@@ -93,7 +92,8 @@
                             <li>✔️ Stylish finish</li>
                             <li>✔️ Pay with USDT or cash</li>
                         </ul>
-                        <p class="service-price">💰 Price: 35 USDT (~32,39€) <span class="discount-badge">20% OFF</span></p>
+                        <p class="service-price">💰 Price: 35 USDT (~32,39€) <span class="discount-badge">20% OFF</span>
+                        </p>
                         <p class="service-location">📍 Location: Barbershop</p>
                         <a href="#" class="service-btn">Buy Voucher</a>
                     </div>
@@ -145,7 +145,8 @@
                             <li>✔️ Stylish finish</li>
                             <li>✔️ Pay with USDT or cash</li>
                         </ul>
-                        <p class="service-price">💰 Price: 20 USDT (~18,54€) <span class="discount-badge">20% OFF</span></p>
+                        <p class="service-price">💰 Price: 20 USDT (~18,54€) <span class="discount-badge">20% OFF</span>
+                        </p>
                         <p class="service-location">📍 Location: Barbershop</p>
                         <a href="#" class="service-btn">Buy Voucher</a>
                     </div>
@@ -160,7 +161,8 @@
                             <li>✔️ Stylish finish</li>
                             <li>✔️ Pay with USDT or cash</li>
                         </ul>
-                        <p class="service-price">💰 Price: 15 USDT (~13,9€) <span class="discount-badge">20% OFF</span></p>
+                        <p class="service-price">💰 Price: 15 USDT (~13,9€) <span class="discount-badge">20% OFF</span>
+                        </p>
                         <p class="service-location">📍 Location: Barbershop</p>
                         <a href="#" class="service-btn">Buy Voucher</a>
                     </div>
@@ -243,5 +245,21 @@
         <div class="spinner"></div>
     </div>
 </body>
+<style>
+    .checkout-btn:disabled,
+    .checkout-btn.disabled {
+        background: #888 !important;
+        /* Увеличиваем приоритет */
+        opacity: 0.5 !important;
+        cursor: not-allowed !important;
+        color: #FFF !important;
+    }
+
+    .checkout-btn:disabled:hover,
+    .checkout-btn.disabled:hover {
+        background: #888 !important;
+        opacity: 0.5 !important;
+    }
+</style>
 
 </html>

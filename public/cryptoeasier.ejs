@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <title>Why Crypto is Easier - TimourBarber</title>
     <link rel="icon" type="image/x-icon" href="../media/logo.ico">
-    <link rel="stylesheet" type="text/css" href="css/cart.css">
     <link rel="stylesheet" type="text/css" href="css/job.css">
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -80,11 +79,16 @@
 
             <!-- Основной контент -->
             <div class="job-main">
-                <p class="job-text">🌐 <strong>Fast and Global:</strong> Pay with cryptocurrency in seconds from anywhere in the world—no borders, no delays, just instant transactions.</p>
-                <p class="job-text">🔒 <strong>Secure and Private:</strong> Your payments are protected by blockchain technology. No personal data shared, just pure privacy.</p>
-                <p class="job-text">💰 <strong>No Extra Fees:</strong> Forget bank charges or currency conversion costs. Crypto keeps it simple and cost-effective.</p>
-                <p class="job-text">⚡ <strong>Future-Ready:</strong> Join the revolution! Paying with crypto aligns you with the modern, decentralized economy.</p>
-                <p class="job-text">🌟 At Timour Barber, we’ve integrated seamless crypto payments with USDT (TRC20) making your experience as smooth as your fresh cut!</p>
+                <p class="job-text">🌐 <strong>Fast and Global:</strong> Pay with cryptocurrency in seconds from
+                    anywhere in the world—no borders, no delays, just instant transactions.</p>
+                <p class="job-text">🔒 <strong>Secure and Private:</strong> Your payments are protected by blockchain
+                    technology. No personal data shared, just pure privacy.</p>
+                <p class="job-text">💰 <strong>No Extra Fees:</strong> Forget bank charges or currency conversion costs.
+                    Crypto keeps it simple and cost-effective.</p>
+                <p class="job-text">⚡ <strong>Future-Ready:</strong> Join the revolution! Paying with crypto aligns you
+                    with the modern, decentralized economy.</p>
+                <p class="job-text">🌟 At Timour Barber, we’ve integrated seamless crypto payments with USDT (TRC20)
+                    making your experience as smooth as your fresh cut!</p>
             </div>
 
             <!-- Кнопка действия -->
@@ -123,5 +127,120 @@
         <div class="spinner"></div>
     </div>
 </body>
+<style>
+    /* Стили для иконки корзины */
+    .cart-icon {
+        position: fixed;
+        /* Всегда фиксирована в углу */
+        bottom: 20px;
+        right: 20px;
+        color: #FFF;
+        font-size: 40px;
+        /* Изначально маленькая */
+        cursor: pointer;
+        padding: 5px 10px;
+        /* Меньший padding */
+        background: rgba(159, 127, 243, 0.8);
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        /* Плавный переход для всех изменений */
+        z-index: 1000;
+        /* Поверх других элементов */
+    }
+
+    @media screen and (max-width: 758px) {
+        .cart-icon {
+            font-size: 30px !important;
+        }
+    }
+
+    .cart-icon:hover {
+        opacity: 0.8;
+    }
+
+    .cart-count {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: #ff4444;
+        color: #FFF;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 900;
+        transition: all 0.3s ease;
+    }
+
+    /* Увеличение при скролле */
+    .cart-icon-scrolled {
+        font-size: 30px;
+        /* Увеличиваем размер */
+        padding: 10px 20px;
+        /* Увеличиваем padding */
+        transform: scale(1.2);
+        /* Дополнительное масштабирование */
+    }
+
+    .cart-icon-scrolled .cart-count {
+        top: -10px;
+        right: -10px;
+        width: 25px;
+        height: 25px;
+        font-size: 14px;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    .checkout-btn:disabled,
+    .checkout-btn.disabled {
+        background: #888 !important;
+        /* Увеличиваем приоритет */
+        opacity: 0.5 !important;
+        cursor: not-allowed !important;
+        color: #FFF !important;
+    }
+
+    .checkout-btn:disabled:hover,
+    .checkout-btn.disabled:hover {
+        background: #888 !important;
+        opacity: 0.5 !important;
+    }
+
+    .headline-main,
+    .headline-sub,
+    .job-text,
+    .apply-title,
+    .form-group {
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeIn 0.5s ease forwards;
+    }
+
+    @keyframes fadeIn {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Задержки для последовательного появления */
+    .headline-sub {
+        animation-delay: 0.2s;
+    }
+
+    .job-text:nth-child(1) {
+        animation-delay: 0.3s;
+    }
+
+    .job-text:nth-child(2) {
+        animation-delay: 0.4s;
+    }
+</style>
 
 </html>
