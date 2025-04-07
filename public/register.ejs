@@ -121,6 +121,63 @@
         background: #888 !important;
         opacity: 0.5 !important;
     }
+
+    .remove-item {
+        background: #ff4444;
+        color: #FFF;
+        border: none;
+        padding: 5px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .cart-total {
+        display: flex;
+        justify-content: space-between;
+        padding: 15px 0;
+        font-size: 20px;
+        font-weight: 900;
+        background: rgba(159, 127, 243, 0.2);
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    .cart-total:not(:last-child) {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+    }
+
+    .checkout-btn,
+    .close-cart {
+        display: block;
+        width: 100%;
+        padding: 15px;
+        margin: 10px 0;
+        border: none;
+        border-radius: 10px;
+        font-size: 18px;
+        font-weight: 900;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: opacity 0.3s;
+    }
+
+    .checkout-btn {
+        background: #9F7FF3;
+        color: #FFF;
+    }
+
+    .checkout-btn:hover,
+    .close-cart:hover {
+        opacity: 0.8;
+    }
+
+    .close-cart {
+        background: #FFF;
+        color: #000;
+    }
 </style>
 
 </html>
