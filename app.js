@@ -256,7 +256,7 @@ app.post('/register', async (req, res) => {
     }
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
-        db.run('INSERT INTO users (username, email, password, voucher) VALUES (?, ?, ?, 0)', 
+        db.run('INSERT INTO users (username, email, password, voucher) VALUES (?, ?, ?, 0)',
             [username, email, hashedPassword], function (err) {
                 if (err) {
                     return res.render('register', { error: 'This email is already registered', user: null });
@@ -1226,7 +1226,7 @@ app.post('/voucher-checkout', async (req, res) => {
                                 <p><strong>Wallet Address:</strong> TSLutTokZzNEnz1fb8NBDWrgE2GEYF2xet</p>
                                 <p><strong>Amount:</strong> ${totalUSDT.toFixed(2)} USDT</p>
                                 <p><strong>Transaction ID:</strong> ${transaction_id}</p>
-                                <p style="color: red; font-weight: bold;">Include your order number (${orderNumber}) in the transaction comment.</p>
+                                <p style="color: red; font-weight: bold;">Your order is being prepared. Our receptionist checks the payment for the (${orderNumber}) order. This usually doesn't take long. You will receive a new notification of a status change.</p>
                                 <p><img src="https://timour-barber.com/media/icon.png" alt="TimourBarber" style="max-width: 250px;"></p>
                                 <p><strong><a href="https://timour-barber.com/">Our website</a></strong></p>
                                 <p><strong>TimourBarber 2025©</strong></p>
