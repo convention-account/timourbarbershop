@@ -11,6 +11,180 @@ const nodemailer = require('nodemailer');
 const admins = ['admin', 'Andrii Slavutskyi'];
 const multer = require('multer');
 
+let products = {
+    'сlassic-pomade-125ml': {
+        id: 'сlassic-pomade-125ml',
+        title: 'Classic pomade 125ML',
+        price: 21.83,
+        priceEUR: 20,
+        description: 'A timeless, strong-hold pomade for a sleek, polished look. Perfect for all hair types. 125ML.',
+        images: ['/img/image4.jpg', '/img/image16.jpg'],
+        features: ['Professional tool', 'Payment in USDT or cash']
+    },
+    'deluxe_pomade_125ml': {
+        id: 'deluxe_pomade_125ML',
+        title: 'Deluxe pomade 125ML',
+        price: 21.83,
+        priceEUR: 20,
+        description: 'A classic deluxe pomade with a strong hold and high shine. Ideal for sleek, timeless styles. 125ML.',
+        images: ['/img/image17.jpg', '/img/image5.jpg'],
+        features: ['Professional tool', 'Payment in USDT or cash']
+    },
+    'fiber-wax-125ml': {
+        id: 'fiber-wax-125ML',
+        title: 'Fiber wax 125ML',
+        price: 21.83,
+        priceEUR: 20,
+        description: 'A flexible fiber wax with a strong hold and matte finish. Perfect for textured, natural styles. 125ML.',
+        images: ['/img/image14.jpg', '/img/image18.jpg'],
+        features: ['Professional tool', 'Payment in USDT or cash']
+    },
+    'matte-wax-125ml': {
+        id: 'matte-wax-125ML',
+        title: 'Matte wax 125 ML',
+        price: 21.83,
+        priceEUR: 20,
+        description: 'A matte wax with a strong hold for a natural, textured look. No shine, all style. 125ML.',
+        images: ['/img/image2.jpg', '/img/image6.jpg'],
+        features: ['Professional tool', 'Payment in USDT or cash']
+    },
+    'matte-clay-125ml': {
+        id: 'matte-clay-125ML',
+        title: 'Matte clay 125ML',
+        price: 21.83,
+        priceEUR: 20,
+        description: 'A flexible fiber wax with a strong hold and matte finish. Perfect for textured, natural styles. 125ML.',
+        images: ['/img/image15.jpg', '/img/image3.jpg'],
+        features: ['Professional tool', 'Payment in USDT or cash']
+    },
+    'beard-oil-limited-edition-40ml': {
+        id: 'beard-oil-limited-edition-40ml',
+        title: 'Beard Oil Limited Edition 40ML',
+        price: 24.01,
+        priceEUR: 22,
+        description: 'A premium limited-edition beard oil that nourishes, softens, and adds a healthy shine. 40ML.',
+        images: ['/img/image23.jpg'],
+        features: ['Professional tool', 'Payment in USDT or cash']
+    },
+    'beard-balm-argan-oil-40ml': {
+        id: 'beard-balm-argan-oil-40ml',
+        title: 'Beard Balm argan oil 40ML',
+        price: 24.01,
+        priceEUR: 22,
+        description: 'A nourishing beard balm with argan oil for softness, control, and a healthy shine. 40ML.',
+        images: ['/img/image1.jpg'],
+        features: ['Professional tool', 'Payment in USDT or cash']
+    },
+    'hairspray-extra-volume-400ml': {
+        id: 'hairspray-extra-volume-400ml',
+        title: 'Hairspray Extra Volume 400ML',
+        price: 16.37,
+        priceEUR: 15,
+        description: 'A lightweight hairspray for extra volume and long-lasting hold without stiffness. 400ML.',
+        images: ['/img/image22.jpg'],
+        features: ['Professional tool', 'Payment in USDT or cash']
+    },
+    'sea-salt-spray-250ml': {
+        id: 'sea-salt-spray-250ml',
+        title: 'Sea salt spray 250ML',
+        price: 20.74,
+        priceEUR: 19,
+        description: 'A sea salt spray for effortless, beachy waves with natural texture and volume. 250ML.',
+        images: ['/img/image21.jpg'],
+        features: ['Professional tool', 'Payment in USDT or cash']
+    },
+    'after-shave-cream-cologne-350ml': {
+        id: 'after-shave-cream-cologne-350ml',
+        title: 'After shave cream cologne 350ML ',
+        price: 21.83,
+        priceEUR: 20,
+        description: 'A flexible fiber wax with a strong hold and matte finish. Perfect for textured, natural styles. 125ML.',
+        images: ['/img/image19.jpg'],
+        features: ['Professional tool', 'Payment in USDT or cash']
+    },
+    'hairstyling-powder-20ml': {
+        id: 'hairstyling-powder-20ml',
+        title: 'Hairstyling powder 20ml',
+        price: 21.83,
+        priceEUR: 20,
+        description: 'A lightweight hairstyling powder for instant volume and texture with a matte finish. 20ML.',
+        images: ['/img/image20.jpg'],
+        features: ['Professional tool', 'Payment in USDT or cash']
+    },
+    'black-flat-top-barber-comb-professional-use': {
+        id: 'black-flat-top-barber-comb-professional-use',
+        title: 'Black flat top barber comb professional use',
+        price: 6.55,
+        priceEUR: 6,
+        description: 'A durable black flat-top barber comb, designed for professional use, offering precise styling and control.',
+        images: ['/img/image7.jpg'],
+        features: ['Professional tool', 'Payment in USDT or cash']
+    },
+    'styling-comb-wet&dry-for-all-hair-types': {
+        id: 'styling-comb-wet&dry-for-all-hair-types',
+        title: 'Styling comb wet&dry for all hair types',
+        price: 9.82,
+        priceEUR: 9,
+        description: 'A versatile wet & dry styling comb, suitable for all hair types, providing gentle detangling and smooth styling.',
+        images: ['/img/image8.jpg'],
+        features: ['Professional tool', 'Payment in USDT or cash']
+    },
+    'dual-sided-brush-for-daily-hair': {
+        id: 'dual-sided-brush-for-daily-hair',
+        title: 'Dual-sided brush for daily hair',
+        price: 5.46,
+        priceEUR: 5,
+        description: 'A dual-sided brush for daily hair care, with soft bristles for detangling and a firmer side for styling and volume.',
+        images: ['/img/image9.jpg'],
+        features: ['Professional tool', 'Payment in USDT or cash']
+    },
+    'broken-hair-sweep-beard-shape': {
+        id: 'broken-hair-sweep-beard-shape',
+        title: 'broken hair sweep beard shape, two sides combed men`s oil head texture combing nylon soft hair clean beard brush',
+        price: 7.64,
+        priceEUR: 7,
+        description: 'A multifunctional comb and brush for men, designed to shape and sweep broken hair and beards. Features two sides for versatile styling, with soft nylon bristles for gentle cleaning and texture.',
+        images: ['/img/image10.jpg'],
+        features: ['Professional tool', 'Payment in USDT or cash']
+    },
+    'double-side-hair-comb-texture-comb': {
+        id: 'double-side-hair-comb-texture-comb',
+        title: 'Double Side Hair Comb, Texture Comb',
+        price: 6.55,
+        priceEUR: 6,
+        description: 'A double-sided hair and texture comb for precise styling, offering both fine and wide teeth for versatile hair control. Perfect for all hair types.',
+        images: ['/img/image11.jpg'],
+        features: ['Professional tool', 'Payment in USDT or cash']
+    },
+    'men-beard-brush&1pc-beard': {
+        id: 'men-beard-brush&1pc-beard',
+        title: '1pc Men Beard Brush & 1pc Beard Comb & 1pc Storage Bag.',
+        price: 20.74,
+        priceEUR: 19,
+        description: 'A complete beard grooming set, including a beard brush, comb, and a convenient storage bag. Ideal for keeping your beard neat and well-maintained.',
+        images: ['/img/image12.jpg'],
+        features: ['Professional tool', 'Payment in USDT or cash']
+    },
+    'derma-roller-system': {
+        id: 'derma-roller-system',
+        title: '1pc Derma Roller System',
+        price: 14,
+        priceEUR: 12.98,
+        description: 'Derma Roller System boosts collagen, improves skin texture, and enhances skincare absorption.',
+        images: ['/img/image24.png'],
+        features: ['Professional tool', 'Payment in USDT or cash']
+    },
+    'matte-pomade-125ml': {
+        id: 'matte-pomade-125ml',
+        title: 'Matte pomade 125ML',
+        price: 20,
+        priceEUR: 18.56,
+        description: 'Matte Pomade provides strong, flexible hold with a natural, shine-free finish. 125ML.',
+        images: ['/img/image25.png'],
+        features: ['Professional tool', 'Payment in USDT or cash']
+    }
+};
+
 require('dotenv').config();
 
 // MySQL временно не используется, удалено для работы с SQLite
@@ -82,6 +256,114 @@ const storage = multer.diskStorage({
     },
     filename: (req, file, cb) => {
         cb(null, `${Date.now()}-${file.originalname}`);
+    }
+});
+
+// Настройка multer для изображений товаров
+const productUpload = multer({
+    storage: multer.diskStorage({
+        destination: (req, file, cb) => {
+            const uploadDir = path.join(__dirname, 'public/img');
+            if (!fs.existsSync(uploadDir)) {
+                fs.mkdirSync(uploadDir);
+            }
+            cb(null, uploadDir);
+        },
+        filename: (req, file, cb) => {
+            cb(null, `${Date.now()}-${file.originalname}`);
+        }
+    }),
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype.startsWith('image/')) {
+            cb(null, true);
+        } else {
+            cb(new Error('Only images are allowed'), false);
+        }
+    }
+});
+
+// Загрузка товаров для админ-панели
+app.get('/admin/products', (req, res) => {
+    if (!req.session.user || !admins.includes(req.session.user)) {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+    res.json(Object.values(products));
+});
+
+// Добавление нового товара
+app.post('/admin/add-product', productUpload.array('images'), (req, res) => {
+    if (!req.session.user || !admins.includes(req.session.user)) {
+        return res.status(403).json({ success: false, error: 'Unauthorized' });
+    }
+
+    const { title, description, price, priceEUR } = req.body;
+    const images = req.files.map(file => `/img/${file.filename}`);
+
+    if (!title || !price) {
+        return res.status(400).json({ success: false, error: 'Title and price are required' });
+    }
+
+    const productId = title.toLowerCase().replace(/\s+/g, '-');
+    products[productId] = {
+        id: productId,
+        title,
+        description: description || '',
+        price: parseFloat(price),
+        priceEUR: priceEUR ? parseFloat(priceEUR) : 0,
+        images,
+        features: ['Professional tool', 'Payment in USDT or cash']
+    };
+
+    res.json({ success: true });
+});
+
+// Обновление товара
+app.post('/admin/update-product', productUpload.array('images'), (req, res) => {
+    if (!req.session.user || !admins.includes(req.session.user)) {
+        return res.status(403).json({ success: false, error: 'Unauthorized' });
+    }
+
+    const { title, description, price, priceEUR, productId } = req.body; // Извлекаем productId из req.body
+    const newImages = req.files.map(file => `/img/${file.filename}`);
+
+    if (!productId || !products[productId]) {
+        return res.status(404).json({ success: false, error: 'Product not found' });
+    }
+
+    products[productId] = {
+        ...products[productId],
+        title: title || products[productId].title,
+        description: description || products[productId].description,
+        price: price ? parseFloat(price) : products[productId].price,
+        priceEUR: priceEUR ? parseFloat(priceEUR) : products[productId].priceEUR,
+        images: newImages.length ? newImages : products[productId].images
+    };
+    res.json({ success: true });
+});
+
+// Удаление товара
+app.post('/admin/delete-product', async (req, res) => {
+    if (!req.session.user || !admins.includes(req.session.user)) {
+        return res.status(403).json({ success: false, error: 'Unauthorized' });
+    }
+
+    const { productId, password } = req.body;
+
+    const user = await new Promise((resolve) => {
+        db.get('SELECT password FROM users WHERE username = ?', [req.session.user], (err, row) => {
+            resolve(row);
+        });
+    });
+
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+        return res.status(401).json({ success: false, error: 'Incorrect password' });
+    }
+
+    if (products[productId]) {
+        delete products[productId];
+        res.json({ success: true });
+    } else {
+        res.status(404).json({ success: false, error: 'Product not found' });
     }
 });
 
@@ -474,7 +756,8 @@ app.get('/webshop', (req, res) => {
     const renderData = {
         user: req.session.user || null,
         purchaseSuccess: req.session.purchaseSuccess || false,
-        voucherAlreadyOwned: req.session.voucherAlreadyOwned || false
+        voucherAlreadyOwned: req.session.voucherAlreadyOwned || false,
+        products: Object.values(products) // Преобразуем объект в массив
     };
     if (req.session.purchaseSuccess) delete req.session.purchaseSuccess;
     if (req.session.voucherAlreadyOwned) delete req.session.voucherAlreadyOwned;
@@ -836,179 +1119,179 @@ app.get('/product/:productId', (req, res) => {
     const productId = req.params.productId;
     const hash = req.query.hash || uuidv4();
 
-    const products = {
-        'сlassic-pomade-125ml': {
-            id: 'сlassic-pomade-125ml',
-            title: 'Classic pomade 125ML',
-            price: 21.83,
-            priceEUR: 20,
-            description: 'A timeless, strong-hold pomade for a sleek, polished look. Perfect for all hair types. 125ML.',
-            images: ['/img/image4.jpg', '/img/image16.jpg'],
-            features: ['Professional tool', 'Payment in USDT or cash']
-        },
-        'deluxe_pomade_125ml': {
-            id: 'deluxe_pomade_125ML',
-            title: 'Deluxe pomade 125ML',
-            price: 21.83,
-            priceEUR: 20,
-            description: 'A classic deluxe pomade with a strong hold and high shine. Ideal for sleek, timeless styles. 125ML.',
-            images: ['/img/image17.jpg', '/img/image5.jpg'],
-            features: ['Professional tool', 'Payment in USDT or cash']
-        },
-        'fiber-wax-125ml': {
-            id: 'fiber-wax-125ML',
-            title: 'Fiber wax 125ML',
-            price: 21.83,
-            priceEUR: 20,
-            description: 'A flexible fiber wax with a strong hold and matte finish. Perfect for textured, natural styles. 125ML.',
-            images: ['/img/image14.jpg', '/img/image18.jpg'],
-            features: ['Professional tool', 'Payment in USDT or cash']
-        },
-        'matte-wax-125ml': {
-            id: 'matte-wax-125ML',
-            title: 'Matte wax 125 ML',
-            price: 21.83,
-            priceEUR: 20,
-            description: 'A matte wax with a strong hold for a natural, textured look. No shine, all style. 125ML.',
-            images: ['/img/image2.jpg', '/img/image6.jpg'],
-            features: ['Professional tool', 'Payment in USDT or cash']
-        },
-        'matte-clay-125ml': {
-            id: 'matte-clay-125ML',
-            title: 'Matte clay 125ML',
-            price: 21.83,
-            priceEUR: 20,
-            description: 'A flexible fiber wax with a strong hold and matte finish. Perfect for textured, natural styles. 125ML.',
-            images: ['/img/image15.jpg', '/img/image3.jpg'],
-            features: ['Professional tool', 'Payment in USDT or cash']
-        },
-        'beard-oil-limited-edition-40ml': {
-            id: 'beard-oil-limited-edition-40ml',
-            title: 'Beard Oil Limited Edition 40ML',
-            price: 24.01,
-            priceEUR: 22,
-            description: 'A premium limited-edition beard oil that nourishes, softens, and adds a healthy shine. 40ML.',
-            images: ['/img/image23.jpg'],
-            features: ['Professional tool', 'Payment in USDT or cash']
-        },
-        'beard-balm-argan-oil-40ml': {
-            id: 'beard-balm-argan-oil-40ml',
-            title: 'Beard Balm argan oil 40ML',
-            price: 24.01,
-            priceEUR: 22,
-            description: 'A nourishing beard balm with argan oil for softness, control, and a healthy shine. 40ML.',
-            images: ['/img/image1.jpg'],
-            features: ['Professional tool', 'Payment in USDT or cash']
-        },
-        'hairspray-extra-volume-400ml': {
-            id: 'hairspray-extra-volume-400ml',
-            title: 'Hairspray Extra Volume 400ML',
-            price: 16.37,
-            priceEUR: 15,
-            description: 'A lightweight hairspray for extra volume and long-lasting hold without stiffness. 400ML.',
-            images: ['/img/image22.jpg'],
-            features: ['Professional tool', 'Payment in USDT or cash']
-        },
-        'sea-salt-spray-250ml': {
-            id: 'sea-salt-spray-250ml',
-            title: 'Sea salt spray 250ML',
-            price: 20.74,
-            priceEUR: 19,
-            description: 'A sea salt spray for effortless, beachy waves with natural texture and volume. 250ML.',
-            images: ['/img/image21.jpg'],
-            features: ['Professional tool', 'Payment in USDT or cash']
-        },
-        'after-shave-cream-cologne-350ml': {
-            id: 'after-shave-cream-cologne-350ml',
-            title: 'After shave cream cologne 350ML ',
-            price: 21.83,
-            priceEUR: 20,
-            description: 'A flexible fiber wax with a strong hold and matte finish. Perfect for textured, natural styles. 125ML.',
-            images: ['/img/image19.jpg'],
-            features: ['Professional tool', 'Payment in USDT or cash']
-        },
-        'hairstyling-powder-20ml': {
-            id: 'hairstyling-powder-20ml',
-            title: 'Hairstyling powder 20ml',
-            price: 21.83,
-            priceEUR: 20,
-            description: 'A lightweight hairstyling powder for instant volume and texture with a matte finish. 20ML.',
-            images: ['/img/image20.jpg'],
-            features: ['Professional tool', 'Payment in USDT or cash']
-        },
-        'black-flat-top-barber-comb-professional-use': {
-            id: 'black-flat-top-barber-comb-professional-use',
-            title: 'Black flat top barber comb professional use',
-            price: 6.55,
-            priceEUR: 6,
-            description: 'A durable black flat-top barber comb, designed for professional use, offering precise styling and control.',
-            images: ['/img/image7.jpg'],
-            features: ['Professional tool', 'Payment in USDT or cash']
-        },
-        'styling-comb-wet&dry-for-all-hair-types': {
-            id: 'styling-comb-wet&dry-for-all-hair-types',
-            title: 'Styling comb wet&dry for all hair types',
-            price: 9.82,
-            priceEUR: 9,
-            description: 'A versatile wet & dry styling comb, suitable for all hair types, providing gentle detangling and smooth styling.',
-            images: ['/img/image8.jpg'],
-            features: ['Professional tool', 'Payment in USDT or cash']
-        },
-        'dual-sided-brush-for-daily-hair': {
-            id: 'dual-sided-brush-for-daily-hair',
-            title: 'Dual-sided brush for daily hair',
-            price: 5.46,
-            priceEUR: 5,
-            description: 'A dual-sided brush for daily hair care, with soft bristles for detangling and a firmer side for styling and volume.',
-            images: ['/img/image9.jpg'],
-            features: ['Professional tool', 'Payment in USDT or cash']
-        },
-        'broken-hair-sweep-beard-shape': {
-            id: 'broken-hair-sweep-beard-shape',
-            title: 'broken hair sweep beard shape, two sides combed men`s oil head texture combing nylon soft hair clean beard brush',
-            price: 7.64,
-            priceEUR: 7,
-            description: 'A multifunctional comb and brush for men, designed to shape and sweep broken hair and beards. Features two sides for versatile styling, with soft nylon bristles for gentle cleaning and texture.',
-            images: ['/img/image10.jpg'],
-            features: ['Professional tool', 'Payment in USDT or cash']
-        },
-        'double-side-hair-comb-texture-comb': {
-            id: 'double-side-hair-comb-texture-comb',
-            title: 'Double Side Hair Comb, Texture Comb',
-            price: 6.55,
-            priceEUR: 6,
-            description: 'A double-sided hair and texture comb for precise styling, offering both fine and wide teeth for versatile hair control. Perfect for all hair types.',
-            images: ['/img/image11.jpg'],
-            features: ['Professional tool', 'Payment in USDT or cash']
-        },
-        'men-beard-brush&1pc-beard': {
-            id: 'men-beard-brush&1pc-beard',
-            title: '1pc Men Beard Brush & 1pc Beard Comb & 1pc Storage Bag.',
-            price: 20.74,
-            priceEUR: 19,
-            description: 'A complete beard grooming set, including a beard brush, comb, and a convenient storage bag. Ideal for keeping your beard neat and well-maintained.',
-            images: ['/img/image12.jpg'],
-            features: ['Professional tool', 'Payment in USDT or cash']
-        },
-        'derma-roller-system': {
-            id: 'derma-roller-system',
-            title: '1pc Derma Roller System',
-            price: 14,
-            priceEUR: 12.98,
-            description: 'Derma Roller System boosts collagen, improves skin texture, and enhances skincare absorption.',
-            images: ['/img/image24.png'],
-            features: ['Professional tool', 'Payment in USDT or cash']
-        },
-        'matte-pomade-125ml': {
-            id: 'matte-pomade-125ml',
-            title: 'Matte pomade 125ML',
-            price: 20,
-            priceEUR: 18.56,
-            description: 'Matte Pomade provides strong, flexible hold with a natural, shine-free finish. 125ML.',
-            images: ['/img/image25.png'],
-            features: ['Professional tool', 'Payment in USDT or cash']
-        }
-    };
+    // const products = {
+    //     'сlassic-pomade-125ml': {
+    //         id: 'сlassic-pomade-125ml',
+    //         title: 'Classic pomade 125ML',
+    //         price: 21.83,
+    //         priceEUR: 20,
+    //         description: 'A timeless, strong-hold pomade for a sleek, polished look. Perfect for all hair types. 125ML.',
+    //         images: ['/img/image4.jpg', '/img/image16.jpg'],
+    //         features: ['Professional tool', 'Payment in USDT or cash']
+    //     },
+    //     'deluxe_pomade_125ml': {
+    //         id: 'deluxe_pomade_125ML',
+    //         title: 'Deluxe pomade 125ML',
+    //         price: 21.83,
+    //         priceEUR: 20,
+    //         description: 'A classic deluxe pomade with a strong hold and high shine. Ideal for sleek, timeless styles. 125ML.',
+    //         images: ['/img/image17.jpg', '/img/image5.jpg'],
+    //         features: ['Professional tool', 'Payment in USDT or cash']
+    //     },
+    //     'fiber-wax-125ml': {
+    //         id: 'fiber-wax-125ML',
+    //         title: 'Fiber wax 125ML',
+    //         price: 21.83,
+    //         priceEUR: 20,
+    //         description: 'A flexible fiber wax with a strong hold and matte finish. Perfect for textured, natural styles. 125ML.',
+    //         images: ['/img/image14.jpg', '/img/image18.jpg'],
+    //         features: ['Professional tool', 'Payment in USDT or cash']
+    //     },
+    //     'matte-wax-125ml': {
+    //         id: 'matte-wax-125ML',
+    //         title: 'Matte wax 125 ML',
+    //         price: 21.83,
+    //         priceEUR: 20,
+    //         description: 'A matte wax with a strong hold for a natural, textured look. No shine, all style. 125ML.',
+    //         images: ['/img/image2.jpg', '/img/image6.jpg'],
+    //         features: ['Professional tool', 'Payment in USDT or cash']
+    //     },
+    //     'matte-clay-125ml': {
+    //         id: 'matte-clay-125ML',
+    //         title: 'Matte clay 125ML',
+    //         price: 21.83,
+    //         priceEUR: 20,
+    //         description: 'A flexible fiber wax with a strong hold and matte finish. Perfect for textured, natural styles. 125ML.',
+    //         images: ['/img/image15.jpg', '/img/image3.jpg'],
+    //         features: ['Professional tool', 'Payment in USDT or cash']
+    //     },
+    //     'beard-oil-limited-edition-40ml': {
+    //         id: 'beard-oil-limited-edition-40ml',
+    //         title: 'Beard Oil Limited Edition 40ML',
+    //         price: 24.01,
+    //         priceEUR: 22,
+    //         description: 'A premium limited-edition beard oil that nourishes, softens, and adds a healthy shine. 40ML.',
+    //         images: ['/img/image23.jpg'],
+    //         features: ['Professional tool', 'Payment in USDT or cash']
+    //     },
+    //     'beard-balm-argan-oil-40ml': {
+    //         id: 'beard-balm-argan-oil-40ml',
+    //         title: 'Beard Balm argan oil 40ML',
+    //         price: 24.01,
+    //         priceEUR: 22,
+    //         description: 'A nourishing beard balm with argan oil for softness, control, and a healthy shine. 40ML.',
+    //         images: ['/img/image1.jpg'],
+    //         features: ['Professional tool', 'Payment in USDT or cash']
+    //     },
+    //     'hairspray-extra-volume-400ml': {
+    //         id: 'hairspray-extra-volume-400ml',
+    //         title: 'Hairspray Extra Volume 400ML',
+    //         price: 16.37,
+    //         priceEUR: 15,
+    //         description: 'A lightweight hairspray for extra volume and long-lasting hold without stiffness. 400ML.',
+    //         images: ['/img/image22.jpg'],
+    //         features: ['Professional tool', 'Payment in USDT or cash']
+    //     },
+    //     'sea-salt-spray-250ml': {
+    //         id: 'sea-salt-spray-250ml',
+    //         title: 'Sea salt spray 250ML',
+    //         price: 20.74,
+    //         priceEUR: 19,
+    //         description: 'A sea salt spray for effortless, beachy waves with natural texture and volume. 250ML.',
+    //         images: ['/img/image21.jpg'],
+    //         features: ['Professional tool', 'Payment in USDT or cash']
+    //     },
+    //     'after-shave-cream-cologne-350ml': {
+    //         id: 'after-shave-cream-cologne-350ml',
+    //         title: 'After shave cream cologne 350ML ',
+    //         price: 21.83,
+    //         priceEUR: 20,
+    //         description: 'A flexible fiber wax with a strong hold and matte finish. Perfect for textured, natural styles. 125ML.',
+    //         images: ['/img/image19.jpg'],
+    //         features: ['Professional tool', 'Payment in USDT or cash']
+    //     },
+    //     'hairstyling-powder-20ml': {
+    //         id: 'hairstyling-powder-20ml',
+    //         title: 'Hairstyling powder 20ml',
+    //         price: 21.83,
+    //         priceEUR: 20,
+    //         description: 'A lightweight hairstyling powder for instant volume and texture with a matte finish. 20ML.',
+    //         images: ['/img/image20.jpg'],
+    //         features: ['Professional tool', 'Payment in USDT or cash']
+    //     },
+    //     'black-flat-top-barber-comb-professional-use': {
+    //         id: 'black-flat-top-barber-comb-professional-use',
+    //         title: 'Black flat top barber comb professional use',
+    //         price: 6.55,
+    //         priceEUR: 6,
+    //         description: 'A durable black flat-top barber comb, designed for professional use, offering precise styling and control.',
+    //         images: ['/img/image7.jpg'],
+    //         features: ['Professional tool', 'Payment in USDT or cash']
+    //     },
+    //     'styling-comb-wet&dry-for-all-hair-types': {
+    //         id: 'styling-comb-wet&dry-for-all-hair-types',
+    //         title: 'Styling comb wet&dry for all hair types',
+    //         price: 9.82,
+    //         priceEUR: 9,
+    //         description: 'A versatile wet & dry styling comb, suitable for all hair types, providing gentle detangling and smooth styling.',
+    //         images: ['/img/image8.jpg'],
+    //         features: ['Professional tool', 'Payment in USDT or cash']
+    //     },
+    //     'dual-sided-brush-for-daily-hair': {
+    //         id: 'dual-sided-brush-for-daily-hair',
+    //         title: 'Dual-sided brush for daily hair',
+    //         price: 5.46,
+    //         priceEUR: 5,
+    //         description: 'A dual-sided brush for daily hair care, with soft bristles for detangling and a firmer side for styling and volume.',
+    //         images: ['/img/image9.jpg'],
+    //         features: ['Professional tool', 'Payment in USDT or cash']
+    //     },
+    //     'broken-hair-sweep-beard-shape': {
+    //         id: 'broken-hair-sweep-beard-shape',
+    //         title: 'broken hair sweep beard shape, two sides combed men`s oil head texture combing nylon soft hair clean beard brush',
+    //         price: 7.64,
+    //         priceEUR: 7,
+    //         description: 'A multifunctional comb and brush for men, designed to shape and sweep broken hair and beards. Features two sides for versatile styling, with soft nylon bristles for gentle cleaning and texture.',
+    //         images: ['/img/image10.jpg'],
+    //         features: ['Professional tool', 'Payment in USDT or cash']
+    //     },
+    //     'double-side-hair-comb-texture-comb': {
+    //         id: 'double-side-hair-comb-texture-comb',
+    //         title: 'Double Side Hair Comb, Texture Comb',
+    //         price: 6.55,
+    //         priceEUR: 6,
+    //         description: 'A double-sided hair and texture comb for precise styling, offering both fine and wide teeth for versatile hair control. Perfect for all hair types.',
+    //         images: ['/img/image11.jpg'],
+    //         features: ['Professional tool', 'Payment in USDT or cash']
+    //     },
+    //     'men-beard-brush&1pc-beard': {
+    //         id: 'men-beard-brush&1pc-beard',
+    //         title: '1pc Men Beard Brush & 1pc Beard Comb & 1pc Storage Bag.',
+    //         price: 20.74,
+    //         priceEUR: 19,
+    //         description: 'A complete beard grooming set, including a beard brush, comb, and a convenient storage bag. Ideal for keeping your beard neat and well-maintained.',
+    //         images: ['/img/image12.jpg'],
+    //         features: ['Professional tool', 'Payment in USDT or cash']
+    //     },
+    //     'derma-roller-system': {
+    //         id: 'derma-roller-system',
+    //         title: '1pc Derma Roller System',
+    //         price: 14,
+    //         priceEUR: 12.98,
+    //         description: 'Derma Roller System boosts collagen, improves skin texture, and enhances skincare absorption.',
+    //         images: ['/img/image24.png'],
+    //         features: ['Professional tool', 'Payment in USDT or cash']
+    //     },
+    //     'matte-pomade-125ml': {
+    //         id: 'matte-pomade-125ml',
+    //         title: 'Matte pomade 125ML',
+    //         price: 20,
+    //         priceEUR: 18.56,
+    //         description: 'Matte Pomade provides strong, flexible hold with a natural, shine-free finish. 125ML.',
+    //         images: ['/img/image25.png'],
+    //         features: ['Professional tool', 'Payment in USDT or cash']
+    //     }
+    // };
 
     const product = products[productId];
     if (!product) {

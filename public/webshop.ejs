@@ -28,13 +28,13 @@
             </div>
             <ul class="nav-list">
                 <li><a href="/">Home</a></li>
-                <li><a href="academy">Academy</a></li>
-                <li><a href="webshop">Store</a></li>
-                <li><a href="about">About</a></li>
+                <li><a href="/academy">Academy</a></li>
+                <li><a href="/webshop">Store</a></li>
+                <li><a href="/about">About</a></li>
                 <li><a href="/services">Services</a></li>
-                <li><a href="contact">Contact</a></li>
-                <li><a href="job">Job</a></li>
-                <li><a href="coin">Coin</a></li>
+                <li><a href="/contact">Contact</a></li>
+                <li><a href="/job">Job</a></li>
+                <li><a href="/coin">Coin</a></li>
             </ul>
         </nav>
         <div class="login-nav">
@@ -53,30 +53,6 @@
         🛒
         <span class="cart-count">0</span>
     </div>
-
-    <!-- Модальное окно корзины -->
-    <!-- <div class="cart-modal">
-        <div class="cart-content">
-            <h2>Your Cart</h2>
-            <div class="cart-items"></div>
-            <div class="cart-total">
-                <span>Total:</span>
-                <span class="total-price">0 USDT</span>
-            </div>
-            <form id="payment-form" method="POST" action="https://plisio.net/invoice">
-                <input type="hidden" name="source_currency" value="USDT_TRC20">
-                <input type="hidden" name="source_amount" id="cart-amount" value="">
-                <input type="hidden" name="order_name" value="Cart Purchase">
-                <input type="hidden" name="order_number" value="cart-001">
-                <input type="hidden" name="api_key"
-                    value="#">
-                <input type="hidden" name="success_url" value="https://yourdomain.com/success">
-                <input type="hidden" name="cancel_url" value="https://yourdomain.com/webshop">
-                <input type="submit" value="Proceed to Payment" class="checkout-btn">
-            </form>
-            <button class="close-cart">Close</button>
-        </div>
-    </div> -->
 
     <div class="cart-modal">
         <div class="cart-content">
@@ -111,274 +87,28 @@
                     access.</p>
             </div>
 
-            <!-- Дополнительные карточки -->
+            <!-- Динамические карточки товаров -->
             <div class="webshop-products">
-                <div class="product-card">
-                    <img src="img/image23.jpg" alt="Beard Balm" class="product-image">
-                    <div class="product-content">
-                        <h2>Beard Balm Argan Oil</h2>
-                        <p class="product-description">💈 A nourishing beard balm with argan oil for softness, control,
-                            and a healthy shine. 40ML.<br><br>
-                            ✔️ Professional tool<br>
-                            ✔️ Payment in USDT or cash.
-                        </p>
-                        <p class="product-price">💰 24.01 USDT (~22€)</p>
-                        <a href="/product/beard-balm-argan-oil-40ml" class="product-btn">Buy now</a>
+                <% products.forEach(product=> { %>
+                    <div class="product-card">
+                        <img src="<%= product.images[0] %>" alt="<%= product.title %>" class="product-image">
+                        <div class="product-content">
+                            <h2>
+                                <%= product.title %>
+                            </h2>
+                            <p class="product-description">
+                                💈 <%= product.description %><br><br>
+                                    <% product.features.forEach(feature=> { %>
+                                        ✔️ <%= feature %><br>
+                                            <% }) %>
+                            </p>
+                            <p class="product-price">💰 <%= product.price %> USDT (~<%= product.priceEUR %>€)</p>
+                            <a href="/product/<%= product.id %>" class="product-btn">Buy now</a>
+                        </div>
                     </div>
-                </div>
-                <div class="product-card">
-                    <img src="img/image22.jpg" alt="Hairspray" class="product-image">
-                    <div class="product-content">
-                        <h2>Hairspray Extra Volume</h2>
-                        <p class="product-description">💈 A lightweight hairspray for extra volume and long-lasting hold
-                            without stiffness. 400ML.<br><br>
-                            ✔️ Professional tool<br>
-                            ✔️ Payment in USDT or cash.
-                        </p>
-                        <p class="product-price">💰 16.37 USDT (~15€)</p>
-                        <a href="/product/hairspray-extra-volume-400ml" class="product-btn">Buy now</a>
-                    </div>
-                </div>
-                <div class="product-card">
-                    <img src="img/image21.jpg" alt="Sea Salt Spray" class="product-image">
-                    <div class="product-content">
-                        <h2>Sea Salt Spray</h2>
-                        <p class="product-description">💈 A sea salt spray for effortless, beachy waves with natural
-                            texture and volume. 250ML.<br><br>
-                            ✔️ Professional tool<br>
-                            ✔️ Payment in USDT or cash.
-                        </p>
-                        <p class="product-price">💰 20.74 USDT (~19€)</p>
-                        <a href="/product/sea-salt-spray-250ml" class="product-btn">Buy now</a>
-                    </div>
-                </div>
+                    <% }) %>
             </div>
-
-            <div class="webshop-products">
-                <div class="product-card">
-                    <img src="img/image19.jpg" alt="After Shave Cream" class="product-image">
-                    <div class="product-content">
-                        <h2>After Shave Cream Cologne</h2>
-                        <p class="product-description">💈 A soothing after-shave cream with a refreshing cologne scent,
-                            providing comfort and hydration. 350ML.<br><br>
-                            ✔️ Professional tool<br>
-                            ✔️ Payment in USDT or cash.
-                        </p>
-                        <p class="product-price">💰 21.83 USDT (~20€)</p>
-                        <a href="/product/after-shave-cream-cologne-350ml" class="product-btn">Buy now</a>
-                    </div>
-                </div>
-                <div class="product-card">
-                    <img src="img/image20.jpg" alt="Hairstyling Powder" class="product-image">
-                    <div class="product-content">
-                        <h2>Hairstyling Powder</h2>
-                        <p class="product-description">💈 A lightweight hairstyling powder for instant volume and
-                            texture with a matte finish. 20ML.<br><br>
-                            ✔️ Professional tool<br>
-                            ✔️ Payment in USDT or cash.
-                        </p>
-                        <p class="product-price">💰 21.83 USDT (~20€)</p>
-                        <a href="/product/hairstyling-powder-20ml" class="product-btn">Buy now</a>
-                    </div>
-                </div>
-                <div class="product-card">
-                    <img src="img/image7.jpg" alt="Barber Comb" class="product-image">
-                    <div class="product-content">
-                        <h2>Black Flat Top Barber Comb</h2>
-                        <p class="product-description">💈 A durable black flat-top barber comb, designed for
-                            professional use, offering precise styling and control.<br><br>
-                            ✔️ Professional tool<br>
-                            ✔️ Payment in USDT or cash.
-                        </p>
-                        <p class="product-price">💰 6.55 USDT (~6€)</p>
-                        <a href="/product/black-flat-top-barber-comb-professional-use" class="product-btn">Buy now</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="webshop-products">
-                <div class="product-card">
-                    <img src="img/image8.jpg" alt="Styling Comb" class="product-image">
-                    <div class="product-content">
-                        <h2>Styling Comb Wet & Dry</h2>
-                        <p class="product-description">💈 A versatile wet & dry styling comb, suitable for all hair
-                            types, providing gentle detangling and smooth styling.<br><br>
-                            ✔️ Professional tool<br>
-                            ✔️ Payment in USDT or cash.
-                        </p>
-                        <p class="product-price">💰 9.82 USDT (~9€)</p>
-                        <a href="/product/styling-comb-wet&dry-for-all-hair-types" class="product-btn">Buy now</a>
-                    </div>
-                </div>
-                <div class="product-card">
-                    <img src="img/image9.jpg" alt="Dual Sided Brush" class="product-image">
-                    <div class="product-content">
-                        <h2>Dual-Sided Brush</h2>
-                        <p class="product-description">💈 A dual-sided brush for daily hair care, with soft bristles for
-                            detangling and a firmer side for styling and volume.<br><br>
-                            ✔️ Professional tool<br>
-                            ✔️ Payment in USDT or cash.
-                        </p>
-                        <p class="product-price">💰 5.46 USDT (~5€)</p>
-                        <a href="/product/dual-sided-brush-for-daily-hair" class="product-btn">Buy now</a>
-                    </div>
-                </div>
-                <div class="product-card">
-                    <img src="img/image10.jpg" alt="Beard Brush" class="product-image">
-                    <div class="product-content">
-                        <h2>Broken Hair Sweep Beard Brush</h2>
-                        <p class="product-description">💈 A multifunctional comb and brush for men, designed to shape
-                            and sweep broken hair and beards with soft nylon bristles.<br><br>
-                            ✔️ Professional tool<br>
-                            ✔️ Payment in USDT or cash.
-                        </p>
-                        <p class="product-price">💰 7.64 USDT (~7€)</p>
-                        <a href="/product/broken-hair-sweep-beard-shape" class="product-btn">Buy now</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="webshop-products">
-                <div class="product-card">
-                    <img src="img/image11.jpg" alt="Texture Comb" class="product-image">
-                    <div class="product-content">
-                        <h2>Double Side Texture Comb</h2>
-                        <p class="product-description">💈 A double-sided hair and texture comb for precise styling,
-                            offering both fine and wide teeth for versatile control.<br><br>
-                            ✔️ Professional tool<br>
-                            ✔️ Payment in USDT or cash.
-                        </p>
-                        <p class="product-price">💰 6.55 USDT (~6€)</p>
-                        <a href="/product/double-side-hair-comb-texture-comb" class="product-btn">Buy now</a>
-                    </div>
-                </div>
-                <div class="product-card">
-                    <img src="img/image12.jpg" alt="Beard Grooming Set" class="product-image">
-                    <div class="product-content">
-                        <h2>Men Beard Grooming Set</h2>
-                        <p class="product-description">💈 A complete beard grooming set, including a beard brush, comb,
-                            and a convenient storage bag.<br><br>
-                            ✔️ Professional tool<br>
-                            ✔️ Payment in USDT or cash.
-                        </p>
-                        <p class="product-price">💰 20.74 USDT (~19€)</p>
-                        <a href="/product/men-beard-brush&1pc-beard" class="product-btn">Buy now</a>
-                    </div>
-                </div>
-            </div>
-            <!-- Добавляем недостающие карточки в новую секцию webshop-products -->
-            <div class="webshop-products">
-                <div class="product-card">
-                    <img src="img/image16.jpg" alt="Classic Pomade" class="product-image">
-                    <div class="product-content">
-                        <h2>Classic Pomade 125ML</h2>
-                        <p class="product-description">💈 A timeless, strong-hold pomade for a sleek, polished look.
-                            Perfect for all hair types. 125ML.<br><br>
-                            ✔️ Professional tool<br>
-                            ✔️ Payment in USDT or cash.
-                        </p>
-                        <p class="product-price">💰 21.83 USDT (~20€)</p>
-                        <a href="/product/сlassic-pomade-125ml" class="product-btn">Buy now</a>
-                    </div>
-                </div>
-                <div class="product-card">
-                    <img src="img/image5.jpg" alt="Deluxe Pomade" class="product-image">
-                    <div class="product-content">
-                        <h2>Deluxe Pomade 125ML</h2>
-                        <p class="product-description">💈 A classic deluxe pomade with a strong hold and high shine.
-                            Ideal for sleek, timeless styles. 125ML.<br><br>
-                            ✔️ Professional tool<br>
-                            ✔️ Payment in USDT or cash.
-                        </p>
-                        <p class="product-price">💰 21.83 USDT (~20€)</p>
-                        <a href="/product/deluxe_pomade_125ml" class="product-btn">Buy now</a>
-                    </div>
-                </div>
-                <div class="product-card">
-                    <img src="img/image6.jpg" alt="Fiber Wax" class="product-image">
-                    <div class="product-content">
-                        <h2>Fiber Wax 125ML</h2>
-                        <p class="product-description">💈 A flexible fiber wax with a strong hold and matte finish.
-                            Perfect for textured, natural styles. 125ML.<br><br>
-                            ✔️ Professional tool<br>
-                            ✔️ Payment in USDT or cash.
-                        </p>
-                        <p class="product-price">💰 21.83 USDT (~20€)</p>
-                        <a href="/product/fiber-wax-125ml" class="product-btn">Buy now</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="webshop-products">
-                <div class="product-card">
-                    <img src="img/image14.jpg" alt="Matte Wax" class="product-image">
-                    <div class="product-content">
-                        <h2>Matte Wax 125ML</h2>
-                        <p class="product-description">💈 A matte wax with a strong hold for a natural, textured look.
-                            No shine, all style. 125ML.<br><br>
-                            ✔️ Professional tool<br>
-                            ✔️ Payment in USDT or cash.
-                        </p>
-                        <p class="product-price">💰 21.83 USDT (~20€)</p>
-                        <a href="/product/matte-wax-125ml" class="product-btn">Buy now</a>
-                    </div>
-                </div>
-                <div class="product-card">
-                    <img src="img/image3.jpg" alt="Matte Clay" class="product-image">
-                    <div class="product-content">
-                        <h2>Matte Clay 125ML</h2>
-                        <p class="product-description">💈 A flexible fiber wax with a strong hold and matte finish.
-                            Perfect for textured, natural styles. 125ML.<br><br>
-                            ✔️ Professional tool<br>
-                            ✔️ Payment in USDT or cash.
-                        </p>
-                        <p class="product-price">💰 21.83 USDT (~20€)</p>
-                        <a href="/product/matte-clay-125ml" class="product-btn">Buy now</a>
-                    </div>
-                </div>
-                <div class="product-card">
-                    <img src="img/image1.jpg" alt="Beard Oil Limited Edition" class="product-image">
-                    <div class="product-content">
-                        <h2>Beard Oil Limited Edition 40ML</h2>
-                        <p class="product-description">💈 A premium limited-edition beard oil that nourishes, softens,
-                            and adds a healthy shine. 40ML.<br><br>
-                            ✔️ Professional tool<br>
-                            ✔️ Payment in USDT or cash.
-                        </p>
-                        <p class="product-price">💰 24.01 USDT (~22€)</p>
-                        <a href="/product/beard-oil-limited-edition-40ml" class="product-btn">Buy now</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="webshop-products">
-                <div class="product-card">
-                    <img src="img/image24.png" alt="Derma Roller System" class="product-image">
-                    <div class="product-content">
-                        <h2>Derma Roller System</h2>
-                        <p class="product-description">💈 Derma Roller System boosts collagen, improves skin texture,
-                            and enhances skincare absorption.<br><br>
-                            ✔️ Professional tool<br>
-                            ✔️ Payment in USDT or cash.
-                        </p>
-                        <p class="product-price">💰 14 USDT (~12,98€)</p>
-                        <a href="/product/derma-roller-system" class="product-btn">Buy now</a>
-                    </div>
-                </div>
-                <div class="product-card">
-                    <img src="img/image25.png" alt="Matte Clay" class="product-image">
-                    <div class="product-content">
-                        <h2>Matte pomade 125ML</h2>
-                        <p class="product-description">💈 Matte Pomade provides strong, flexible hold with a natural,
-                            shine-free finish. 125ML.<br><br>
-                            ✔️ Professional tool<br>
-                            ✔️ Payment in USDT or cash.
-                        </p>
-                        <p class="product-price">💰 20 USDT (~18,55€)</p>
-                        <a href="/product/matte-pomade-125ml" class="product-btn">Buy now</a>
-                    </div>
-                </div>
-            </div>
+        </div>
     </main>
 
     <div class="crypto-popup">
@@ -400,7 +130,7 @@
 
     <footer>
         <div class="footer-content">
-            <p>&copy; 2025 Timour Barber. All rights reserved.</p>
+            <p>© 2025 Timour Barber. All rights reserved.</p>
             <ul class="footer-links">
                 <li><a href="/cookie-policy">Privacy Policy</a></li>
                 <li><a href="/terms-of-service">Terms of Service</a></li>
@@ -408,19 +138,20 @@
             </ul>
         </div>
     </footer>
-    <script src="js/webshop.js"></script>
-    <script src="js/cart.js"></script>
-    <script src="js/script.js"></script>
+
+    <script src="/js/webshop.js"></script>
+    <script src="/js/cart.js"></script>
+    <script src="/js/script.js"></script>
 
     <div class="loading-overlay">
         <div class="spinner"></div>
     </div>
 </body>
+
 <style>
     .checkout-btn:disabled,
     .checkout-btn.disabled {
         background: #888 !important;
-        /* Увеличиваем приоритет */
         opacity: 0.5 !important;
         cursor: not-allowed !important;
         color: #FFF !important;

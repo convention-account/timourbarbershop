@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Admin Panel - TimourBarber</title>
+    <title>[ACCESS] Admin Panel - TimourBarber</title>
     <link rel="icon" type="image/x-icon" href="../media/logo.ico">
     <link rel="stylesheet" type="text/css" href="/css/admin.css">
     <link rel="stylesheet" href="/css/mobile-adaptation.css">
@@ -113,31 +113,41 @@
         .order-card .status.placed {
             background: rgba(128, 128, 128, 0.2);
             color: #808080;
-            /* Gray for "placed" */
         }
 
         .order-card .status.preparing {
             background: rgba(255, 165, 0, 0.2);
             color: #FFA500;
-            /* Orange for "preparing" */
         }
 
         .order-card .status.ready-to-ship {
             background: rgba(255, 215, 0, 0.2);
             color: #FFD700;
-            /* Yellow for "ready to ship" */
         }
 
         .order-card .status.delivered {
             background: rgba(0, 206, 209, 0.2);
             color: #00CED1;
-            /* Turquoise for "delivered" */
         }
 
         .order-card .status.cancelled {
             background: rgba(255, 68, 68, 0.2);
             color: #FF4444;
-            /* Red for "cancelled" */
+        }
+
+        .order-card .status.awaiting_payment {
+            background: rgba(128, 128, 128, 0.2);
+            color: #808080;
+        }
+
+        .order-card .status.awaiting_visitor {
+            background: rgba(255, 165, 0, 0.2);
+            color: #FFA500;
+        }
+
+        .order-card .status.completed {
+            background: rgba(0, 206, 209, 0.2);
+            color: #00CED1;
         }
 
         /* Styles for select and button */
@@ -146,24 +156,6 @@
             align-items: center;
             gap: 10px;
             margin-top: 10px;
-        }
-
-        .order-card .status.awaiting_payment {
-            background: rgba(128, 128, 128, 0.2);
-            color: #808080;
-            /* Gray */
-        }
-
-        .order-card .status.awaiting_visitor {
-            background: rgba(255, 165, 0, 0.2);
-            color: #FFA500;
-            /* Orange */
-        }
-
-        .order-card .status.completed {
-            background: rgba(0, 206, 209, 0.2);
-            color: #00CED1;
-            /* Turquoise */
         }
 
         .status-select {
@@ -176,7 +168,8 @@
             cursor: pointer;
         }
 
-        .update-status-btn {
+        .update-status-btn,
+        .delete-order-btn {
             padding: 5px 10px;
             background: #9F7FF3;
             color: #FFF;
@@ -189,7 +182,236 @@
             transition: opacity 0.3s ease;
         }
 
-        .update-status-btn:hover {
+        .delete-order-btn {
+            background: #FF4444;
+        }
+
+        .update-status-btn:hover,
+        .delete-order-btn:hover {
+            opacity: 0.8;
+        }
+
+        /* Product Management Styles */
+        .admin-controls {
+            margin: 20px 0;
+        }
+
+        #manage-products-btn {
+            padding: 10px 20px;
+            background: #9F7FF3;
+            color: #FFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 900;
+            text-transform: uppercase;
+            transition: opacity 0.3s ease;
+        }
+
+        #manage-products-btn:hover {
+            opacity: 0.8;
+        }
+
+        .products-management.hidden {
+            display: none;
+        }
+
+        .products-management {
+            width: 100%;
+            max-width: 1200px;
+            margin: 20px 0;
+        }
+
+        .products-management h2 {
+            color: #9F7FF3;
+            font-size: 32px;
+            font-weight: 900;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 10px rgba(159, 127, 243, 0.5);
+        }
+
+        .products-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .product-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(159, 127, 243, 0.3);
+            width: 300px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .new-product {
+            background: rgba(240, 240, 240, 0.2);
+            text-align: center;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100px;
+        }
+
+        .new-product .plus {
+            font-size: 36px;
+            color: #9F7FF3;
+            margin-right: 10px;
+        }
+
+        .new-product p {
+            color: #FFF;
+            font-size: 18px;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+
+        .product-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .product-form input,
+        .product-form textarea {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #9F7FF3;
+            background: rgba(255, 255, 255, 0.9);
+            color: #000;
+            font-size: 14px;
+        }
+
+        .product-form textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .product-form .current-images img {
+            max-width: 50px;
+            margin: 5px;
+            border-radius: 5px;
+        }
+
+        .save-btn,
+        .delete-btn {
+            padding: 8px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 900;
+            text-transform: uppercase;
+            transition: opacity 0.3s ease;
+        }
+
+        .save-btn {
+            background: #9F7FF3;
+            color: #FFF;
+        }
+
+        .delete-btn {
+            background: #FF4444;
+            color: #FFF;
+            margin-top: 10px;
+        }
+
+        .save-btn:hover,
+        .delete-btn:hover {
+            opacity: 0.8;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(159, 127, 243, 0.3);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .modal-content h2 {
+            color: #9F7FF3;
+            font-size: 24px;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .modal-content p {
+            color: #FFF;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #9F7FF3;
+            background: rgba(255, 255, 255, 0.9);
+            color: #000;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .modal-btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 900;
+            text-transform: uppercase;
+            transition: opacity 0.3s ease;
+        }
+
+        .confirm-delete-btn {
+            background: #FF4444;
+            color: #FFF;
+        }
+
+        .close-modal-btn {
+            background: #9F7FF3;
+            color: #FFF;
+        }
+
+        .modal-btn:hover {
             opacity: 0.8;
         }
 
@@ -209,13 +431,17 @@
                 margin-bottom: 30px;
             }
 
-            .orders-container {
+            .orders-container,
+            .products-list {
                 grid-template-columns: 1fr;
                 gap: 15px;
             }
 
-            .order-card {
+            .order-card,
+            .product-card {
                 padding: 15px;
+                width: 100%;
+                max-width: 100%;
             }
 
             .order-card h3 {
@@ -223,7 +449,8 @@
                 margin-bottom: 10px;
             }
 
-            .order-card p {
+            .order-card p,
+            .modal-content p {
                 font-size: 14px;
                 margin: 6px 0;
             }
@@ -237,13 +464,32 @@
                 padding: 4px 8px;
             }
 
-            .status-select {
+            .status-select,
+            .product-form input,
+            .product-form textarea,
+            .modal-input {
                 font-size: 12px;
             }
 
-            .update-status-btn {
+            .update-status-btn,
+            .delete-order-btn,
+            .save-btn,
+            .delete-btn,
+            .modal-btn {
                 font-size: 12px;
                 padding: 4px 8px;
+            }
+
+            .new-product {
+                height: 80px;
+            }
+
+            .new-product .plus {
+                font-size: 28px;
+            }
+
+            .new-product p {
+                font-size: 16px;
             }
         }
 
@@ -258,7 +504,8 @@
                 margin-bottom: 20px;
             }
 
-            .order-card {
+            .order-card,
+            .product-card {
                 padding: 10px;
             }
 
@@ -266,7 +513,8 @@
                 font-size: 16px;
             }
 
-            .order-card p {
+            .order-card p,
+            .modal-content p {
                 font-size: 12px;
             }
 
@@ -279,11 +527,18 @@
                 padding: 3px 6px;
             }
 
-            .status-select {
+            .status-select,
+            .product-form input,
+            .product-form textarea,
+            .modal-input {
                 font-size: 11px;
             }
 
-            .update-status-btn {
+            .update-status-btn,
+            .delete-order-btn,
+            .save-btn,
+            .delete-btn,
+            .modal-btn {
                 font-size: 11px;
                 padding: 3px 6px;
             }
@@ -317,7 +572,7 @@
             </ul>
         </nav>
         <div class="login-nav">
-            <li>Welcome, Admin | <a href="/logout">Logout</a></li>
+            <li>Welcome, <%= user %> | <a href="/logout">Logout</a></li>
         </div>
     </header>
 
@@ -383,10 +638,27 @@
                         </div>
                         <% } %>
             </div>
+
+            <!-- Product Management Section -->
+            <div class="admin-controls">
+                <button id="manage-products-btn">Manage Products</button>
+            </div>
+            <div id="products-management" class="products-management hidden">
+                <h2>Product Management</h2>
+                <div id="products-list" class="products-list">
+                    <!-- Products will be populated dynamically via JS -->
+                </div>
+                <div class="product-card new-product">
+                    <div class="add-new-product">
+                        <span class="plus">+</span>
+                        <p>Add New Product</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 
-    <!-- Модальное окно для подтверждения удаления -->
+    <!-- Modal for Order Deletion -->
     <div id="delete-modal" class="modal">
         <div class="modal-content">
             <h2>Confirm Order Deletion</h2>
@@ -410,8 +682,192 @@
         </div>
     </footer>
 
-    <script src="js/script.js"></script>
-    <script src="js/admin.js"></script>
+    <script src="/js/script.js"></script>
+    <script src="/js/admin.js"></script>
+    <script>
+        // Existing order management scripts
+        function updateStatus(orderNumber) {
+            const select = document.querySelector(`.status-select[data-order-number="${orderNumber}"]`);
+            const newStatus = select.value;
+
+            fetch('/admin/update-status', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ orderNumber, status: newStatus })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('Failed to update status: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error updating status');
+                });
+        }
+
+        let orderToDelete = null;
+
+        function openDeleteModal(orderNumber) {
+            orderToDelete = orderNumber;
+            document.getElementById('delete-order-number').textContent = orderNumber;
+            document.getElementById('delete-modal').style.display = 'flex';
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('delete-modal').style.display = 'none';
+            document.getElementById('delete-password').value = '';
+            orderToDelete = null;
+        }
+
+        function confirmDelete() {
+            const password = document.getElementById('delete-password').value;
+            if (!password) {
+                alert('Please enter your password');
+                return;
+            }
+
+            fetch('/admin/delete-order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ orderNumber: orderToDelete, password })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Order deleted successfully');
+                        location.reload();
+                    } else {
+                        alert('Failed to delete order: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error deleting order');
+                })
+                .finally(() => closeDeleteModal());
+        }
+
+        // Product management scripts
+        document.addEventListener('DOMContentLoaded', () => {
+            const manageProductsBtn = document.getElementById('manage-products-btn');
+            const productsManagement = document.getElementById('products-management');
+            const productsList = document.getElementById('products-list');
+            const newProductCard = document.querySelector('.new-product');
+
+            manageProductsBtn.addEventListener('click', () => {
+                productsManagement.classList.toggle('hidden');
+                if (!productsManagement.classList.contains('hidden')) {
+                    loadProducts();
+                }
+            });
+
+            async function loadProducts() {
+                try {
+                    const response = await fetch('/admin/products');
+                    const products = await response.json();
+                    productsList.innerHTML = '';
+                    products.forEach(product => {
+                        const productCard = createProductCard(product);
+                        productsList.appendChild(productCard);
+                    });
+                } catch (error) {
+                    console.error('Error loading products:', error);
+                }
+            }
+
+            function createProductCard(product) {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <form class="product-form" data-id="${product.id}">
+                        <input type="text" name="title" value="${product.title}" placeholder="Title">
+                        <textarea name="description" placeholder="Description">${product.description}</textarea>
+                        <input type="number" name="price" value="${product.price}" placeholder="Price (USDT)">
+                        <input type="number" name="priceEUR" value="${product.priceEUR}" placeholder="Price (EUR)">
+                        <input type="file" name="images" multiple accept="image/*">
+                        <div class="current-images">
+                            ${product.images.map(img => `<img src="${img}" alt="${product.title}">`).join('')}
+                        </div>
+                        <button type="button" class="save-btn">Save Changes</button>
+                        <button type="button" class="delete-btn">Delete Product</button>
+                    </form>
+                `;
+
+                card.querySelector('.save-btn').addEventListener('click', () => saveProduct(card));
+                card.querySelector('.delete-btn').addEventListener('click', () => deleteProduct(product.id));
+                return card;
+            }
+
+            newProductCard.addEventListener('click', () => {
+                const form = document.createElement('div');
+                form.className = 'product-card';
+                form.innerHTML = `
+                    <form class="product-form">
+                        <input type="text" name="title" placeholder="Title">
+                        <textarea name="description" placeholder="Description"></textarea>
+                        <input type="number" name="price" placeholder="Price (USDT)">
+                        <input type="number" name="priceEUR" placeholder="Price (EUR)">
+                        <input type="file" name="images" multiple accept="image/*">
+                        <button type="button" class="save-btn">Add Product</button>
+                    </form>
+                `;
+                form.querySelector('.save-btn').addEventListener('click', () => saveProduct(form, true));
+                productsList.appendChild(form);
+                newProductCard.style.display = 'none';
+            });
+
+            async function saveProduct(card, isNew = false) {
+                const form = card.querySelector('.product-form');
+                const formData = new FormData(form);
+                if (!isNew) formData.append('productId', form.dataset.id);
+
+                try {
+                    const response = await fetch(isNew ? '/admin/add-product' : '/admin/update-product', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        alert('Product saved successfully');
+                        loadProducts();
+                        if (isNew) newProductCard.style.display = 'flex';
+                    } else {
+                        alert('Failed to save product: ' + result.error);
+                    }
+                } catch (error) {
+                    console.error('Error saving product:', error);
+                    alert('Error saving product');
+                }
+            }
+
+            async function deleteProduct(productId) {
+                const password = prompt('Enter admin password to confirm deletion:');
+                if (!password) return;
+
+                try {
+                    const response = await fetch('/admin/delete-product', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ productId, password })
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        alert('Product deleted successfully');
+                        loadProducts();
+                    } else {
+                        alert('Failed to delete product: ' + result.error);
+                    }
+                } catch (error) {
+                    console.error('Error deleting product:', error);
+                    alert('Error deleting product');
+                }
+            }
+        });
+    </script>
 
     <div class="loading-overlay">
         <div class="spinner"></div>
