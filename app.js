@@ -22,7 +22,7 @@ let products = {
         features: ['Professional tool', 'Payment in USDT or cash']
     },
     'deluxe_pomade_125ml': {
-        id: 'deluxe_pomade_125ML',
+        id: 'deluxe_pomade_125ml',
         title: 'Deluxe pomade 125ML',
         price: 21.83,
         priceEUR: 20,
@@ -31,7 +31,7 @@ let products = {
         features: ['Professional tool', 'Payment in USDT or cash']
     },
     'fiber-wax-125ml': {
-        id: 'fiber-wax-125ML',
+        id: 'fiber-wax-125ml',
         title: 'Fiber wax 125ML',
         price: 21.83,
         priceEUR: 20,
@@ -40,7 +40,7 @@ let products = {
         features: ['Professional tool', 'Payment in USDT or cash']
     },
     'matte-wax-125ml': {
-        id: 'matte-wax-125ML',
+        id: 'matte-wax-125ml',
         title: 'Matte wax 125 ML',
         price: 21.83,
         priceEUR: 20,
@@ -49,7 +49,7 @@ let products = {
         features: ['Professional tool', 'Payment in USDT or cash']
     },
     'matte-clay-125ml': {
-        id: 'matte-clay-125ML',
+        id: 'matte-clay-125ml',
         title: 'Matte clay 125ML',
         price: 21.83,
         priceEUR: 20,

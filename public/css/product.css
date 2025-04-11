@@ -1,4 +1,4 @@
-/* Базовые стили для body */
+/* Base styles for body */
 body {
     display: flex;
     flex-direction: column;
@@ -12,7 +12,7 @@ body {
     transition: opacity 0.3s ease;
 }
 
-/* Стили для основного контента */
+/* Main content styles */
 main {
     position: relative;
     z-index: 2;
@@ -24,7 +24,7 @@ main {
     align-items: flex-start;
 }
 
-/* Стили для секции продукта */
+/* Product section styles */
 .product-section {
     position: relative;
     z-index: 2;
@@ -58,6 +58,30 @@ main {
     text-shadow: 0 5px 20px rgba(255, 255, 255, 0.3);
     margin: 0;
     text-align: center;
+}
+
+.product-labels {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.label {
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.label-hit {
+    background: #ff4444;
+    color: #FFF;
+}
+
+.label-new {
+    background: #9F7FF3;
+    color: #FFF;
 }
 
 .product-gallery {
@@ -177,12 +201,116 @@ main {
     text-align: center;
 }
 
+.return-btn a {
+    color: #FFF;
+    text-decoration: none;
+}
+
 .return-btn:hover {
     background: #9F7FF3;
     color: #FFF;
 }
 
-/* Стили для футера */
+/* Specifications styles */
+.product-specifications {
+    color: #FFF;
+}
+
+.product-specifications h2 {
+    font-size: 24px;
+    font-weight: 900;
+    margin-bottom: 15px;
+}
+
+.spec-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.spec-list li {
+    margin-bottom: 10px;
+}
+
+.spec-list strong {
+    color: #9F7FF3;
+}
+
+/* Reviews styles */
+.product-reviews {
+    color: #FFF;
+}
+
+.product-reviews h2 {
+    font-size: 24px;
+    font-weight: 900;
+    margin-bottom: 15px;
+}
+
+.review {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.review-text {
+    font-size: 16px;
+    margin: 0 0 5px;
+}
+
+.review-author {
+    font-size: 14px;
+    color: #9F7FF3;
+    margin: 0;
+}
+
+/* Related products styles */
+.related-products {
+    color: #FFF;
+}
+
+.related-products h2 {
+    font-size: 24px;
+    font-weight: 900;
+    margin-bottom: 15px;
+}
+
+.related-items {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.related-item {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    width: 200px;
+}
+
+.related-image {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+.related-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 10px 0 5px;
+}
+
+.related-price {
+    font-size: 14px;
+    color: #9F7FF3;
+    margin: 0;
+}
+
+/* Footer styles */
 footer {
     position: relative;
     z-index: 2;
@@ -231,7 +359,83 @@ footer {
     opacity: 0.8;
 }
 
-/* Адаптивность для мобильных устройств */
+/* Cart icon styles */
+.cart-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    color: #FFF;
+    font-size: 40px;
+    cursor: pointer;
+    padding: 5px 10px;
+    background: rgba(159, 127, 243, 0.8);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.cart-icon:hover {
+    opacity: 0.8;
+}
+
+.cart-count {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #ff4444;
+    color: #FFF;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+}
+
+/* Loading overlay styles */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 33, 0.8);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.loading-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #9F7FF3;
+    border-top: 5px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive design */
 @media (max-width: 768px) {
     main {
         padding: 20px;
@@ -275,6 +479,25 @@ footer {
         font-size: 14px;
     }
 
+    .product-specifications h2,
+    .product-reviews h2,
+    .related-products h2 {
+        font-size: 20px;
+    }
+
+    .spec-list,
+    .review-text {
+        font-size: 14px;
+    }
+
+    .related-item {
+        width: 150px;
+    }
+
+    .cart-icon {
+        font-size: 30px;
+    }
+
     footer {
         padding: 20px;
     }
@@ -293,7 +516,6 @@ footer {
     }
 }
 
-/* Дополнительная оптимизация для очень маленьких manage-width: 480px */
 @media (max-width: 480px) {
     .product-title {
         font-size: 28px;
@@ -324,54 +546,8 @@ footer {
         padding: 10px 20px;
         font-size: 12px;
     }
-}
 
-/* Стили для спиннера загрузки */
-.loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 33, 0.8);
-    z-index: 9999;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-}
-
-.loading-overlay.active {
-    opacity: 1;
-    pointer-events: all;
-}
-
-.spinner {
-    width: 50px;
-    height: 50px;
-    border: 5px solid #9F7FF3;
-    border-top: 5px solid transparent;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* Убираем text-shadow для iOS (Safari) */
-@media screen and (-webkit-min-device-pixel-ratio: 0) {
-    /* Уточняем, что это для iOS */
-    @supports (-webkit-touch-callout: none) {
-        .headline-main,
-        .headline-sub,
-        .headline-main-second,
-        .headline-sub-second,
-        .headline-main-third {
-            text-shadow: none !important;
-        }
+    .related-item {
+        width: 120px;
     }
 }
