@@ -213,6 +213,23 @@
             opacity: 0.8;
         }
 
+        #manage-reviews-btn {
+            padding: 10px 20px;
+            background: #9F7FF3;
+            color: #FFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 900;
+            text-transform: uppercase;
+            transition: opacity 0.3s ease;
+        }
+
+        #manage-reviews-btn:hover {
+            opacity: 0.8;
+        }
+
         .products-management.hidden {
             display: none;
         }
@@ -543,6 +560,120 @@
                 padding: 3px 6px;
             }
         }
+
+        /* Review Moderation Styles */
+        .reviews-management.hidden {
+            display: none;
+        }
+
+        .reviews-management {
+            width: 100%;
+            max-width: 1200px;
+            margin: 20px 0;
+        }
+
+        .reviews-management h2 {
+            color: #9F7FF3;
+            font-size: 32px;
+            font-weight: 900;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 10px rgba(159, 127, 243, 0.5);
+        }
+
+        .reviews-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .review-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(159, 127, 243, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .review-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .review-card p {
+            color: #FFF;
+            font-size: 16px;
+            margin: 8px 0;
+            line-height: 1.5;
+        }
+
+        .review-card .delete-review-btn {
+            padding: 5px 10px;
+            background: #FF4444;
+            color: #FFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 900;
+            text-transform: uppercase;
+            transition: opacity 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .review-card .delete-review-btn:hover {
+            opacity: 0.8;
+        }
+
+        /* Responsiveness for Review Cards */
+        @media (max-width: 768px) {
+            .reviews-management h2 {
+                font-size: 24px;
+                margin-bottom: 15px;
+            }
+
+            .reviews-list {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .review-card {
+                padding: 15px;
+            }
+
+            .review-card p {
+                font-size: 14px;
+            }
+
+            .review-card .delete-review-btn {
+                font-size: 12px;
+                padding: 4px 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .reviews-management h2 {
+                font-size: 20px;
+                margin-bottom: 10px;
+            }
+
+            .review-card {
+                padding: 10px;
+            }
+
+            .review-card p {
+                font-size: 12px;
+            }
+
+            .review-card .delete-review-btn {
+                font-size: 11px;
+                padding: 3px 6px;
+            }
+        }
     </style>
 </head>
 
@@ -655,6 +786,17 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Review Moderation Section -->
+            <div class="admin-controls">
+                <button id="manage-reviews-btn">Manage Reviews</button>
+            </div>
+            <div id="reviews-management" class="reviews-management hidden">
+                <h2>Review Moderation</h2>
+                <div id="reviews-list" class="reviews-list">
+                    <!-- Reviews will be populated dynamically via JS -->
+                </div>
+            </div>
         </div>
     </main>
 
@@ -684,75 +826,8 @@
 
     <script src="/js/script.js"></script>
     <script src="/js/admin.js"></script>
-    <script>
-        // Existing order management scripts
-        function updateStatus(orderNumber) {
-            const select = document.querySelector(`.status-select[data-order-number="${orderNumber}"]`);
-            const newStatus = select.value;
-
-            fetch('/admin/update-status', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ orderNumber, status: newStatus })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        location.reload();
-                    } else {
-                        alert('Failed to update status: ' + data.error);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Error updating status');
-                });
-        }
-
-        let orderToDelete = null;
-
-        function openDeleteModal(orderNumber) {
-            orderToDelete = orderNumber;
-            document.getElementById('delete-order-number').textContent = orderNumber;
-            document.getElementById('delete-modal').style.display = 'flex';
-        }
-
-        function closeDeleteModal() {
-            document.getElementById('delete-modal').style.display = 'none';
-            document.getElementById('delete-password').value = '';
-            orderToDelete = null;
-        }
-
-        function confirmDelete() {
-            const password = document.getElementById('delete-password').value;
-            if (!password) {
-                alert('Please enter your password');
-                return;
-            }
-
-            fetch('/admin/delete-order', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ orderNumber: orderToDelete, password })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Order deleted successfully');
-                        location.reload();
-                    } else {
-                        alert('Failed to delete order: ' + data.error);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Error deleting order');
-                })
-                .finally(() => closeDeleteModal());
-        }
-
-        // Product management scripts
-        document.addEventListener('DOMContentLoaded', () => {
+    <script>document.addEventListener('DOMContentLoaded', () => {
+            // Product management scripts
             const manageProductsBtn = document.getElementById('manage-products-btn');
             const productsManagement = document.getElementById('products-management');
             const productsList = document.getElementById('products-list');
@@ -783,19 +858,19 @@
                 const card = document.createElement('div');
                 card.className = 'product-card';
                 card.innerHTML = `
-                    <form class="product-form" data-id="${product.id}">
-                        <input type="text" name="title" value="${product.title}" placeholder="Title">
-                        <textarea name="description" placeholder="Description">${product.description}</textarea>
-                        <input type="number" name="price" value="${product.price}" placeholder="Price (USDT)">
-                        <input type="number" name="priceEUR" value="${product.priceEUR}" placeholder="Price (EUR)">
-                        <input type="file" name="images" multiple accept="image/*">
-                        <div class="current-images">
-                            ${product.images.map(img => `<img src="${img}" alt="${product.title}">`).join('')}
-                        </div>
-                        <button type="button" class="save-btn">Save Changes</button>
-                        <button type="button" class="delete-btn">Delete Product</button>
-                    </form>
-                `;
+                <form class="product-form" data-id="${product.id}">
+                    <input type="text" name="title" value="${product.title}" placeholder="Title">
+                    <textarea name="description" placeholder="Description">${product.description}</textarea>
+                    <input type="number" name="price" value="${product.price}" placeholder="Price (USDT)">
+                    <input type="number" name="priceEUR" value="${product.priceEUR}" placeholder="Price (EUR)">
+                    <input type="file" name="images" multiple accept="image/*">
+                    <div class="current-images">
+                        ${product.images.map(img => `<img src="${img}" alt="${product.title}">`).join('')}
+                    </div>
+                    <button type="button" class="save-btn">Save Changes</button>
+                    <button type="button" class="delete-btn">Delete Product</button>
+                </form>
+            `;
 
                 card.querySelector('.save-btn').addEventListener('click', () => saveProduct(card));
                 card.querySelector('.delete-btn').addEventListener('click', () => deleteProduct(product.id));
@@ -806,15 +881,15 @@
                 const form = document.createElement('div');
                 form.className = 'product-card';
                 form.innerHTML = `
-                    <form class="product-form">
-                        <input type="text" name="title" placeholder="Title">
-                        <textarea name="description" placeholder="Description"></textarea>
-                        <input type="number" name="price" placeholder="Price (USDT)">
-                        <input type="number" name="priceEUR" placeholder="Price (EUR)">
-                        <input type="file" name="images" multiple accept="image/*">
-                        <button type="button" class="save-btn">Add Product</button>
-                    </form>
-                `;
+                <form class="product-form">
+                    <input type="text" name="title" placeholder="Title">
+                    <textarea name="description" placeholder="Description"></textarea>
+                    <input type="number" name="price" placeholder="Price (USDT)">
+                    <input type="number" name="priceEUR" placeholder="Price (EUR)">
+                    <input type="file" name="images" multiple accept="image/*">
+                    <button type="button" class="save-btn">Add Product</button>
+                </form>
+            `;
                 form.querySelector('.save-btn').addEventListener('click', () => saveProduct(form, true));
                 productsList.appendChild(form);
                 newProductCard.style.display = 'none';
@@ -866,8 +941,85 @@
                     alert('Error deleting product');
                 }
             }
+
+            // Review management scripts
+            const manageReviewsBtn = document.getElementById('manage-reviews-btn');
+            const reviewsManagement = document.getElementById('reviews-management');
+            const reviewsList = document.getElementById('reviews-list');
+
+            manageReviewsBtn.addEventListener('click', () => {
+                reviewsManagement.classList.toggle('hidden');
+                if (!reviewsManagement.classList.contains('hidden')) {
+                    loadReviews();
+                }
+            });
+
+            async function loadReviews() {
+                reviewsList.innerHTML = '<p>Loading...</p>';
+                try {
+                    const response = await fetch('/admin/reviews');
+                    console.log('Response status:', response.status);
+                    const text = await response.text(); // Get raw response as text
+                    console.log('Raw response from /admin/reviews:', text);
+
+                    let data;
+                    try {
+                        data = JSON.parse(text); // Attempt to parse as JSON
+                    } catch (parseError) {
+                        console.error('JSON parsing error:', parseError);
+                        throw new Error(`Server response is not valid JSON: ${text}`);
+                    }
+
+                    // Check response status
+                    if (!response.ok) {
+                        console.error('Failed to load reviews:', response.status, data);
+                        if (data && data.error) {
+                            throw new Error(data.error); // Use error message from response
+                        } else {
+                            throw new Error(`Failed to load reviews: ${response.status} ${text}`);
+                        }
+                    }
+
+                    // Verify data is an array
+                    if (!Array.isArray(data)) {
+                        console.error('Server response is not an array:', data);
+                        if (data && data.error) {
+                            throw new Error(data.error); // Use error field if present
+                        }
+                        throw new Error('Expected an array of reviews, but received a different data format');
+                    }
+
+                    // Clear list and display reviews
+                    reviewsList.innerHTML = '';
+                    if (data.length === 0) {
+                        reviewsList.innerHTML = '<p>No reviews available.</p>';
+                        return;
+                    }
+
+                    data.forEach(review => {
+                        const reviewCard = createReviewCard(review);
+                        reviewsList.appendChild(reviewCard);
+                    });
+                } catch (error) {
+                    console.error('Error loading reviews:', error);
+                    reviewsList.innerHTML = '<p>Error loading reviews: ' + error.message + '</p>';
+                }
+            }
+
+            function createReviewCard(review) {
+                const card = document.createElement('div');
+                card.className = 'review-card';
+                card.innerHTML = `
+                <p><strong>User:</strong> ${review.username}</p>
+                <p><strong>Product ID:</strong> ${review.product_id}</p>
+                <p><strong>Review:</strong> ${review.review_text}</p>
+                <p><strong>Date:</strong> ${new Date(review.created_at).toLocaleString()}</p>
+                <button class="delete-review-btn" onclick="openDeleteReviewModal('${review.id}')">Delete</button>
+            `;
+                return card;
+            }
         });
-    </script>
+        </script>
 
     <div class="loading-overlay">
         <div class="spinner"></div>

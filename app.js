@@ -1149,6 +1149,94 @@ app.post('/admin/update-status', (req, res) => {
     );
 });
 
+app.post('/admin/delete-review', async (req, res) => {
+    if (!req.session.user || !admins.includes(req.session.user)) {
+        return res.status(403).json({ error: 'Access denied' });
+    }
+
+    const { reviewId, password } = req.body;
+
+    // Проверяем пароль администратора
+    db.get('SELECT * FROM users WHERE username = ?', ['admin'], async (err, user) => {
+        if (err || !user) {
+            console.error('Error fetching admin user:', err?.message || 'User not found');
+            return res.status(500).json({ error: 'Server error' });
+        }
+
+        const isValid = await bcrypt.compare(password, user.password);
+        if (!isValid) {
+            return res.status(401).json({ error: 'Incorrect password' });
+        }
+
+        // Получаем информацию об отзыве и пользователе
+        db.get(
+            `SELECT r.*, u.email 
+             FROM reviews r 
+             JOIN users u ON r.user_id = u.id 
+             WHERE r.id = ?`,
+            [reviewId],
+            (err, review) => {
+                if (err || !review) {
+                    console.error('Error fetching review:', err?.message || 'Review not found');
+                    return res.status(500).json({ error: 'Server error' });
+                }
+
+                // Удаляем отзыв
+                db.run('DELETE FROM reviews WHERE id = ?', [reviewId], (err) => {
+                    if (err) {
+                        console.error('Error deleting review:', err.message);
+                        return res.status(500).json({ error: 'Server error' });
+                    }
+
+                    // Отправляем уведомление пользователю
+                    if (review.email) {
+                        transporter.sendMail({
+                            from: 'timourbarber@gmail.com',
+                            to: review.email,
+                            subject: `Your Review Has Been Removed`,
+                            html: `
+                                <h1>Review Removed</h1>
+                                <p>Your review for product ID ${review.product_id} has been removed by an administrator.</p>
+                                <p>Review text: ${review.review_text}</p>
+                                <p>If you believe this is an error, please contact us.</p>
+                                <p><img src="https://timour-barber.com/media/icon.png" alt="TimourBarber" style="max-width: 250px;"></p>
+                                <p><strong><a href="https://timour-barber.com/">Our website</a></strong></p>
+                                <p><strong>TimourBarber 2025©</strong></p>
+                            `
+                        }, (error, info) => {
+                            if (error) console.error('Error sending review deletion email:', error);
+                        });
+                    }
+
+                    res.json({ success: true });
+                });
+            }
+        );
+    });
+});
+
+app.get('/admin/reviews', (req, res) => {
+    console.log('req.session.user:', req.session.user); // Логируем для отладки
+    if (!req.session.user || !admins.includes(req.session.user)) {
+        return res.status(403).json({ error: 'Доступ запрещён' });
+    }
+
+    db.all(
+        `SELECT r.*, u.username 
+         FROM reviews r 
+         JOIN users u ON r.user_id = u.id 
+         ORDER BY r.created_at DESC`,
+        [],
+        (err, reviews) => {
+            if (err) {
+                console.error('Ошибка при получении отзывов:', err.message);
+                return res.status(500).json({ error: 'Ошибка сервера: ' + err.message });
+            }
+            res.json(reviews || []); // Если reviews undefined, возвращаем пустой массив
+        }
+    );
+});
+
 // Дополнительные маршруты
 app.get('/services', (req, res) => {
     const renderData = {
