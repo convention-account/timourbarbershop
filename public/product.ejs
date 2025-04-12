@@ -105,11 +105,10 @@
             <div class="product-specifications">
                 <h2>Specifications</h2>
                 <ul class="spec-list">
-                    <li><strong>Material:</strong> Stainless Steel</li>
-                    <li><strong>Weight:</strong> 1.5 kg</li>
-                    <li><strong>Dimensions:</strong> 20 x 15 x 10 cm</li>
-                    <li><strong>Color:</strong> Silver</li>
-                    <li><strong>Warranty:</strong> 2 years</li>
+                    <li><strong>Material:</strong> Stainless Steel, Plastic, other</li>
+                    <li><strong>Weight:</strong> 200 g</li>
+                    <li><strong>Dimensions:</strong> small, 20 x 15 x 10 cm</li>
+                    <li><strong>Color:</strong> Silver, Multi</li>
                 </ul>
             </div>
 
@@ -154,19 +153,24 @@
             <div class="related-products">
                 <h2>Related Products</h2>
                 <div class="related-items">
-                    <% if (relatedProducts && relatedProducts.length > 0) { %>
-                        <% relatedProducts.forEach(relatedProduct => { %>
+                    <% if (relatedProducts && relatedProducts.length> 0) { %>
+                        <% relatedProducts.forEach(relatedProduct=> { %>
                             <div class="related-item">
                                 <a href="/product/<%= relatedProduct.id %>">
-                                    <img src="<%= relatedProduct.images && relatedProduct.images.length > 0 ? relatedProduct.images[0] : '/media/placeholder.jpg' %>" alt="<%= relatedProduct.title %>" class="related-image">
-                                    <p class="related-title"><%= relatedProduct.title %></p>
-                                    <p class="related-price"><%= relatedProduct.price %> USDT</p>
+                                    <img src="<%= relatedProduct.images && relatedProduct.images.length > 0 ? relatedProduct.images[0] : '/media/placeholder.jpg' %>"
+                                        alt="<%= relatedProduct.title %>" class="related-image">
+                                    <p class="related-title">
+                                        <%= relatedProduct.title %>
+                                    </p>
+                                    <p class="related-price">
+                                        <%= relatedProduct.price %> USDT
+                                    </p>
                                 </a>
                             </div>
-                        <% }) %>
-                    <% } else { %>
-                        <p>No related products available.</p>
-                    <% } %>
+                            <% }) %>
+                                <% } else { %>
+                                    <p>No related products available.</p>
+                                    <% } %>
                 </div>
             </div>
         </div>
