@@ -154,16 +154,19 @@
             <div class="related-products">
                 <h2>Related Products</h2>
                 <div class="related-items">
-                    <div class="related-item">
-                        <img src="../media/related1.jpg" alt="Related Product 1" class="related-image">
-                        <p class="related-title">Product Name 1</p>
-                        <p class="related-price">50 USDT</p>
-                    </div>
-                    <div class="related-item">
-                        <img src="../media/related2.jpg" alt="Related Product 2" class="related-image">
-                        <p class="related-title">Product Name 2</p>
-                        <p class="related-price">75 USDT</p>
-                    </div>
+                    <% if (relatedProducts && relatedProducts.length > 0) { %>
+                        <% relatedProducts.forEach(relatedProduct => { %>
+                            <div class="related-item">
+                                <a href="/product/<%= relatedProduct.id %>">
+                                    <img src="<%= relatedProduct.images && relatedProduct.images.length > 0 ? relatedProduct.images[0] : '/media/placeholder.jpg' %>" alt="<%= relatedProduct.title %>" class="related-image">
+                                    <p class="related-title"><%= relatedProduct.title %></p>
+                                    <p class="related-price"><%= relatedProduct.price %> USDT</p>
+                                </a>
+                            </div>
+                        <% }) %>
+                    <% } else { %>
+                        <p>No related products available.</p>
+                    <% } %>
                 </div>
             </div>
         </div>
@@ -232,128 +235,185 @@
         });
     </script>
 
-<style>
-    .return-btn a {
-        color: white;
-        text-decoration: none;
-    }
-
-    .cart-icon {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        color: #FFF;
-        font-size: 40px;
-        cursor: pointer;
-        padding: 5px 10px;
-        background: rgba(159, 127, 243, 0.8);
-        border-radius: 10px;
-        transition: all 0.3s ease;
-        z-index: 1000;
-    }
-
-    .submit-review-btn {
-        background: #9F7FF3;
-        color: #FFF;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 16px;
-        transition: background 0.3s ease;
-    }
-
-    .submit-review-btn:hover {
-        background: #7F5FD3;
-    }
-
-    #review-form textarea {
-        width: 100%;
-        max-width: 500px;
-        height: 80px;
-        padding: 10px;
-        font-size: 16px;
-        color: #333;
-        background-color: #fff;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        resize: none;
-        box-sizing: border-box;
-        position: relative;
-        outline: none;
-    }
-
-    #review-form textarea:focus {
-        border-color: #9F7FF3;
-        box-shadow: 0 0 5px rgba(159, 127, 243, 0.3);
-    }
-
-    #review-form textarea::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        width: 20px;
-        height: 20px;
-        background: linear-gradient(135deg, transparent 50%, #9F7FF3 50%);
-        border-bottom-right-radius: 8px;
-    }
-
-    @media screen and (max-width: 758px) {
-        .cart-icon {
-            font-size: 30px !important;
+    <style>
+        .return-btn a {
+            color: white;
+            text-decoration: none;
         }
-    }
 
-    .cart-icon:hover {
-        opacity: 0.8;
-    }
+        .cart-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            color: #FFF;
+            font-size: 40px;
+            cursor: pointer;
+            padding: 5px 10px;
+            background: rgba(159, 127, 243, 0.8);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
 
-    .cart-count {
-        position: absolute;
-        top: -8px;
-        right: -8px;
-        background: #ff4444;
-        color: #FFF;
-        border-radius: 50%;
-        width: 20px;
-        height: 20px;
-        font-size: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 900;
-        transition: all 0.3s ease;
-    }
+        .submit-review-btn {
+            background: #9F7FF3;
+            color: #FFF;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s ease;
+        }
 
-    .cart-icon-scrolled {
-        font-size: 30px;
-        padding: 10px 20px;
-        transform: scale(1.2);
-    }
+        .submit-review-btn:hover {
+            background: #7F5FD3;
+        }
 
-    .cart-icon-scrolled .cart-count {
-        top: -10px;
-        right: -10px;
-        width: 25px;
-        height: 25px;
-        font-size: 14px;
-    }
+        #review-form textarea {
+            width: 100%;
+            max-width: 500px;
+            height: 80px;
+            padding: 10px;
+            font-size: 16px;
+            color: #333;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            resize: none;
+            box-sizing: border-box;
+            position: relative;
+            outline: none;
+        }
 
-    .checkout-btn:disabled,
-    .checkout-btn.disabled {
-        background: #888 !important;
-        opacity: 0.5 !important;
-        cursor: not-allowed !important;
-        color: #FFF !important;
-    }
+        #review-form textarea:focus {
+            border-color: #9F7FF3;
+            box-shadow: 0 0 5px rgba(159, 127, 243, 0.3);
+        }
 
-    .checkout-btn:disabled:hover,
-    .checkout-btn.disabled:hover {
-        background: #888 !important;
-        opacity: 0.5 !important;
-    }
-</style>
+        #review-form textarea::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, transparent 50%, #9F7FF3 50%);
+            border-bottom-right-radius: 8px;
+        }
+
+        @media screen and (max-width: 758px) {
+            .cart-icon {
+                font-size: 30px !important;
+            }
+        }
+
+        .cart-icon:hover {
+            opacity: 0.8;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ff4444;
+            color: #FFF;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            transition: all 0.3s ease;
+        }
+
+        .cart-icon-scrolled {
+            font-size: 30px;
+            padding: 10px 20px;
+            transform: scale(1.2);
+        }
+
+        .cart-icon-scrolled .cart-count {
+            top: -10px;
+            right: -10px;
+            width: 25px;
+            height: 25px;
+            font-size: 14px;
+        }
+
+        .checkout-btn:disabled,
+        .checkout-btn.disabled {
+            background: #888 !important;
+            opacity: 0.5 !important;
+            cursor: not-allowed !important;
+            color: #FFF !important;
+        }
+
+        .checkout-btn:disabled:hover,
+        .checkout-btn.disabled:hover {
+            background: #888 !important;
+            opacity: 0.5 !important;
+        }
+
+        .related-item-placeholder {
+            opacity: 0.5;
+            pointer-events: none;
+            /* Отключаем кликабельность */
+        }
+
+        .related-item {
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .related-items {
+            display: flex;
+            flex-direction: row;
+            /* Устанавливаем направление в ряд */
+            flex-wrap: nowrap;
+            /* Отключаем перенос на следующую строку */
+            gap: 20px;
+            /* Расстояние между карточками */
+            justify-content: center;
+            /* Центрируем карточки */
+            overflow-x: auto;
+            /* Добавляем горизонтальную прокрутку, если карточки не помещаются */
+            padding: 10px 0;
+            /* Отступы для прокрутки */
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Задержка для каждой карточки */
+        .related-item:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .related-item:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .related-item:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        a {
+            color: white;
+            text-decoration: none;
+        }
+    </style>
 
 
     <div class="loading-overlay">
