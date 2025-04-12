@@ -8,7 +8,7 @@ const fs = require('fs');
 const crypto = require('crypto');
 const { v4: uuidv4 } = require('uuid');
 const nodemailer = require('nodemailer');
-const admins = ['admin', 'Andrii Slavutskyi'];
+const admins = ['admin', 'Andrii Slavutskyi', 'Jampam.21'];
 const multer = require('multer');
 
 let products = {
