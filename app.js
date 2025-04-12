@@ -794,9 +794,32 @@ app.post('/admin/delete-order', (req, res) => {
                             <h1>Order Deleted</h1>
                             <p>Your order #${orderNumber} has been deleted by an administrator.</p>
                             <p>If you believe this is an error, please contact us.</p>
-                            <p><img src="https://timour-barber.com/media/icon.png" alt="TimourBarber" style="max-width: 250px;"></p>
-                            <p><strong><a href="https://timour-barber.com/">Our website</a></strong></p>
-                            <p><strong>TimourBarber 2025©</strong></p>
+                            <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin-top: 20px; border-top: 2px solid #9F7FF3; padding-top: 20px;">
+                                <table cellpadding="0" cellspacing="0" style="width: 100%;">
+                                    <tr>
+                                        <td style="width: 100px; vertical-align: top;">
+                                            <img src="https://timour-barber.com/media/icon.png" alt="Timour Barber Logo" style="width: 80px; height: auto;" />
+                                        </td>
+                                        <td style="vertical-align: top; padding-left: 15px;">
+                                            <p style="font-size: 16px; font-weight: bold; color: #9F7FF3; margin: 0;">Timour Barber</p>
+                                            <p style="font-size: 14px; color: #555; margin: 5px 0;">Precision. Style. Mastery.</p>
+                                            <p style="font-size: 14px; color: #555; margin: 5px 0;">
+                                                <a href="https://timour-barber.com" style="color: #9F7FF3; text-decoration: none;">Visit our website</a> | 
+                                                <a href="mailto:timourbarber@gmail.com" style="color: #9F7FF3; text-decoration: none;">timourbarber@gmail.com</a>
+                                            </p>
+                                            <p style="font-size: 14px; color: #555; margin: 5px 0;">
+                                                Follow us: 
+                                                <a href="https://www.instagram.com/timour_barber" style="color: #9F7FF3; text-decoration: none;">Instagram</a> | 
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" style="text-align: center; padding-top: 10px;">
+                                            <p style="font-size: 12px; color: #777; margin: 0;">&copy; 2025 Timour Barber. All rights reserved.</p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
                         `
                     }, (error, info) => {
                         if (error) console.error('Error sending deletion email:', error);
@@ -945,9 +968,32 @@ app.post('/checkout', async (req, res) => {
                         <p><strong>Shipping Address:</strong> ${shippingAddress}</p>
                         <p><strong>Transaction ID:</strong> ${transaction_id}</p>
                         <p>We will verify your payment and update the order status soon.</p>
-                        <p><img src="https://timour-barber.com/media/icon.png" alt="TimourBarber" style="max-width: 250px;"></p>
-                        <p><strong><a href="https://timour-barber.com/">Our website</a></strong></p>
-                        <p><strong>TimourBarber 2025©</strong></p>
+                        <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin-top: 20px; border-top: 2px solid #9F7FF3; padding-top: 20px;">
+                                <table cellpadding="0" cellspacing="0" style="width: 100%;">
+                                    <tr>
+                                        <td style="width: 100px; vertical-align: top;">
+                                            <img src="https://timour-barber.com/media/icon.png" alt="Timour Barber Logo" style="width: 80px; height: auto;" />
+                                        </td>
+                                        <td style="vertical-align: top; padding-left: 15px;">
+                                            <p style="font-size: 16px; font-weight: bold; color: #9F7FF3; margin: 0;">Timour Barber</p>
+                                            <p style="font-size: 14px; color: #555; margin: 5px 0;">Precision. Style. Mastery.</p>
+                                            <p style="font-size: 14px; color: #555; margin: 5px 0;">
+                                                <a href="https://timour-barber.com" style="color: #9F7FF3; text-decoration: none;">Visit our website</a> | 
+                                                <a href="mailto:timourbarber@gmail.com" style="color: #9F7FF3; text-decoration: none;">timourbarber@gmail.com</a>
+                                            </p>
+                                            <p style="font-size: 14px; color: #555; margin: 5px 0;">
+                                                Follow us: 
+                                                <a href="https://www.instagram.com/timour_barber" style="color: #9F7FF3; text-decoration: none;">Instagram</a> | 
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" style="text-align: center; padding-top: 10px;">
+                                            <p style="font-size: 12px; color: #777; margin: 0;">&copy; 2025 Timour Barber. All rights reserved.</p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
                     `
                 }, (error, info) => {
                     if (error) console.error('Error sending email to user:', error);
@@ -970,7 +1016,32 @@ app.post('/checkout', async (req, res) => {
                         <p><strong>Shipping Address:</strong> ${shippingAddress}</p>
                         <p><strong>Transaction ID:</strong> ${transaction_id}</p>
                         <p>Please verify the payment.</p>
-                        <p><img src="https://timour-barber.com/media/icon.png" alt="TimourBarber" style="max-width: 250px;"></p>
+                        <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin-top: 20px; border-top: 2px solid #9F7FF3; padding-top: 20px;">
+                                <table cellpadding="0" cellspacing="0" style="width: 100%;">
+                                    <tr>
+                                        <td style="width: 100px; vertical-align: top;">
+                                            <img src="https://timour-barber.com/media/icon.png" alt="Timour Barber Logo" style="width: 80px; height: auto;" />
+                                        </td>
+                                        <td style="vertical-align: top; padding-left: 15px;">
+                                            <p style="font-size: 16px; font-weight: bold; color: #9F7FF3; margin: 0;">Timour Barber</p>
+                                            <p style="font-size: 14px; color: #555; margin: 5px 0;">Precision. Style. Mastery.</p>
+                                            <p style="font-size: 14px; color: #555; margin: 5px 0;">
+                                                <a href="https://timour-barber.com" style="color: #9F7FF3; text-decoration: none;">Visit our website</a> | 
+                                                <a href="mailto:timourbarber@gmail.com" style="color: #9F7FF3; text-decoration: none;">timourbarber@gmail.com</a>
+                                            </p>
+                                            <p style="font-size: 14px; color: #555; margin: 5px 0;">
+                                                Follow us: 
+                                                <a href="https://www.instagram.com/timour_barber" style="color: #9F7FF3; text-decoration: none;">Instagram</a> | 
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" style="text-align: center; padding-top: 10px;">
+                                            <p style="font-size: 12px; color: #777; margin: 0;">&copy; 2025 Timour Barber. All rights reserved.</p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
                     `
                 }, (error, info) => {
                     if (error) console.error('Error sending email to admin:', error);
@@ -1134,9 +1205,32 @@ app.post('/admin/update-status', (req, res) => {
                             <p><strong>Items:</strong> ${itemsList}</p>
                             <p><strong>Total:</strong> ${order.total_usdt.toFixed(2)} USDT</p>
                             ${isVoucherOrder ? '' : `<p><strong>Shipping Address:</strong> ${order.shipping_address}</p>`}
-                            <p><img src="https://timour-barber.com/media/icon.png" alt="TimourBarber" style="max-width: 250px;"></p>
-                            <p><strong><a href="https://timour-barber.com/">Our website</a></strong></p>
-                            <p><strong>TimourBarber 2025&copy;</strong></p>
+                            <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin-top: 20px; border-top: 2px solid #9F7FF3; padding-top: 20px;">
+                                <table cellpadding="0" cellspacing="0" style="width: 100%;">
+                                    <tr>
+                                        <td style="width: 100px; vertical-align: top;">
+                                            <img src="https://timour-barber.com/media/icon.png" alt="Timour Barber Logo" style="width: 80px; height: auto;" />
+                                        </td>
+                                        <td style="vertical-align: top; padding-left: 15px;">
+                                            <p style="font-size: 16px; font-weight: bold; color: #9F7FF3; margin: 0;">Timour Barber</p>
+                                            <p style="font-size: 14px; color: #555; margin: 5px 0;">Precision. Style. Mastery.</p>
+                                            <p style="font-size: 14px; color: #555; margin: 5px 0;">
+                                                <a href="https://timour-barber.com" style="color: #9F7FF3; text-decoration: none;">Visit our website</a> | 
+                                                <a href="mailto:timourbarber@gmail.com" style="color: #9F7FF3; text-decoration: none;">timourbarber@gmail.com</a>
+                                            </p>
+                                            <p style="font-size: 14px; color: #555; margin: 5px 0;">
+                                                Follow us: 
+                                                <a href="https://www.instagram.com/timour_barber" style="color: #9F7FF3; text-decoration: none;">Instagram</a> | 
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" style="text-align: center; padding-top: 10px;">
+                                            <p style="font-size: 12px; color: #777; margin: 0;">&copy; 2025 Timour Barber. All rights reserved.</p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
                         `
                     }, (error, info) => {
                         if (error) console.error('Error sending email:', error);
@@ -1199,9 +1293,32 @@ app.post('/admin/delete-review', async (req, res) => {
                                 <p>Your review for product ID ${review.product_id} has been removed by an administrator.</p>
                                 <p>Review text: ${review.review_text}</p>
                                 <p>If you believe this is an error, please contact us.</p>
-                                <p><img src="https://timour-barber.com/media/icon.png" alt="TimourBarber" style="max-width: 250px;"></p>
-                                <p><strong><a href="https://timour-barber.com/">Our website</a></strong></p>
-                                <p><strong>TimourBarber 2025©</strong></p>
+                                <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin-top: 20px; border-top: 2px solid #9F7FF3; padding-top: 20px;">
+                                <table cellpadding="0" cellspacing="0" style="width: 100%;">
+                                    <tr>
+                                        <td style="width: 100px; vertical-align: top;">
+                                            <img src="https://timour-barber.com/media/icon.png" alt="Timour Barber Logo" style="width: 80px; height: auto;" />
+                                        </td>
+                                        <td style="vertical-align: top; padding-left: 15px;">
+                                            <p style="font-size: 16px; font-weight: bold; color: #9F7FF3; margin: 0;">Timour Barber</p>
+                                            <p style="font-size: 14px; color: #555; margin: 5px 0;">Precision. Style. Mastery.</p>
+                                            <p style="font-size: 14px; color: #555; margin: 5px 0;">
+                                                <a href="https://timour-barber.com" style="color: #9F7FF3; text-decoration: none;">Visit our website</a> | 
+                                                <a href="mailto:timourbarber@gmail.com" style="color: #9F7FF3; text-decoration: none;">timourbarber@gmail.com</a>
+                                            </p>
+                                            <p style="font-size: 14px; color: #555; margin: 5px 0;">
+                                                Follow us: 
+                                                <a href="https://www.instagram.com/timour_barber" style="color: #9F7FF3; text-decoration: none;">Instagram</a> | 
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" style="text-align: center; padding-top: 10px;">
+                                            <p style="font-size: 12px; color: #777; margin: 0;">&copy; 2025 Timour Barber. All rights reserved.</p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
                             `
                         }, (error, info) => {
                             if (error) console.error('Error sending review deletion email:', error);
@@ -1212,6 +1329,123 @@ app.post('/admin/delete-review', async (req, res) => {
                 });
             }
         );
+    });
+});
+
+app.get('/contact', (req, res) => {
+    res.render('contact', {
+        user: req.session.user || null,
+        admins: admins,
+        success: req.query.success || null // Передаём параметр success
+    });
+});
+
+// Обработка формы обратной связи
+app.post('/contact/submit', (req, res) => {
+    const { name, email, message } = req.body;
+
+    // Проверка, что все поля заполнены
+    if (!name || !email || !message) {
+        return res.status(400).json({ success: false, error: 'All fields are required' });
+    }
+
+    // Формируем письмо
+    const mailOptions = {
+        from: 'timourbarber@gmail.com',
+        to: 'timourbarber@gmail.com',
+        subject: `New Contact Form Submission from ${name}`,
+        html: `
+            <h1>New Contact Form Submission</h1>
+            <p><strong>Name:</strong> ${name}</p>
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Message:</strong> ${message}</p>
+            <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin-top: 20px; border-top: 2px solid #9F7FF3; padding-top: 20px;">
+            <table cellpadding="0" cellspacing="0" style="width: 100%;">
+                <tr>
+                    <td style="width: 100px; vertical-align: top;">
+                        <img src="https://timour-barber.com/media/icon.png" alt="Timour Barber Logo" style="width: 80px; height: auto;" />
+                    </td>
+                    <td style="vertical-align: top; padding-left: 15px;">
+                        <p style="font-size: 16px; font-weight: bold; color: #9F7FF3; margin: 0;">Timour Barber</p>
+                        <p style="font-size: 14px; color: #555; margin: 5px 0;">Precision. Style. Mastery.</p>
+                        <p style="font-size: 14px; color: #555; margin: 5px 0;">
+                            <a href="https://timour-barber.com" style="color: #9F7FF3; text-decoration: none;">Visit our website</a> | 
+                            <a href="mailto:timourbarber@gmail.com" style="color: #9F7FF3; text-decoration: none;">timourbarber@gmail.com</a>
+                        </p>
+                        <p style="font-size: 14px; color: #555; margin: 5px 0;">
+                            Follow us: 
+                            <a href="https://www.instagram.com/timour_barber" style="color: #9F7FF3; text-decoration: none;">Instagram</a> | 
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="text-align: center; padding-top: 10px;">
+                        <p style="font-size: 12px; color: #777; margin: 0;">&copy; 2025 Timour Barber. All rights reserved.</p>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        `
+    };
+
+    // Отправляем письмо
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.error('Error sending contact form email:', error);
+            return res.status(500).json({ success: false, error: 'Failed to send message' });
+        }
+        console.log('Contact form email sent:', info.response);
+
+        // Отправляем письмо с подтверждением пользователю
+        const confirmationMailOptions = {
+            from: 'timourbarber@gmail.com',
+            to: email,
+            subject: 'Thank You for Contacting Timour Barber',
+            html: `
+                <h1>Thank You for Your Message!</h1>
+                <p>Dear ${name},</p>
+                <p>We have received your message and will get back to you as soon as possible.</p>
+                <p><strong>Your Message:</strong> ${message}</p>
+                <p>If you have any urgent inquiries, feel free to reach us at <a href="mailto:timourbarber@gmail.com">timourbarber@gmail.com</a> or call us at +370 682 05695.</p>
+                <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin-top: 20px; border-top: 2px solid #9F7FF3; padding-top: 20px;">
+                <table cellpadding="0" cellspacing="0" style="width: 100%;">
+                    <tr>
+                        <td style="width: 100px; vertical-align: top;">
+                            <img src="https://timour-barber.com/media/icon.png" alt="Timour Barber Logo" style="width: 80px; height: auto;" />
+                        </td>
+                        <td style="vertical-align: top; padding-left: 15px;">
+                            <p style="font-size: 16px; font-weight: bold; color: #9F7FF3; margin: 0;">Timour Barber</p>
+                            <p style="font-size: 14px; color: #555; margin: 5px 0;">Precision. Style. Mastery.</p>
+                            <p style="font-size: 14px; color: #555; margin: 5px 0;">
+                                <a href="https://timour-barber.com" style="color: #9F7FF3; text-decoration: none;">Visit our website</a> | 
+                                <a href="mailto:timourbarber@gmail.com" style="color: #9F7FF3; text-decoration: none;">timourbarber@gmail.com</a>
+                            </p>
+                            <p style="font-size: 14px; color: #555; margin: 5px 0;">
+                                Follow us: 
+                                <a href="https://www.instagram.com/timour_barber" style="color: #9F7FF3; text-decoration: none;">Instagram</a> | 
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-align: center; padding-top: 10px;">
+                            <p style="font-size: 12px; color: #777; margin: 0;">&copy; 2025 Timour Barber. All rights reserved.</p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            `
+        };
+
+        transporter.sendMail(confirmationMailOptions, (error, info) => {
+            if (error) {
+                console.error('Error sending confirmation email:', error);
+            } else {
+                console.log('Confirmation email sent to user:', info.response);
+            }
+        });
+
+        // Перенаправляем пользователя на страницу контактов с сообщением об успехе
+        res.redirect('/contact?success=Message sent successfully');
     });
 });
 
@@ -1522,9 +1756,32 @@ app.post('/voucher-checkout', async (req, res) => {
                                 <p><strong>Amount:</strong> ${totalUSDT.toFixed(2)} USDT</p>
                                 <p><strong>Transaction ID:</strong> ${transaction_id}</p>
                                 <p style="color: red; font-weight: bold;">Your order is being prepared. Our receptionist checks the payment for the (${orderNumber}) order. This usually doesn't take long. You will receive a new notification of a status change.</p>
-                                <p><img src="https://timour-barber.com/media/icon.png" alt="TimourBarber" style="max-width: 250px;"></p>
-                                <p><strong><a href="https://timour-barber.com/">Our website</a></strong></p>
-                                <p><strong>TimourBarber 2025©</strong></p>
+                                <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin-top: 20px; border-top: 2px solid #9F7FF3; padding-top: 20px;">
+                                <table cellpadding="0" cellspacing="0" style="width: 100%;">
+                                    <tr>
+                                        <td style="width: 100px; vertical-align: top;">
+                                            <img src="https://timour-barber.com/media/icon.png" alt="Timour Barber Logo" style="width: 80px; height: auto;" />
+                                        </td>
+                                        <td style="vertical-align: top; padding-left: 15px;">
+                                            <p style="font-size: 16px; font-weight: bold; color: #9F7FF3; margin: 0;">Timour Barber</p>
+                                            <p style="font-size: 14px; color: #555; margin: 5px 0;">Precision. Style. Mastery.</p>
+                                            <p style="font-size: 14px; color: #555; margin: 5px 0;">
+                                                <a href="https://timour-barber.com" style="color: #9F7FF3; text-decoration: none;">Visit our website</a> | 
+                                                <a href="mailto:timourbarber@gmail.com" style="color: #9F7FF3; text-decoration: none;">timourbarber@gmail.com</a>
+                                            </p>
+                                            <p style="font-size: 14px; color: #555; margin: 5px 0;">
+                                                Follow us: 
+                                                <a href="https://www.instagram.com/timour_barber" style="color: #9F7FF3; text-decoration: none;">Instagram</a> | 
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" style="text-align: center; padding-top: 10px;">
+                                            <p style="font-size: 12px; color: #777; margin: 0;">&copy; 2025 Timour Barber. All rights reserved.</p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
                             `
                         }, (error, info) => {
                             if (error) {
@@ -1548,6 +1805,32 @@ app.post('/voucher-checkout', async (req, res) => {
                                 <ul>${voucherCart.map(item => `<li>${item.title} - ${item.price} USDT</li>`).join('')}</ul>
                                 <p><strong>Total:</strong> ${totalUSDT.toFixed(2)} USDT</p>
                                 <p><strong>Transaction ID:</strong> ${transaction_id}</p>
+                                <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin-top: 20px; border-top: 2px solid #9F7FF3; padding-top: 20px;">
+                                <table cellpadding="0" cellspacing="0" style="width: 100%;">
+                                    <tr>
+                                        <td style="width: 100px; vertical-align: top;">
+                                            <img src="https://timour-barber.com/media/icon.png" alt="Timour Barber Logo" style="width: 80px; height: auto;" />
+                                        </td>
+                                        <td style="vertical-align: top; padding-left: 15px;">
+                                            <p style="font-size: 16px; font-weight: bold; color: #9F7FF3; margin: 0;">Timour Barber</p>
+                                            <p style="font-size: 14px; color: #555; margin: 5px 0;">Precision. Style. Mastery.</p>
+                                            <p style="font-size: 14px; color: #555; margin: 5px 0;">
+                                                <a href="https://timour-barber.com" style="color: #9F7FF3; text-decoration: none;">Visit our website</a> | 
+                                                <a href="mailto:timourbarber@gmail.com" style="color: #9F7FF3; text-decoration: none;">timourbarber@gmail.com</a>
+                                            </p>
+                                            <p style="font-size: 14px; color: #555; margin: 5px 0;">
+                                                Follow us: 
+                                                <a href="https://www.instagram.com/timour_barber" style="color: #9F7FF3; text-decoration: none;">Instagram</a> | 
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" style="text-align: center; padding-top: 10px;">
+                                            <p style="font-size: 12px; color: #777; margin: 0;">&copy; 2025 Timour Barber. All rights reserved.</p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
                             `
                         }, (error, info) => {
                             if (error) {
