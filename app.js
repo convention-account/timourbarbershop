@@ -678,7 +678,7 @@ app.get('/profile', (req, res) => {
     }
     console.log('User is logged in:', req.session.user);
 
-    db.get('SELECT id, voucher FROM users WHERE email = ?', [req.session.user], (err, user) => {
+    db.get('SELECT id, voucher FROM users WHERE username = ?', [req.session.user], (err, user) => {
         if (err || !user) {
             console.error('User lookup error:', err?.message || 'User not found');
             return res.redirect('/');
