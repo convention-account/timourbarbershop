@@ -22,6 +22,25 @@ body {
     touch-action: pan-y;
 }
 
+@media (max-width: 768px) {
+    main {
+        padding: 20px;
+        padding-top: 70px;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    .content-wrapper {
+        flex-direction: column;
+        align-items: center;
+        position: static;
+        min-height: auto;
+        padding: 0;
+        gap: 15px;
+    }
+}
+
 body.menu-open {
     overflow: hidden;
 }
