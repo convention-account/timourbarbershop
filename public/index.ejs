@@ -189,5 +189,14 @@
         opacity: 0.5 !important;
     }
 </style>
+<script>
+    document.addEventListener('touchmove', function (e) {
+        const touch = e.touches[0];
+        const deltaX = touch.pageX - (touch.startX || touch.pageX);
+        if (Math.abs(deltaX) > 0) {
+            e.preventDefault(); // Предотвращаем горизонтальный скролл
+        }
+    }, { passive: false });
+</script>
 
 </html>

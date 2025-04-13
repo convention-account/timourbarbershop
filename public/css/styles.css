@@ -41,6 +41,10 @@ body {
     }
 }
 
+body {
+    -webkit-overflow-scrolling: auto; /* Замени на auto или убери */
+}
+
 body.menu-open {
     overflow: hidden;
 }
