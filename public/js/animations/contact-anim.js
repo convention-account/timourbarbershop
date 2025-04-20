@@ -28,3 +28,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+let startX = 0;
+let startY = 0;
+
+document.addEventListener('touchstart', function (e) {
+    startX = e.touches[0].pageX;
+    startY = e.touches[0].pageY;
+}, { passive: true });
+
+document.addEventListener('touchmove', function (e) {
+    const touch = e.touches[0];
+    const deltaX = touch.pageX - startX;
+    const deltaY = touch.pageY - startY;
+
+    // Если движение больше по горизонтали, чем по вертикали, предотвращаем прокрутку
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        e.preventDefault();
+    }
+}, { passive: false });

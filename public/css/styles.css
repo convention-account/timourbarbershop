@@ -45,6 +45,11 @@ body {
     -webkit-overflow-scrolling: auto; /* Замени на auto или убери */
 }
 
+body {
+    overflow-x: hidden !important;
+    touch-action: pan-y !important;
+}
+
 body.menu-open {
     overflow: hidden;
 }
