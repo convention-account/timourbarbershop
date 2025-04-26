@@ -90,8 +90,8 @@
                                 <% if (product.video) { %>
                                     <a href="<%= product.video %>" data-fancybox="gallery"
                                         data-caption="<%= product.title %> - Video">
-                                        <video src="<%= product.video %>" class="product-video" muted
-                                            poster="<%= product.images && product.images.length > 0 ? product.images[0] : '/media/placeholder.jpg' %>"></video>
+                                        <video src="<%= product.video %>" class="product-video" muted autoplay
+                                            loop></video>
                                     </a>
                                     <% } %>
             </div>
@@ -243,6 +243,40 @@
         .return-btn a {
             color: white;
             text-decoration: none;
+        }
+
+        .fancybox__container {
+            width: 100vw !important;
+            height: 100vh !important;
+            max-width: 100% !important;
+            max-height: 100% !important;
+        }
+
+        .fancybox__content {
+            max-width: 90vw !important;
+            max-height: 90vh !important;
+            width: auto !important;
+            height: auto !important;
+            overflow: visible !important;
+            /* Убедимся, что контент не обрезается */
+        }
+
+        .fancybox__slide {
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            overflow: auto !important;
+            /* Добавляем прокрутку, если контент не помещается */
+        }
+
+        .fancybox__content>img,
+        .fancybox__content>video {
+            max-width: 100% !important;
+            max-height: 90vh !important;
+            width: auto !important;
+            height: auto !important;
+            object-fit: contain !important;
+            /* Масштабируем с сохранением пропорций */
         }
 
         .cart-icon {
