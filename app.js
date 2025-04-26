@@ -270,7 +270,8 @@ const storage = multer.diskStorage({
 const productUpload = multer({
     storage: multer.diskStorage({
         destination: (req, file, cb) => {
-            const uploadDir = path.join(__dirname, 'public/img');
+            const isVideo = file.mimetype.startsWith('video/');
+            const uploadDir = isVideo ? path.join(__dirname, 'public/videos') : path.join(__dirname, 'public/img');
             if (!fs.existsSync(uploadDir)) {
                 fs.mkdirSync(uploadDir);
             }
@@ -281,11 +282,16 @@ const productUpload = multer({
         }
     }),
     fileFilter: (req, file, cb) => {
-        if (file.mimetype.startsWith('image/')) {
+        const isImage = file.mimetype.startsWith('image/');
+        const isVideo = file.mimetype.startsWith('video/');
+        if (isImage || isVideo) {
             cb(null, true);
         } else {
-            cb(new Error('Only images are allowed'), false);
+            cb(new Error('Только изображения и видео (MP4, MOV) разрешены'), false);
         }
+    },
+    limits: {
+        fileSize: 100 * 1024 * 1024 // 100MB лимит для видео
     }
 });
 
@@ -298,16 +304,20 @@ app.get('/admin/products', (req, res) => {
 });
 
 // Добавление нового товара
-app.post('/admin/add-product', productUpload.array('images'), (req, res) => {
+app.post('/admin/add-product', productUpload.fields([
+    { name: 'images', maxCount: 10 },
+    { name: 'video', maxCount: 1 }
+]), (req, res) => {
     if (!req.session.user || !admins.includes(req.session.user)) {
         return res.status(403).json({ success: false, error: 'Unauthorized' });
     }
 
     const { title, description, price, priceEUR } = req.body;
-    const images = req.files.map(file => `/img/${file.filename}`);
+    const images = req.files['images'] ? req.files['images'].map(file => `/img/${file.filename}`) : [];
+    const video = req.files['video'] ? `/videos/${req.files['video'][0].filename}` : null;
 
     if (!title || !price) {
-        return res.status(400).json({ success: false, error: 'Title and price are required' });
+        return res.status(400).json({ success: false, error: 'Название и цена обязательны' });
     }
 
     const productId = title.toLowerCase().replace(/\s+/g, '-');
@@ -318,6 +328,7 @@ app.post('/admin/add-product', productUpload.array('images'), (req, res) => {
         price: parseFloat(price),
         priceEUR: priceEUR ? parseFloat(priceEUR) : 0,
         images,
+        video,
         features: ['Professional tool', 'Payment in USDT or cash']
     };
 
@@ -325,16 +336,20 @@ app.post('/admin/add-product', productUpload.array('images'), (req, res) => {
 });
 
 // Обновление товара
-app.post('/admin/update-product', productUpload.array('images'), (req, res) => {
+app.post('/admin/update-product', productUpload.fields([
+    { name: 'images', maxCount: 10 },
+    { name: 'video', maxCount: 1 }
+]), (req, res) => {
     if (!req.session.user || !admins.includes(req.session.user)) {
         return res.status(403).json({ success: false, error: 'Unauthorized' });
     }
 
-    const { title, description, price, priceEUR, productId } = req.body; // Извлекаем productId из req.body
-    const newImages = req.files.map(file => `/img/${file.filename}`);
+    const { title, description, price, priceEUR, productId } = req.body;
+    const newImages = req.files['images'] ? req.files['images'].map(file => `/img/${file.filename}`) : [];
+    const newVideo = req.files['video'] ? `/videos/${req.files['video'][0].filename}` : null;
 
     if (!productId || !products[productId]) {
-        return res.status(404).json({ success: false, error: 'Product not found' });
+        return res.status(404).json({ success: false, error: 'Продукт не найден' });
     }
 
     products[productId] = {
@@ -343,7 +358,8 @@ app.post('/admin/update-product', productUpload.array('images'), (req, res) => {
         description: description || products[productId].description,
         price: price ? parseFloat(price) : products[productId].price,
         priceEUR: priceEUR ? parseFloat(priceEUR) : products[productId].priceEUR,
-        images: newImages.length ? newImages : products[productId].images
+        images: newImages.length ? newImages : products[productId].images,
+        video: newVideo || products[productId].video
     };
     res.json({ success: true });
 });

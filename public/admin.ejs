@@ -317,7 +317,8 @@
             resize: vertical;
         }
 
-        .product-form .current-images img {
+        .product-form .current-media img,
+        .product-form .current-media video {
             max-width: 50px;
             margin: 5px;
             border-radius: 5px;
@@ -813,6 +814,19 @@
         </div>
     </div>
 
+    <!-- Modal for Review Deletion -->
+    <div id="delete-review-modal" class="modal">
+        <div class="modal-content">
+            <h2>Confirm Review Deletion</h2>
+            <p>Please enter your password to delete review #<span id="delete-review-id"></span></p>
+            <input type="password" id="delete-review-password" placeholder="Your Password" class="modal-input">
+            <div class="modal-actions">
+                <button class="modal-btn confirm-delete-btn" onclick="confirmDeleteReview()">Confirm</button>
+                <button class="modal-btn close-modal-btn" onclick="closeDeleteReviewModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <footer>
         <div class="footer-content">
             <p>© 2025 Timour Barber. All rights reserved.</p>
@@ -826,7 +840,8 @@
 
     <script src="/js/script.js"></script>
     <script src="/js/admin.js"></script>
-    <script>document.addEventListener('DOMContentLoaded', () => {
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
             // Product management scripts
             const manageProductsBtn = document.getElementById('manage-products-btn');
             const productsManagement = document.getElementById('products-management');
@@ -858,19 +873,23 @@
                 const card = document.createElement('div');
                 card.className = 'product-card';
                 card.innerHTML = `
-                <form class="product-form" data-id="${product.id}">
-                    <input type="text" name="title" value="${product.title}" placeholder="Title">
-                    <textarea name="description" placeholder="Description">${product.description}</textarea>
-                    <input type="number" name="price" value="${product.price}" placeholder="Price (USDT)">
-                    <input type="number" name="priceEUR" value="${product.priceEUR}" placeholder="Price (EUR)">
-                    <input type="file" name="images" multiple accept="image/*">
-                    <div class="current-images">
-                        ${product.images.map(img => `<img src="${img}" alt="${product.title}">`).join('')}
-                    </div>
-                    <button type="button" class="save-btn">Save Changes</button>
-                    <button type="button" class="delete-btn">Delete Product</button>
-                </form>
-            `;
+                    <form class="product-form" data-id="${product.id}">
+                        <input type="text" name="title" value="${product.title}" placeholder="Title">
+                        <textarea name="description" placeholder="Description">${product.description}</textarea>
+                        <input type="number" name="price" value="${product.price}" placeholder="Price (USDT)">
+                        <input type="number" name="priceEUR" value="${product.priceEUR}" placeholder="Price (EUR)">
+                        <label>Images (multiple allowed):</label>
+                        <input type="file" name="images" multiple accept="image/*">
+                        <label>Video (one file, MP4 recommended):</label>
+                        <input type="file" name="video" accept="video/mp4,video/mov">
+                        <div class="current-media">
+                            ${product.images.map(img => `<img src="${img}" alt="${product.title}">`).join('')}
+                            ${product.video ? `<video src="${product.video}" controls muted style="max-width: 50px;"></video>` : ''}
+                        </div>
+                        <button type="button" class="save-btn">Save Changes</button>
+                        <button type="button" class="delete-btn">Delete Product</button>
+                    </form>
+                `;
 
                 card.querySelector('.save-btn').addEventListener('click', () => saveProduct(card));
                 card.querySelector('.delete-btn').addEventListener('click', () => deleteProduct(product.id));
@@ -881,15 +900,18 @@
                 const form = document.createElement('div');
                 form.className = 'product-card';
                 form.innerHTML = `
-                <form class="product-form">
-                    <input type="text" name="title" placeholder="Title">
-                    <textarea name="description" placeholder="Description"></textarea>
-                    <input type="number" name="price" placeholder="Price (USDT)">
-                    <input type="number" name="priceEUR" placeholder="Price (EUR)">
-                    <input type="file" name="images" multiple accept="image/*">
-                    <button type="button" class="save-btn">Add Product</button>
-                </form>
-            `;
+                    <form class="product-form">
+                        <input type="text" name="title" placeholder="Title">
+                        <textarea name="description" placeholder="Description"></textarea>
+                        <input type="number" name="price" placeholder="Price (USDT)">
+                        <input type="number" name="priceEUR" placeholder="Price (EUR)">
+                        <label>Images (multiple allowed):</label>
+                        <input type="file" name="images" multiple accept="image/*">
+                        <label>Video (one file, MP4 recommended):</label>
+                        <input type="file" name="video" accept="video/mp4,video/mov">
+                        <button type="button" class="save-btn">Add Product</button>
+                    </form>
+                `;
                 form.querySelector('.save-btn').addEventListener('click', () => saveProduct(form, true));
                 productsList.appendChild(form);
                 newProductCard.style.display = 'none';
@@ -899,6 +921,13 @@
                 const form = card.querySelector('.product-form');
                 const formData = new FormData(form);
                 if (!isNew) formData.append('productId', form.dataset.id);
+
+                // Validate video input (only one video allowed)
+                const videoInput = form.querySelector('input[name="video"]');
+                if (videoInput.files.length > 1) {
+                    alert('Only one video file is allowed per product.');
+                    return;
+                }
 
                 try {
                     const response = await fetch(isNew ? '/admin/add-product' : '/admin/update-product', {
@@ -958,38 +987,25 @@
                 reviewsList.innerHTML = '<p>Loading...</p>';
                 try {
                     const response = await fetch('/admin/reviews');
-                    console.log('Response status:', response.status);
-                    const text = await response.text(); // Get raw response as text
-                    console.log('Raw response from /admin/reviews:', text);
-
+                    const text = await response.text();
                     let data;
                     try {
-                        data = JSON.parse(text); // Attempt to parse as JSON
+                        data = JSON.parse(text);
                     } catch (parseError) {
                         console.error('JSON parsing error:', parseError);
                         throw new Error(`Server response is not valid JSON: ${text}`);
                     }
 
-                    // Check response status
                     if (!response.ok) {
                         console.error('Failed to load reviews:', response.status, data);
-                        if (data && data.error) {
-                            throw new Error(data.error); // Use error message from response
-                        } else {
-                            throw new Error(`Failed to load reviews: ${response.status} ${text}`);
-                        }
+                        throw new Error(data.error || `Failed to load reviews: ${response.status}`);
                     }
 
-                    // Verify data is an array
                     if (!Array.isArray(data)) {
                         console.error('Server response is not an array:', data);
-                        if (data && data.error) {
-                            throw new Error(data.error); // Use error field if present
-                        }
-                        throw new Error('Expected an array of reviews, but received a different data format');
+                        throw new Error(data.error || 'Expected an array of reviews');
                     }
 
-                    // Clear list and display reviews
                     reviewsList.innerHTML = '';
                     if (data.length === 0) {
                         reviewsList.innerHTML = '<p>No reviews available.</p>';
@@ -1010,15 +1026,111 @@
                 const card = document.createElement('div');
                 card.className = 'review-card';
                 card.innerHTML = `
-                <p><strong>User:</strong> ${review.username}</p>
-                <p><strong>Product ID:</strong> ${review.product_id}</p>
-                <p><strong>Review:</strong> ${review.review_text}</p>
-                <p><strong>Date:</strong> ${new Date(review.created_at).toLocaleString()}</p>
-                <button class="delete-review-btn" onclick="openDeleteReviewModal('${review.id}')">Delete</button>
-            `;
+                    <p><strong>User:</strong> ${review.username}</p>
+                    <p><strong>Product ID:</strong> ${review.product_id}</p>
+                    <p><strong>Review:</strong> ${review.review_text}</p>
+                    <p><strong>Date:</strong> ${new Date(review.created_at).toLocaleString()}</p>
+                    <button class="delete-review-btn" onclick="openDeleteReviewModal('${review.id}')">Delete</button>
+                `;
                 return card;
             }
+
+            // Review deletion modal functions
+            function openDeleteReviewModal(reviewId) {
+                const modal = document.getElementById('delete-review-modal');
+                document.getElementById('delete-review-id').textContent = reviewId;
+                modal.style.display = 'flex';
+            }
+
+            function closeDeleteReviewModal() {
+                const modal = document.getElementById('delete-review-modal');
+                modal.style.display = 'none';
+                document.getElementById('delete-review-password').value = '';
+            }
+
+            async function confirmDeleteReview() {
+                const reviewId = document.getElementById('delete-review-id').textContent;
+                const password = document.getElementById('delete-review-password').value;
+
+                try {
+                    const response = await fetch('/admin/delete-review', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ reviewId, password })
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        alert('Review deleted successfully');
+                        loadReviews();
+                        closeDeleteReviewModal();
+                    } else {
+                        alert('Failed to delete review: ' + result.error);
+                    }
+                } catch (error) {
+                    console.error('Error deleting review:', error);
+                    alert('Error deleting review');
+                }
+            }
         });
+
+        function updateStatus(orderNumber) {
+            const select = document.querySelector(`select[data-order-number="${orderNumber}"]`);
+            const newStatus = select.value;
+
+            fetch('/admin/update-status', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ orderNumber, status: newStatus })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Status updated successfully');
+                        location.reload();
+                    } else {
+                        alert('Failed to update status: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating status:', error);
+                    alert('Error updating status');
+                });
+        }
+
+        function openDeleteModal(orderNumber) {
+            const modal = document.getElementById('delete-modal');
+            document.getElementById('delete-order-number').textContent = orderNumber;
+            modal.style.display = 'flex';
+        }
+
+        function closeDeleteModal() {
+            const modal = document.getElementById('delete-modal');
+            modal.style.display = 'none';
+            document.getElementById('delete-password').value = '';
+        }
+
+        async function confirmDelete() {
+            const orderNumber = document.getElementById('delete-order-number').textContent;
+            const password = document.getElementById('delete-password').value;
+
+            try {
+                const response = await fetch('/admin/delete-order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ orderNumber, password })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert('Order deleted successfully');
+                    location.reload();
+                } else {
+                    alert('Failed to delete order: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Error deleting order:', error);
+                alert('Error deleting order');
+            }
+        }
     </script>
 
     <div class="loading-overlay">

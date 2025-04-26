@@ -551,3 +551,469 @@ footer {
         width: 120px;
     }
 }
+
+/* Медиа-запросы для мобильных устройств */
+@media (max-width: 768px) {
+
+    /* Основной контейнер */
+    body {
+        overflow-x: hidden;
+        /* Предотвращаем горизонтальную прокрутку */
+    }
+
+    main {
+        padding: 10px;
+        width: 100%;
+        box-sizing: border-box;
+        /* Учитываем padding в ширине */
+    }
+
+    .product-section {
+        padding: 10px;
+        width: 100%;
+        box-sizing: border-box;
+        align-items: flex-start;
+    }
+
+    .product-wrapper {
+        padding: 15px;
+        border-radius: 12px;
+        gap: 12px;
+        width: 100%;
+        max-width: 100%;
+        /* Не выходит за пределы экрана */
+        box-sizing: border-box;
+    }
+
+    /* Заголовок продукта */
+    .product-title {
+        font-size: 26px;
+        line-height: 1.2;
+        text-align: center;
+        margin: 0 auto;
+        max-width: 100%;
+        word-wrap: break-word;
+        /* Перенос длинных слов */
+    }
+
+    /* Лейблы */
+    .product-labels {
+        gap: 6px;
+        flex-wrap: wrap;
+        justify-content: center;
+        max-width: 100%;
+    }
+
+    .label {
+        font-size: 11px;
+        padding: 4px 8px;
+    }
+
+    /* Галерея продукта */
+    .product-gallery {
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+        overflow-x: hidden;
+        /* Предотвращаем горизонтальное переполнение */
+    }
+
+    .product-image,
+    .product-video {
+        max-width: 100%;
+        /* Не больше ширины контейнера */
+        width: 160px;
+        height: auto;
+        border-radius: 8px;
+        object-fit: contain;
+        /* Сохраняем пропорции */
+    }
+
+    /* Детали продукта */
+    .product-details {
+        gap: 10px;
+        text-align: center;
+        width: 100%;
+    }
+
+    .product-description {
+        font-size: 13px;
+        line-height: 1.4;
+        word-wrap: break-word;
+    }
+
+    .product-features {
+        font-size: 12px;
+        text-align: left;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+    }
+
+    .product-features li {
+        margin-bottom: 8px;
+    }
+
+    .product-price {
+        font-size: 16px;
+    }
+
+    /* Кнопки */
+    .add-to-cart-btn,
+    .return-btn {
+        padding: 8px 12px;
+        font-size: 12px;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        text-align: center;
+    }
+
+    .return-btn a {
+        display: block;
+        width: 100%;
+    }
+
+    /* Спецификации */
+    .product-specifications h2,
+    .product-reviews h2,
+    .related-products h2 {
+        font-size: 16px;
+        margin-bottom: 8px;
+    }
+
+    .spec-list {
+        font-size: 12px;
+        line-height: 1.4;
+        padding: 0;
+        width: 100%;
+    }
+
+    .spec-list li {
+        word-wrap: break-word;
+    }
+
+    /* Отзывы */
+    .review {
+        padding: 8px;
+        border-radius: 8px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .review-text {
+        font-size: 12px;
+        line-height: 1.4;
+        word-wrap: break-word;
+    }
+
+    .review-author {
+        font-size: 11px;
+    }
+
+    #review-form {
+        width: 100%;
+    }
+
+    #review-form textarea {
+        width: 100%;
+        max-width: 100%;
+        height: 50px;
+        font-size: 12px;
+        padding: 6px;
+        border-radius: 6px;
+        box-sizing: border-box;
+    }
+
+    .submit-review-btn {
+        padding: 6px 10px;
+        font-size: 12px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Связанные товары */
+    .related-items {
+        gap: 12px;
+        overflow-x: auto;
+        justify-content: flex-start;
+        width: 100%;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-overflow-scrolling: touch;
+        /* Плавная прокрутка на iOS */
+    }
+
+    .related-item {
+        width: 120px;
+        padding: 8px;
+        border-radius: 8px;
+        flex: 0 0 auto;
+        box-sizing: border-box;
+    }
+
+    .related-image {
+        width: 100%;
+        height: auto;
+        border-radius: 5px;
+    }
+
+    .related-title {
+        font-size: 12px;
+        margin: 6px 0 4px;
+        word-wrap: break-word;
+    }
+
+    .related-price {
+        font-size: 11px;
+    }
+
+    /* Иконка корзины */
+    .cart-icon {
+        font-size: 24px;
+        padding: 5px;
+        bottom: 10px;
+        right: 10px;
+        box-sizing: border-box;
+    }
+
+    .cart-count {
+        width: 14px;
+        height: 14px;
+        font-size: 8px;
+        top: -6px;
+        right: -6px;
+    }
+
+    /* Попап */
+    .crypto-popup-content {
+        padding: 10px;
+        max-width: 90%;
+        box-sizing: border-box;
+    }
+
+    .crypto-popup-content p {
+        font-size: 12px;
+        word-wrap: break-word;
+    }
+
+    .crypto-popup-actions a,
+    .crypto-close-btn {
+        font-size: 11px;
+        padding: 5px 10px;
+    }
+
+    /* Футер */
+    footer {
+        padding: 15px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .footer-content {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .footer-content p {
+        font-size: 12px;
+        word-wrap: break-word;
+    }
+
+    .footer-links {
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+        padding: 0;
+    }
+
+    .footer-links a {
+        font-size: 11px;
+    }
+
+    /* Спиннер */
+    .loading-overlay .spinner {
+        width: 36px;
+        height: 36px;
+        border: 3px solid #9F7FF3;
+        border-top: 3px solid transparent;
+    }
+}
+
+@media (max-width: 480px) {
+    main {
+        padding: 8px;
+    }
+
+    .product-section {
+        padding: 8px;
+    }
+
+    .product-wrapper {
+        padding: 12px;
+        border-radius: 10px;
+        gap: 10px;
+    }
+
+    .product-title {
+        font-size: 22px;
+    }
+
+    .label {
+        font-size: 10px;
+        padding: 3px 6px;
+    }
+
+    .product-image,
+    .product-video {
+        width: 140px;
+    }
+
+    .product-description {
+        font-size: 12px;
+    }
+
+    .product-features {
+        font-size: 11px;
+    }
+
+    .product-price {
+        font-size: 14px;
+    }
+
+    .add-to-cart-btn,
+    .return-btn {
+        padding: 6px 10px;
+        font-size: 11px;
+    }
+
+    .product-specifications h2,
+    .product-reviews h2,
+    .related-products h2 {
+        font-size: 14px;
+    }
+
+    .spec-list,
+    .review-text {
+        font-size: 11px;
+    }
+
+    .review-author {
+        font-size: 10px;
+    }
+
+    #review-form textarea {
+        height: 45px;
+        font-size: 11px;
+        padding: 5px;
+    }
+
+    .submit-review-btn {
+        padding: 5px 8px;
+        font-size: 11px;
+    }
+
+    .related-item {
+        width: 110px;
+        padding: 6px;
+    }
+
+    .related-title {
+        font-size: 11px;
+    }
+
+    .related-price {
+        font-size: 10px;
+    }
+
+    .cart-icon {
+        font-size: 22px;
+        padding: 4px;
+    }
+
+    .cart-count {
+        width: 12px;
+        height: 12px;
+        font-size: 7px;
+    }
+
+    .crypto-popup-content {
+        padding: 8px;
+    }
+
+    .crypto-popup-content p {
+        font-size: 11px;
+    }
+
+    .crypto-popup-actions a,
+    .crypto-close-btn {
+        font-size: 10px;
+        padding: 4px 8px;
+    }
+
+    .footer-content p {
+        font-size: 11px;
+    }
+
+    .footer-links a {
+        font-size: 10px;
+    }
+
+    .loading-overlay .spinner {
+        width: 32px;
+        height: 32px;
+    }
+}
+
+@media (max-width: 360px) {
+    .product-title {
+        font-size: 20px;
+    }
+
+    .product-image,
+    .product-video {
+        width: 120px;
+    }
+
+    .product-description {
+        font-size: 11px;
+    }
+
+    .product-features {
+        font-size: 10px;
+    }
+
+    .product-price {
+        font-size: 13px;
+    }
+
+    .add-to-cart-btn,
+    .return-btn {
+        padding: 5px 8px;
+        font-size: 10px;
+    }
+
+    .related-item {
+        width: 100px;
+    }
+
+    .related-title {
+        font-size: 10px;
+    }
+
+    .related-price {
+        font-size: 9px;
+    }
+
+    .cart-icon {
+        font-size: 20px;
+        padding: 3px;
+    }
+
+    .cart-count {
+        width: 10px;
+        height: 10px;
+        font-size: 6px;
+    }
+}

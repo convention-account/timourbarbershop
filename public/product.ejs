@@ -79,12 +79,21 @@
                 <span class="label label-new">New</span>
             </div>
             <div class="product-gallery">
-                <% product.images.forEach((image, index)=> { %>
-                    <a href="<%= image %>" data-fancybox="gallery"
-                        data-caption="<%= product.title %> - Image <%= index + 1 %>">
-                        <img src="<%= image %>" alt="<%= product.title %>" class="product-image">
-                    </a>
-                    <% }) %>
+                <% if (product.images && product.images.length> 0) { %>
+                    <% product.images.forEach((image, index)=> { %>
+                        <a href="<%= image %>" data-fancybox="gallery"
+                            data-caption="<%= product.title %> - Image <%= index + 1 %>">
+                            <img src="<%= image %>" alt="<%= product.title %>" class="product-image">
+                        </a>
+                        <% }) %>
+                            <% } %>
+                                <% if (product.video) { %>
+                                    <a href="<%= product.video %>" data-fancybox="gallery"
+                                        data-caption="<%= product.title %> - Video">
+                                        <video src="<%= product.video %>" class="product-video" muted
+                                            poster="<%= product.images && product.images.length > 0 ? product.images[0] : '/media/placeholder.jpg' %>"></video>
+                                    </a>
+                                    <% } %>
             </div>
             <div class="product-details">
                 <p class="product-description">
@@ -203,28 +212,16 @@
     <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            Fancybox.bind("[data-fancybox]", {
+            Fancybox.bind("[data-fancybox='gallery']", {
                 loop: true,
                 buttons: ["zoom", "slideShow", "fullScreen", "thumbs", "close"],
                 animationEffect: "zoom-in-out",
                 transitionEffect: "slide",
-                mobile: {
-                    buttons: ["zoom", "close"],
-                    thumbs: false,
-                    clickContent: "zoom",
-                    clickSlide: "close"
+                video: {
+                    autoplay: true,
+                    controls: true,
+                    muted: false
                 },
-                touch: {
-                    vertical: true,
-                    momentum: true
-                },
-                slideShow: {
-                    autoStart: false,
-                    speed: 3000
-                },
-                protect: true,
-                preload: 2,
-                lazy: true,
                 image: {
                     fit: "contain",
                     maxWidth: "100%",
@@ -234,6 +231,9 @@
                 caption: {
                     type: "outside",
                     position: "bottom"
+                },
+                Thumbs: {
+                    autoStart: false
                 }
             });
         });
@@ -339,6 +339,27 @@
             transform: scale(1.2);
         }
 
+        .product-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .product-image,
+        .product-video {
+            width: 250px;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .product-image:hover,
+        .product-video:hover {
+            transform: scale(1.05);
+        }
+
         .cart-icon-scrolled .cart-count {
             top: -10px;
             right: -10px;
@@ -418,7 +439,6 @@
             text-decoration: none;
         }
     </style>
-
 
     <div class="loading-overlay">
         <div class="spinner"></div>
