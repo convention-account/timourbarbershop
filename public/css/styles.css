@@ -257,9 +257,10 @@ main {
 .scissors {
     position: relative;
     width: 45%;
-    max-width: 670px;
+    max-width: 670px !important;
     z-index: 1;
-    margin-top: 20px;
+    margin-top: -4rem;
+    margin-right: 7rem;
 }
 
 .course-section {
